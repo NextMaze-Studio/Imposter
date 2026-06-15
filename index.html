@@ -4,9 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Imposter Word Game</title>
+    <!-- Tailwind CSS v4 Browser Compiler -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- PeerJS for Free Online P2P Multiplayer -->
     <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 
     <style>
@@ -14,7 +18,6 @@
             font-family: 'Plus Jakarta Sans', sans-serif;
             background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
         }
-        /* Custom Apple-inspired Glassmorphism */
         .glass-panel {
             background: rgba(255, 255, 255, 0.06);
             backdrop-filter: blur(20px);
@@ -29,6 +32,7 @@
 </head>
 <body class="text-slate-100 min-h-screen flex flex-col justify-between antialiased">
 
+    <!-- Header Banner -->
     <header class="w-full max-w-4xl mx-auto px-4 pt-6">
         <div class="glass-panel rounded-2xl p-4 flex items-center justify-between shadow-2xl">
             <div class="flex items-center gap-3">
@@ -46,8 +50,10 @@
         </div>
     </header>
 
+    <!-- Main Dynamic Content Box -->
     <main class="w-full max-w-lg mx-auto px-4 py-8 flex-grow flex flex-col justify-center">
         
+        <!-- SCREEN 1: MODE SELECT -->
         <div id="screenModeSelect" class="glass-panel rounded-3xl p-8 shadow-2xl space-y-6">
             <div class="text-center space-y-2">
                 <h2 class="text-2xl font-bold">Choose Game Mode</h2>
@@ -76,6 +82,7 @@
             </div>
         </div>
 
+        <!-- SCREEN 2: OFFLINE SETUP -->
         <div id="screenOfflineSetup" class="hidden glass-panel rounded-3xl p-8 shadow-2xl space-y-6">
             <button onclick="switchScreen('screenModeSelect')" class="text-xs text-slate-400 hover:text-white transition"><i class="fa-solid fa-arrow-left mr-1"></i> Back</button>
             <h2 class="text-2xl font-bold">Offline Setup</h2>
@@ -87,8 +94,7 @@
                 
                 <div class="space-y-2">
                     <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider">Player Names</label>
-                    <div id="offlineNamesContainer" class="space-y-2 max-h-48 overflow-y-auto pr-1">
-                        </div>
+                    <div id="offlineNamesContainer" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
                 </div>
 
                 <button onclick="startOfflineGame()" class="w-full bg-indigo-600 hover:bg-indigo-500 font-bold py-4 rounded-xl transition shadow-lg shadow-indigo-600/20 cursor-pointer">
@@ -97,6 +103,7 @@
             </div>
         </div>
 
+        <!-- SCREEN 3: OFFLINE REVEAL -->
         <div id="screenOfflineReveal" class="hidden glass-panel rounded-3xl p-8 shadow-2xl text-center space-y-6">
             <div class="space-y-1">
                 <p class="text-xs font-semibold tracking-wider text-indigo-400 uppercase">Pass the device to</p>
@@ -125,11 +132,68 @@
             </div>
         </div>
 
+        <!-- NEW DISCUSSION & ROUND STATUS ENGINE SCREEN -->
+        <div id="screenDiscussionBoard" class="hidden glass-panel rounded-3xl p-8 shadow-2xl text-center space-y-6">
+            <div class="space-y-1">
+                <span id="discRoundLabel" class="text-xs font-bold text-amber-400 uppercase tracking-wider">Round Discussion Active</span>
+                <h2 id="discussionHeadline" class="text-2xl font-black text-white">Who speaks first?</h2>
+            </div>
+
+            <div class="glass-card rounded-2xl p-6 border border-white/5 space-y-4">
+                <div class="bg-indigo-500/10 text-indigo-400 rounded-xl py-4 px-3 border border-indigo-500/20">
+                    <p class="text-xs uppercase tracking-widest font-semibold mb-1">Current Speaker</p>
+                    <p id="activeSpeakerName" class="text-2xl font-black tracking-wide text-white">---</p>
+                </div>
+                
+                <div class="text-left bg-slate-950/40 p-4 rounded-xl border border-white/5">
+                    <p class="text-xs font-semibold text-slate-400 uppercase mb-2">Speaking Order Track:</p>
+                    <div id="discussionOrderList" class="space-y-1.5 font-mono text-xs text-slate-400">
+                        <!-- Filled Programmatically -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <button id="btnAdvanceSpeaker" onclick="advanceSpeakerOrder()" class="w-full bg-indigo-600 hover:bg-indigo-500 font-bold py-3.5 rounded-xl transition cursor-pointer shadow-lg shadow-indigo-600/10">
+                    Next Speaker Turn
+                </button>
+                <button id="btnEndRoundEarly" onclick="triggerGuessingPhase()" class="w-full bg-slate-800 hover:bg-slate-700 font-medium py-2.5 rounded-xl text-xs text-slate-400 transition cursor-pointer">
+                    End Discussion, Start Voting <i class="fa-solid fa-gavel ml-1 text-[10px]"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- NEW GUESSING / RESOLUTION PHASE PANEL -->
+        <div id="screenGuessingPhase" class="hidden glass-panel rounded-3xl p-8 shadow-2xl space-y-6">
+            <div class="text-center space-y-1">
+                <span class="text-xs font-bold text-rose-400 uppercase tracking-wider">Judgement Day</span>
+                <h2 class="text-2xl font-black">Identify the Imposter</h2>
+                <p class="text-xs text-slate-400">Discuss as a group, then tap on the person voted off.</p>
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Cast Vote Target</label>
+                <div id="votingGridContainer" class="grid grid-cols-1 gap-2 max-h-60 overflow-y-auto pr-1">
+                    <!-- Dynamic Target Selection Options -->
+                </div>
+            </div>
+            
+            <div id="gameResolutionDisplay" class="hidden glass-card p-5 rounded-2xl border-2 border-emerald-500/20 text-center space-y-3">
+                <h3 id="resolutionTitle" class="text-xl font-bold">---</h3>
+                <p id="resolutionSubtitle" class="text-sm text-slate-300">---</p>
+                <button onclick="location.reload()" class="w-full bg-white/10 hover:bg-white/15 text-sm font-semibold py-2.5 rounded-xl transition cursor-pointer">
+                    Return to Lobby Menu
+                </button>
+            </div>
+        </div>
+
+        <!-- SCREEN 4: ONLINE DASHBOARD (HOST OR JOIN) -->
         <div id="screenOnlineMain" class="hidden glass-panel rounded-3xl p-8 shadow-2xl space-y-6">
             <button onclick="location.reload()" class="text-xs text-slate-400 hover:text-white transition"><i class="fa-solid fa-arrow-left mr-1"></i> Main Menu</button>
             <h2 class="text-2xl font-bold">Online Lobby Setup</h2>
             
             <div class="grid grid-cols-1 gap-6">
+                <!-- Host Panel -->
                 <div class="glass-card p-5 rounded-2xl border border-white/5 space-y-3">
                     <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider">Option A</span>
                     <h3 class="font-bold text-lg">Create a New Room</h3>
@@ -147,6 +211,7 @@
                     <div class="flex-grow border-t border-white/10"></div>
                 </div>
 
+                <!-- Join Panel -->
                 <div class="glass-card p-5 rounded-2xl border border-white/5 space-y-3">
                     <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Option B</span>
                     <h3 class="font-bold text-lg">Join Existing Room</h3>
@@ -163,6 +228,7 @@
             </div>
         </div>
 
+        <!-- SCREEN 5: ONLINE HOST LOBBY ROOM -->
         <div id="screenHostLobby" class="hidden glass-panel rounded-3xl p-8 shadow-2xl space-y-6">
             <div class="space-y-1">
                 <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Room Active</span>
@@ -186,6 +252,7 @@
             </button>
         </div>
 
+        <!-- SCREEN 6: ONLINE CLIENT WAITING / RESULTS SCREEN -->
         <div id="screenClientView" class="hidden glass-panel rounded-3xl p-8 shadow-2xl text-center space-y-6">
             <div class="space-y-1">
                 <p class="text-xs font-semibold tracking-wider text-amber-400 uppercase">Connected Workspace</p>
@@ -203,48 +270,54 @@
                     <p id="clientRoleSubtext" class="text-xs text-slate-400 italic">Keep your screen safe from onlookers.</p>
                 </div>
             </div>
+
+            <!-- Online Mode Realtime Tracking Substructure Injection -->
+            <div id="onlineStatusMonitorBox" class="hidden text-xs bg-white/5 p-4 rounded-xl text-slate-400 border border-white/5 space-y-1 text-left">
+                <p class="font-bold text-slate-300 uppercase tracking-wider text-[10px] mb-1">Live Game Coordinator Monitoring:</p>
+                <p id="onlineMonitorSpeakingNow">Speaker: <span class="text-white font-medium">---</span></p>
+                <p id="onlineMonitorInstructions" class="italic text-[11px] text-indigo-400">Please pay attention to the game stream.</p>
+            </div>
             
             <p class="text-xs text-slate-500">Do not refresh your browser window during active sessions.</p>
         </div>
 
     </main>
 
+    <!-- Global App Footer Rules -->
     <footer class="w-full max-w-lg mx-auto text-center px-4 pb-6 text-xs text-slate-500 font-mono">
         <p>Rule: Everyone says one word description. Vote off the Imposter.</p>
     </footer>
 
+    <!-- App System Scripts -->
     <script>
-        // Core Game Word Arrays
         const WORD_POOL = ["Frog", "Car", "Apple", "Airplane", "Laptop", "Pizza", "Guitar", "Coffee", "Elephant", "Submarine", "Helicopter", "Football", "Watch", "Burger"];
         
-        // System Application Memory Context
         let appState = {
             mode: null, 
             playersCount: 0,
-            playerNames: [], // User custom name strings
+            playerNames: [], 
             roles: [], 
             currentIdx: 0,
             cardVisible: false,
-            // Online Networking State Configurations
+            // Track Speaker Rounds
+            speakerSequence: [],
+            currentSpeakerIdx: 0,
+            // Online Matrix Configuration Properties
             peer: null,
             myId: null,
-            connections: [], // Contains individual connection objects with peer custom nicknames attached
+            connections: [], 
             isHost: false,
             myNickname: ""
         };
 
-        // UI Layer Engine Navigation Controls
         function switchScreen(screenId) {
-            const screens = ['screenModeSelect', 'screenOfflineSetup', 'screenOfflineReveal', 'screenOnlineMain', 'screenHostLobby', 'screenClientView'];
+            const screens = ['screenModeSelect', 'screenOfflineSetup', 'screenOfflineReveal', 'screenDiscussionBoard', 'screenGuessingPhase', 'screenOnlineMain', 'screenHostLobby', 'screenClientView'];
             screens.forEach(id => {
                 document.getElementById(id).classList.add('hidden');
             });
             document.getElementById(screenId).classList.remove('hidden');
         }
 
-        /* =========================================================================
-           OFFLINE LOGIC CONTROLLERS (PASS & PLAY) WITH NAMES
-           ========================================================================= */
         function initOfflineSetup() {
             switchScreen('screenOfflineSetup');
             renderOfflineNameInputs();
@@ -280,7 +353,6 @@
             appState.currentIdx = 0;
             appState.cardVisible = false;
             
-            // Gather custom names from inputs
             appState.playerNames = [];
             for (let i = 1; i <= count; i++) {
                 const inputElement = document.getElementById(`offlineName_${i}`);
@@ -288,16 +360,15 @@
                 appState.playerNames.push(value || `Player ${i}`);
             }
 
-            // Generate Word distribution profile
             const chosenWord = WORD_POOL[Math.floor(Math.random() * WORD_POOL.length)];
             const imposterIndex = Math.floor(Math.random() * count);
 
             appState.roles = [];
             for (let i = 0; i < count; i++) {
                 if (i === imposterIndex) {
-                    appState.roles.push({ type: 'IMPOSTER', word: '⚠️ YOU ARE THE IMPOSTER' });
+                    appState.roles.push({ type: 'IMPOSTER', name: appState.playerNames[i], word: '⚠️ YOU ARE THE IMPOSTER' });
                 } else {
-                    appState.roles.push({ type: 'INNOCENT', word: chosenWord });
+                    appState.roles.push({ type: 'INNOCENT', name: appState.playerNames[i], word: chosenWord });
                 }
             }
 
@@ -310,7 +381,6 @@
             document.getElementById('cardHiddenState').classList.remove('hidden');
             document.getElementById('cardVisibleState').classList.add('hidden');
             
-            // Display the current actual user name
             document.getElementById('revealTurnTitle').innerText = appState.playerNames[appState.currentIdx];
             document.getElementById('btnToggleCard').innerText = "Reveal Word";
             document.getElementById('btnNextPlayer').disabled = true;
@@ -354,22 +424,161 @@
             if (appState.currentIdx < appState.playersCount) {
                 setupOfflineRevealCard();
             } else {
-                // All assignments evaluated natively
-                document.getElementById('revealTurnTitle').innerText = "🎉 All Set!";
-                document.getElementById('cardHiddenState').innerHTML = `
-                    <i class="fa-solid fa-play text-4xl text-emerald-400 mb-2"></i>
-                    <p class="text-sm font-bold text-slate-200">Roles Dispatched Successfully</p>
-                    <p class="text-xs text-slate-400 mt-1 max-w-xs">Start your round. Let each player describe their item while the imposter blends in!</p>
-                `;
-                document.getElementById('btnToggleCard').classList.add('hidden');
-                document.getElementById('btnNextPlayer').onclick = () => location.reload();
-                document.getElementById('btnNextPlayer').innerText = "Restart Game";
-                document.getElementById('btnNextPlayer').disabled = false;
+                buildDiscussionSequence();
             }
         }
 
         /* =========================================================================
-           ONLINE P2P SYSTEM LOGIC CONTROLLERS (WITH NICKNAMES)
+           TURN SEQUENCE & SCHEDULING SYSTEM ENGINE CONTROLS
+           ========================================================================= */
+        function buildDiscussionSequence() {
+            // Filter lists to locate innocent entities
+            let innocentIndexes = [];
+            let imposterIndexes = [];
+
+            appState.roles.forEach((player, idx) => {
+                if(player.type === 'INNOCENT') innocentIndexes.push(idx);
+                else imposterIndexes.push(idx);
+            });
+
+            // Pick a random innocent player to go first
+            const firstSpeakerCollectionIdx = Math.floor(Math.random() * innocentIndexes.length);
+            const firstSpeakerGlobalIdx = innocentIndexes[firstSpeakerCollectionIdx];
+
+            // Remove chosen starter from innocent list pool
+            innocentIndexes.splice(firstSpeakerCollectionIdx, 1);
+
+            // Merge remaining players and shuffle them
+            let remainingPool = [...innocentIndexes, ...imposterIndexes];
+            remainingPool = remainingPool.sort(() => Math.random() - 0.5);
+
+            // Establish final absolute speaker index registry pipeline
+            appState.speakerSequence = [firstSpeakerGlobalIdx, ...remainingPool];
+            appState.currentSpeakerIdx = 0;
+
+            if (appState.mode === 'online' && appState.isHost) {
+                broadcastToOnlineClients({
+                    type: 'SYNC_DISCUSSION_STATE',
+                    sequence: appState.speakerSequence,
+                    currentSpeakerIdx: appState.currentSpeakerIdx
+                });
+            }
+
+            renderDiscussionBoardScreen();
+        }
+
+        function renderDiscussionBoardScreen() {
+            switchScreen('screenDiscussionBoard');
+            
+            const activeGlobalIdx = appState.speakerSequence[appState.currentSpeakerIdx];
+            const currentSpeakerName = appState.playerNames[activeGlobalIdx];
+            
+            document.getElementById('activeSpeakerName').innerText = currentSpeakerName;
+            
+            // Build the chronological visual timeline
+            const orderContainer = document.getElementById('discussionOrderList');
+            orderContainer.innerHTML = appState.speakerSequence.map((globalIdx, orderIdx) => {
+                let statusBadge = "";
+                let nameStyle = "text-slate-400";
+                
+                if (orderIdx === appState.currentSpeakerIdx) {
+                    statusBadge = `<span class="text-[9px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1.5 py-0.5 rounded">SPEAKING NOW</span>`;
+                    nameStyle = "text-white font-bold";
+                } else if (orderIdx < appState.currentSpeakerIdx) {
+                    statusBadge = `<span class="text-[9px] text-slate-500 font-mono"><i class="fa-solid fa-check"></i> Done</span>`;
+                    nameStyle = "text-slate-600 line-through";
+                } else if (orderIdx === 0) {
+                    statusBadge = `<span class="text-[9px] text-indigo-400 font-bold uppercase tracking-wider">Starter Player</span>`;
+                }
+
+                return `<div class="flex items-center justify-between py-1 border-b border-white/5">
+                    <span class="${nameStyle}">${orderIdx + 1}. ${appState.playerNames[globalIdx]}</span>
+                    ${statusBadge}
+                </div>`;
+            }).join('');
+
+            // Hide controls if user is a client in online mode
+            if (appState.mode === 'online' && !appState.isHost) {
+                document.getElementById('btnAdvanceSpeaker').classList.add('hidden');
+                document.getElementById('btnEndRoundEarly').classList.add('hidden');
+            } else {
+                document.getElementById('btnAdvanceSpeaker').classList.remove('hidden');
+                document.getElementById('btnEndRoundEarly').classList.remove('hidden');
+                document.getElementById('btnAdvanceSpeaker').innerText = 
+                    (appState.currentSpeakerIdx === appState.speakerSequence.length - 1) ? "Finish Discussion & Vote" : "Next Speaker Turn";
+            }
+        }
+
+        function advanceSpeakerOrder() {
+            if (appState.currentSpeakerIdx < appState.speakerSequence.length - 1) {
+                appState.currentSpeakerIdx++;
+                
+                if (appState.mode === 'online' && appState.isHost) {
+                    broadcastToOnlineClients({
+                        type: 'SYNC_DISCUSSION_STATE',
+                        sequence: appState.speakerSequence,
+                        currentSpeakerIdx: appState.currentSpeakerIdx
+                    });
+                }
+                renderDiscussionBoardScreen();
+            } else {
+                triggerGuessingPhase();
+            }
+        }
+
+        function triggerGuessingPhase() {
+            if (appState.mode === 'online' && appState.isHost) {
+                broadcastToOnlineClients({ type: 'REDIRECT_GUESSING_PHASE' });
+            }
+            renderGuessingPhaseScreen();
+        }
+
+        function renderGuessingPhaseScreen() {
+            switchScreen('screenGuessingPhase');
+            
+            const grid = document.getElementById('votingGridContainer');
+            document.getElementById('gameResolutionDisplay').classList.add('hidden');
+
+            grid.innerHTML = appState.playerNames.map((name, idx) => {
+                return `<button onclick="submitVotedOffTarget(${idx})" class="w-full text-left bg-white/5 hover:bg-rose-500/10 hover:border-rose-500/30 border border-white/5 p-4 rounded-xl transition cursor-pointer flex justify-between items-center group">
+                    <span class="font-medium group-hover:text-rose-400">${name}</span>
+                    <i class="fa-solid fa-skull text-xs opacity-0 group-hover:opacity-100 text-rose-500 transition"></i>
+                </button>`;
+            }).join('');
+        }
+
+        function submitVotedOffTarget(selectedIdx) {
+            const targetRoleData = appState.roles[selectedIdx];
+            const displayBox = document.getElementById('gameResolutionDisplay');
+            const title = document.getElementById('resolutionTitle');
+            const subtitle = document.getElementById('resolutionSubtitle');
+
+            displayBox.classList.remove('hidden');
+
+            if (targetRoleData.type === 'IMPOSTER') {
+                title.innerText = "🎉 Innocents Win!";
+                title.className = "text-xl font-bold text-emerald-400";
+                subtitle.innerText = `Correct! ${targetRoleData.name} was indeed the secret Imposter!`;
+            } else {
+                // Find who the real imposter was to display them
+                const realImposter = appState.roles.find(r => r.type === 'IMPOSTER');
+                title.innerText = "💥 Imposter Wins!";
+                title.className = "text-xl font-bold text-rose-400";
+                subtitle.innerText = `Wrong choice! ${targetRoleData.name} was innocent. The true Imposter was ${realImposter.name}!`;
+            }
+
+            if (appState.mode === 'online' && appState.isHost) {
+                broadcastToOnlineClients({
+                    type: 'GAME_OVER_SIGNAL',
+                    title: title.innerText,
+                    titleClass: title.className,
+                    subtitle: subtitle.innerText
+                });
+            }
+        }
+
+        /* =========================================================================
+           ONLINE NETWORKING (PEERJS) WITH LIVE DISCUSSION DATA
            ========================================================================= */
         function initOnlineMode() {
             switchScreen('screenOnlineMain');
@@ -378,10 +587,7 @@
             statusBox.innerText = "Connecting Framework...";
             statusBox.className = "text-xs bg-amber-500/10 text-amber-400 px-3 py-1.5 rounded-full border border-amber-500/20 font-mono";
 
-            // Instantiate Peer initialization on public mesh infrastructure
-            appState.peer = new Peer(generateShortRoomId(), {
-                debug: 1
-            });
+            appState.peer = new Peer(generateShortRoomId(), { debug: 1 });
 
             appState.peer.on('open', (id) => {
                 appState.myId = id;
@@ -390,7 +596,7 @@
             });
 
             appState.peer.on('error', (err) => {
-                console.error("PeerJS Core Error Intercept:", err);
+                console.error("PeerJS Error:", err);
                 statusBox.innerText = "● Mesh Node Error";
                 statusBox.className = "text-xs bg-rose-500/10 text-rose-400 px-3 py-1.5 rounded-full border border-rose-500/20 font-mono";
             });
@@ -405,26 +611,23 @@
             return result;
         }
 
-        // --- HOST CAPABILITY MATRIX ---
         function hostOnlineRoom() {
             const hostNickInput = document.getElementById('hostNickname');
             appState.myNickname = hostNickInput.value.trim() || "Host Dealer";
 
             if(!appState.myId) {
-                alert("P2P Signaling framework processing. Please try again in 2 seconds.");
+                alert("Signaling framework processing. Please try again in 2 seconds.");
                 return;
             }
             appState.isHost = true;
+            appState.mode = 'online';
             document.getElementById('displayHostRoomId').innerText = appState.myId;
             switchScreen('screenHostLobby');
 
-            // Listen for connections coming in from external clients
             appState.peer.on('connection', (conn) => {
-                
-                // Listen for handshake structure from the client containing their name
                 conn.on('data', (payload) => {
                     if (payload && payload.type === 'CLIENT_HANDSHAKE') {
-                        conn.playerNickname = payload.nickname; // bind nickname explicitly to connection context
+                        conn.playerNickname = payload.nickname;
                         appState.connections.push(conn);
                         updateHostLobbyUI();
                     }
@@ -446,7 +649,7 @@
                 return;
             }
 
-            container.innerHTML = appState.connections.map((conn, idx) => {
+            container.innerHTML = appState.connections.map((conn) => {
                 return `<div class="flex items-center justify-between bg-white/5 px-4 py-2.5 rounded-xl border border-white/5">
                     <span class="font-medium text-slate-200">${conn.playerNickname || 'Anonymous Player'}</span>
                     <span class="text-[10px] tracking-wider font-mono font-bold bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20">READY</span>
@@ -454,10 +657,14 @@
             }).join('');
         }
 
+        function broadcastToOnlineClients(payload) {
+            appState.connections.forEach(conn => conn.send(payload));
+        }
+
         function triggerOnlineDistribution() {
             const totalPeers = appState.connections.length;
             if (totalPeers < 2) {
-                alert("You need at least 2 connected clients (minimum 3 players total including Host) to balance gameplay parameters.");
+                alert("You need at least 2 connected clients to play.");
                 return;
             }
 
@@ -465,103 +672,127 @@
             const chosenWord = WORD_POOL[Math.floor(Math.random() * WORD_POOL.length)];
             const imposterPositionIdx = Math.floor(Math.random() * gameSize);
 
-            // Determine host position assignment profile
-            let hostRole = { type: 'INNOCENT', word: chosenWord };
+            // Populate system-wide player name arrays matching indexes
+            appState.playerNames = [appState.myNickname];
+            appState.connections.forEach(c => appState.playerNames.push(c.playerNickname));
+
+            // Generate host assignment profiles
+            let hostRole = { type: 'INNOCENT', name: appState.myNickname, word: chosenWord };
             if (imposterPositionIdx === 0) {
-                hostRole = { type: 'IMPOSTER', word: '⚠️ YOU ARE THE IMPOSTER' };
+                hostRole = { type: 'IMPOSTER', name: appState.myNickname, word: '⚠️ YOU ARE THE IMPOSTER' };
             }
 
-            // Construct array stack distribution mappings for clients
+            appState.roles = [hostRole];
+
+            // Build individual client assignment payloads
             let clientAssignments = [];
             for(let i = 1; i <= totalPeers; i++) {
+                let roleObject = { type: 'INNOCENT', name: appState.playerNames[i], word: chosenWord };
                 if(i === imposterPositionIdx) {
-                    clientAssignments.push({ type: 'IMPOSTER', word: '⚠️ YOU ARE THE IMPOSTER' });
-                } else {
-                    clientAssignments.push({ type: 'INNOCENT', word: chosenWord });
+                    roleObject = { type: 'IMPOSTER', name: appState.playerNames[i], word: '⚠️ YOU ARE THE IMPOSTER' };
                 }
+                clientAssignments.push(roleObject);
+                appState.roles.push(roleObject);
             }
 
-            // Disseminate payloads across individual processing threads
+            // Push role cards to clients
             appState.connections.forEach((conn, index) => {
                 conn.send({
                     type: 'ASSIGNMENT_PAYLOAD',
-                    data: clientAssignments[index]
+                    data: clientAssignments[index],
+                    globalNamesList: appState.playerNames
                 });
             });
 
-            // Turn host viewport window into visible asset module
+            // Put host into local card viewing state
             switchScreen('screenClientView');
-            document.getElementById('clientStatusTitle').innerText = `${appState.myNickname} (You)`;
+            document.getElementById('clientStatusTitle').innerText = `${appState.myNickname} (Host Console)`;
             document.getElementById('clientCardLoading').classList.add('hidden');
+            
             const targetReveal = document.getElementById('clientCardRevealed');
             const textEl = document.getElementById('clientWordDisplay');
-            
             targetReveal.classList.remove('hidden');
             textEl.innerText = hostRole.word;
+            
             if (hostRole.type === 'IMPOSTER') {
                 textEl.className = "text-2xl font-black text-rose-400 tracking-wide";
-                document.getElementById('clientRoleSubtext').innerText = "Blend in! You do not have the target word.";
             } else {
                 textEl.className = "text-4xl font-black text-emerald-400 tracking-wide";
-                document.getElementById('clientRoleSubtext').innerText = "Do not reveal this word sequence to anyone.";
             }
+
+            // Create delay to let players read words before triggering discussion tracking
+            setTimeout(() => {
+                buildDiscussionSequence();
+            }, 6000);
         }
 
-        // --- CLIENT CAPABILITY MATRIX ---
         function joinOnlineRoom() {
             const nicknameInput = document.getElementById('clientNickname');
             appState.myNickname = nicknameInput.value.trim() || "Player_" + Math.floor(Math.random() * 900 + 100);
 
             const inputVal = document.getElementById('joinRoomId').value.trim().toUpperCase();
-            if(!inputVal) {
-                alert("Please input a valid room identification sequence.");
-                return;
-            }
+            if(!inputVal) return alert("Please input a valid room ID.");
 
-            if(!appState.myId) {
-                alert("Connecting backend framework. Try again in a moment.");
-                return;
-            }
-
+            appState.mode = 'online';
             switchScreen('screenClientView');
-            document.getElementById('clientStatusTitle').innerText = "Joining Host Mesh...";
+            document.getElementById('clientStatusTitle').innerText = "Joining Room...";
 
-            // Initialize outgoing connectivity stream mapping
             const connection = appState.peer.connect(inputVal);
             
             connection.on('open', () => {
-                document.getElementById('clientStatusTitle').innerText = "Sending Profile Identification...";
-                
-                // Immediately forward personal nickname over to host storage pool
                 connection.send({
                     type: 'CLIENT_HANDSHAKE',
                     nickname: appState.myNickname
                 });
-                
                 document.getElementById('clientStatusTitle').innerText = `${appState.myNickname} (Connected)`;
             });
 
             connection.on('data', (payload) => {
-                if (payload && payload.type === 'ASSIGNMENT_PAYLOAD') {
+                if (payload.type === 'ASSIGNMENT_PAYLOAD') {
+                    appState.playerNames = payload.globalNamesList;
                     document.getElementById('clientCardLoading').classList.add('hidden');
                     const targetReveal = document.getElementById('clientCardRevealed');
                     const textEl = document.getElementById('clientWordDisplay');
                     
                     targetReveal.classList.remove('hidden');
                     textEl.innerText = payload.data.word;
+                    textEl.className = payload.data.type === 'IMPOSTER' ? "text-2xl font-black text-rose-400" : "text-4xl font-black text-emerald-400";
                     
-                    if(payload.data.type === 'IMPOSTER') {
-                        textEl.className = "text-2xl font-black text-rose-400 tracking-wide";
-                        document.getElementById('clientRoleSubtext').innerText = "Blend in! You do not know the target word.";
-                    } else {
-                        textEl.className = "text-4xl font-black text-emerald-400 tracking-wide";
-                        document.getElementById('clientRoleSubtext').innerText = "Do not share this word with anyone.";
-                    }
+                    // Reveal live HUD updates
+                    document.getElementById('onlineStatusMonitorBox').classList.remove('hidden');
+                }
+                
+                if (payload.type === 'SYNC_DISCUSSION_STATE') {
+                    appState.speakerSequence = payload.sequence;
+                    appState.currentSpeakerIdx = payload.currentSpeakerIdx;
+                    
+                    // Sync internal game parameters to update layout
+                    renderDiscussionBoardScreen();
+                }
+
+                if (payload.type === 'REDIRECT_GUESSING_PHASE') {
+                    renderGuessingPhaseScreen();
+                    // Disable local clicking if you are not the host authority coordinator
+                    document.getElementById('votingGridContainer').style.pointerEvents = "none";
+                    document.getElementById('discussionHeadline').innerText = "Host is computing votes...";
+                }
+
+                if (payload.type === 'GAME_OVER_SIGNAL') {
+                    switchScreen('screenGuessingPhase');
+                    const displayBox = document.getElementById('gameResolutionDisplay');
+                    const title = document.getElementById('resolutionTitle');
+                    const subtitle = document.getElementById('resolutionSubtitle');
+                    
+                    document.getElementById('votingGridContainer').classList.add('hidden');
+                    displayBox.classList.remove('hidden');
+                    title.innerText = payload.title;
+                    title.className = payload.titleClass;
+                    subtitle.innerText = payload.subtitle;
                 }
             });
 
             connection.on('close', () => {
-                alert("The host closed the room or dropped network sync.");
+                alert("The host closed the connection.");
                 location.reload();
             });
         }
