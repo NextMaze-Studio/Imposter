@@ -3,253 +3,367 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Legend's GYM | Interactive Trainer</title>
+    <title>Legend's GYM | Sculpt Your Body</title>
     <style>
-        /* Modern Gym Dark Theme */
+        /* Premium Dark/Lime Aesthetic Inspired by image_820d2b.jpg */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Cabinet Grotesk', 'Segoe UI', sans-serif;
         }
 
         body {
-            background-color: #111;
+            background-color: #0b0b0b;
             color: #fff;
-            line-height: 1.6;
+            overflow-x: hidden;
         }
 
-        header {
-            background: linear-gradient(135deg, #111 60%, #ff3e3e 100%);
-            padding: 40px 20px;
-            text-align: center;
-            border-bottom: 4px solid #ff3e3e;
-        }
-
-        header h1 {
-            font-size: 3rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: #fff;
-        }
-
-        header h1 span {
-            color: #ff3e3e;
-        }
-
-        header p {
-            color: #aaa;
-            font-size: 1.1rem;
-            margin-top: 10px;
-        }
-
-        .container {
-            max-width: 1100px;
-            margin: 40px auto;
-            padding: 0 20px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
+        /* Navigation Bar */
+        nav {
+            display: flex;
+            justify-content: space-between;
             align-items: center;
+            padding: 30px 8%;
+            background: transparent;
         }
 
-        @media (max-width: 768px) {
-            .container {
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: -1px;
+        }
+
+        .logo span {
+            color: #ccff00; /* Lime Accent */
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #888;
+            text-decoration: none;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #fff;
+        }
+
+        .btn-contact {
+            background: #ccff00;
+            color: #000;
+            padding: 12px 28px;
+            border-radius: 30px;
+            font-weight: 700;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            transition: 0.3s;
+        }
+
+        .btn-contact:hover {
+            box-shadow: 0 0 20px rgba(204, 255, 0, 0.4);
+        }
+
+        /* Hero Layout Container */
+        .hero {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 8%;
+            display: grid;
+            grid-template-columns: 1fr 1.2fr 1fr;
+            gap: 20px;
+            align-items: center;
+            min-height: 80vh;
+        }
+
+        @media (max-width: 1024px) {
+            .hero {
                 grid-template-columns: 1fr;
+                text-align: center;
             }
         }
 
-        /* Interactive SVG Styling */
-        .interactive-map-box {
-            background: #1a1a1a;
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid #333;
+        /* Hero Text Typography */
+        .hero-text h1 {
+            font-size: 4rem;
+            line-height: 1.1;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            margin-bottom: 20px;
+        }
+
+        .hero-text h1 span {
+            color: #ccff00;
+            display: block;
+        }
+
+        .hero-text p {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        /* 3D Body Canvas / Stage */
+        .stage-3d {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .body-container {
+            width: 100%;
+            max-width: 380px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(40,40,40,0.4) 0%, rgba(0,0,0,0) 70%);
+            position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        svg {
+        /* The SVG '3D' Body graphics */
+        .body-view {
             width: 100%;
-            max-width: 320px;
-            height: auto;
+            height: 100%;
+            position: absolute;
+            display: none;
+            transition: opacity 0.2s ease;
         }
 
-        /* This styles the clickable muscle zones */
-        .muscle-zone {
-            fill: #444;
-            stroke: #222;
-            stroke-width: 2;
+        .body-view.active {
+            display: block;
+        }
+
+        .muscle {
+            fill: #222;
+            stroke: #333;
+            stroke-width: 1.5;
             cursor: pointer;
-            transition: all 0.2s ease-in-out;
+            transition: all 0.3s;
         }
 
-        .muscle-zone:hover {
-            fill: #ff3e3e;
-            filter: drop-shadow(0px 0px 8px #ff3e3e);
+        .muscle:hover {
+            fill: #ccff00;
+            filter: drop-shadow(0 0 15px #ccff00);
         }
 
-        .muscle-zone.active {
-            fill: #ff3e3e;
+        .muscle.selected {
+            fill: #ccff00;
             stroke: #fff;
         }
 
-        /* Dynamic Information Panel */
-        .info-panel {
-            background: #1a1a1a;
+        /* Rotation Control Drag Bar */
+        .rotate-control {
+            width: 80%;
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .rotate-control label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #555;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 4px;
+            background: #222;
+            border-radius: 2px;
+            outline: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ccff00;
+            cursor: pointer;
+            box-shadow: 0 0 10px #ccff00;
+        }
+
+        /* Information UI Panel */
+        .info-card {
+            background: #121212;
+            border: 1px solid #222;
             padding: 30px;
-            border-radius: 12px;
-            border-left: 5px solid #ff3e3e;
-            height: 100%;
+            border-radius: 20px;
+            min-height: 300px;
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
 
-        .info-panel h2 {
+        .info-card h2 {
             font-size: 2rem;
-            margin-bottom: 15px;
             text-transform: uppercase;
-            color: #ff3e3e;
+            color: #ccff00;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
         }
 
-        .info-panel h3 {
-            font-size: 1.3rem;
-            margin-bottom: 10px;
-            color: #ddd;
-        }
-
-        .info-panel p {
-            color: #bbb;
-            font-size: 1.1rem;
+        .info-card p {
+            color: #888;
+            font-size: 1rem;
             margin-bottom: 20px;
+            line-height: 1.5;
         }
 
-        .exercise-list {
-            list-style: none;
-        }
-
-        .exercise-list li {
-            background: #262626;
-            margin: 8px 0;
-            padding: 10px 15px;
-            border-radius: 6px;
-            font-weight: bold;
+        .tag-list {
             display: flex;
-            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
-        .exercise-list li::before {
-            content: "⚡";
-            margin-right: 10px;
-            color: #ff3e3e;
+        .tag {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>Legend's <span>GYM</span></h1>
-        <p>Tap any muscle on the interactive trainer to discover its name and target exercises!</p>
-    </header>
+    <nav>
+        <div class="logo">LEGEND<span>'S</span></div>
+        <ul class="nav-links">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Interactive Trainer</a></li>
+        </ul>
+        <a href="#" class="btn-contact">Get Started</a>
+    </nav>
 
-    <div class="container">
-        <!-- LEFT: The Interactive Body Vector Map -->
-        <div class="interactive-map-box">
-            <svg viewBox="0 0 200 420" xmlns="http://www.w3.org/2000/svg">
-                <!-- Head / Neck -->
-                <circle cx="100" cy="45" r="20" fill="#333" stroke="#222" stroke-width="2"/>
-                <rect x="94" y="65" width="12" height="15" fill="#333" />
-                
-                <!-- Shoulders (Deltoids) -->
-                <path class="muscle-zone" data-muscle="shoulders" d="M 65,78 C 55,85 52,105 58,115 Z" />
-                <path class="muscle-zone" data-muscle="shoulders" d="M 135,78 C 145,85 148,105 142,115 Z" />
-                
-                <!-- Chest (Pectorals) -->
-                <path class="muscle-zone" data-muscle="chest" d="M 68,82 L 100,85 L 100,120 L 70,118 Z" />
-                <path class="muscle-zone" data-muscle="chest" d="M 132,82 L 100,85 L 100,120 L 130,118 Z" />
-                
-                <!-- Arms (Biceps) -->
-                <path class="muscle-zone" data-muscle="biceps" d="M 56,117 C 54,125 50,145 54,155 L 64,155 C 66,145 64,125 64,117 Z" />
-                <path class="muscle-zone" data-muscle="biceps" d="M 144,117 C 146,125 150,145 146,155 L 136,155 C 134,145 136,125 136,117 Z" />
-                
-                <!-- Abs (Abdominals) -->
-                <rect class="muscle-zone" data-muscle="abs" x="76" y="125" width="48" height="55" rx="5" />
-                
-                <!-- Thighs (Quadriceps) -->
-                <path class="muscle-zone" data-muscle="quads" d="M 68,195 L 98,198 L 95,290 L 68,280 Z" />
-                <path class="muscle-zone" data-muscle="quads" d="M 132,195 L 102,198 L 105,290 L 132,280 Z" />
-            </svg>
+    <div class="hero">
+        <!-- LEFT PANEL: Bold Hook Text -->
+        <div class="hero-text">
+            <h1>Sculpt <span>Your Body</span> Elevate Life</h1>
+            <p>Drag the 3D rotation slider below the model to scan muscle layers and select a region to engineer your workout architecture.</p>
         </div>
 
-        <!-- RIGHT: Dynamic Content Display Panel -->
-        <div class="info-panel" id="infoPanel">
-            <h2>Select a Muscle</h2>
-            <p>Click on any highlighted muscle zone on the body map to view targeted training paths and expert workouts.</p>
+        <!-- CENTER PANEL: Simulated 3D Vector Environment -->
+        <div class="stage-3d">
+            <div class="body-container">
+                <!-- VIEW 1: FRONT VIEW -->
+                <svg id="view-front" class="body-view active" viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Head & Frame Reference -->
+                    <circle cx="100" cy="50" r="18" fill="#1f1f1f"/>
+                    <line x1="100" y1="68" x2="100" y2="180" stroke="#1f1f1f" stroke-width="4"/>
+                    <!-- Front Clickable Muscles -->
+                    <path class="muscle" data-name="Chest (Pectorals)" data-ex="Bench Press, Cable Flyes" d="M 72,90 Q 100,95 128,90 L 125,120 Q 100,125 75,120 Z" />
+                    <rect class="muscle" data-name="Abs (Core)" data-ex="Crunches, Leg Raises, Planks" x="80" y="130" width="40" height="60" rx="4" />
+                    <path class="muscle" data-name="Quads (Thighs)" data-ex="Squats, Leg Press, Lunges" d="M 68,200 L 96,205 L 94,290 L 70,280 Z" />
+                    <path class="muscle" data-name="Quads (Thighs)" data-ex="Squats, Leg Press, Lunges" d="M 132,200 L 104,205 L 106,290 L 130,280 Z" />
+                </svg>
+
+                <!-- VIEW 2: SIDE VIEW -->
+                <svg id="view-side" class="body-view" viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="100" cy="50" r="18" fill="#1f1f1f"/>
+                    <!-- Side Clickable Muscles -->
+                    <path class="muscle" data-name="Shoulders & Arms" data-ex="Side Lateral Raises, Dumbbell Overhead Press" d="M 90,85 Q 115,85 110,120 L 95,150 L 85,110 Z" />
+                    <path class="muscle" data-name="Obliques (Side Abs)" data-ex="Russian Twists, Side Planks" d="M 90,130 L 115,135 L 110,185 L 90,180 Z" />
+                </svg>
+
+                <!-- VIEW 3: BACK VIEW -->
+                <svg id="view-back" class="body-view" viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="100" cy="50" r="18" fill="#1f1f1f"/>
+                    <line x1="100" y1="68" x2="100" y2="180" stroke="#1f1f1f" stroke-width="4"/>
+                    <!-- Back Clickable Muscles -->
+                    <path class="muscle" data-name="Upper Back (Lats)" data-ex="Pull-ups, Lat Pulldowns, Barbell Rows" d="M 65,90 Q 100,100 135,90 L 120,140 Q 100,135 80,140 Z" />
+                    <path class="muscle" data-name="Glutes (Gluteus Maximus)" data-ex="Hip Thrusts, Deadlifts, Sumo Squats" d="M 70,195 Q 100,210 130,195 L 125,230 Q 100,240 75,230 Z" />
+                    <path class="muscle" data-name="Hamstrings" data-ex="Romanian Deadlifts, Seated Leg Curls" d="M 72,235 L 97,238 L 94,310 L 72,300 Z" />
+                    <path class="muscle" data-name="Hamstrings" data-ex="Romanian Deadlifts, Seated Leg Curls" d="M 128,235 L 103,238 L 106,310 L 128,300 Z" />
+                </svg>
+            </div>
+
+            <!-- Drag Slider Controls Angle -->
+            <div class="rotate-control">
+                <label>Drag to Orbit Model</label>
+                <input type="range" min="1" max="3" value="1" class="slider" id="rotationSlider">
+            </div>
+        </div>
+
+        <!-- RIGHT PANEL: Dynamic Data Readout -->
+        <div class="info-card">
+            <div id="info-content">
+                <h2>Anatomy Scanner</h2>
+                <p>Interact with the central structural model grid. Select targeting zones to read current movement tracking protocols.</p>
+            </div>
         </div>
     </div>
 
     <script>
-        // Database of muscle info matching the "data-muscle" attribute tags in the SVG map
-        const muscleDatabase = {
-            chest: {
-                title: "Pectoralis Major (Chest)",
-                desc: "The primary muscle group used for pushing movements. Developing your chest creates upper-body power and solid structural symmetry.",
-                exercises: ["Barbell Bench Press", "Incline Dumbbell Flyes", "Cable Crossovers", "Push-Ups"]
-            },
-            shoulders: {
-                title: "Deltoids (Shoulders)",
-                desc: "Your deltoids control all overhead lifting and arm rotation. Broad shoulders are essential for that classic 'V-taper' athletic build.",
-                exercises: ["Overhead Military Press", "Dumbbell Lateral Raises", "Arnold Press", "Face Pulls"]
-            },
-            biceps: {
-                title: "Biceps Brachii (Arms)",
-                desc: "The muscle responsible for elbow flexion and pulling weights toward your body. A staple target for building arm size.",
-                exercises: ["Barbell Biceps Curls", "Hammer Curls", "Incline Dumbbell Curls", "Preacher Curls"]
-            },
-            abs: {
-                title: "Abdominals (Core)",
-                desc: "Your core stabilizes your entire spine, transfers power between your lower and upper body, and keeps your balance locked down.",
-                exercises: ["Hanging Knee Raises", "Ab Wheel Rollouts", "Planks", "Cable Crunches"]
-            },
-            quads: {
-                title: "Quadriceps (Thighs)",
-                desc: "The massive four-muscle group on the front of your thighs. They drive squatting power, leaping ability, and structural leg density.",
-                exercises: ["Barbell Back Squats", "Leg Press", "Bulgarian Split Squats", "Leg Extensions"]
-            }
+        const slider = document.getElementById('rotationSlider');
+        const views = {
+            1: document.getElementById('view-front'),
+            2: document.getElementById('view-side'),
+            3: document.getElementById('view-back')
         };
+        const infoContent = document.getElementById('info-content');
 
-        const zones = document.querySelectorAll('.muscle-zone');
-        const infoPanel = document.getElementById('infoPanel');
-
-        zones.forEach(zone => {
-            zone.addEventListener('click', () => {
-                // Clear active styling from previous selections
-                zones.forEach(z => z.classList.remove('active'));
-                
-                // Set current muscle selection to active
-                zone.classList.add('active');
-                
-                const muscleKey = zone.getAttribute('data-muscle');
-                const data = muscleDatabase[muscleKey];
-                
-                if (data) {
-                    // Inject database content cleanly into our information panel layout
-                    let exercisesHTML = '<ul class="exercise-list">';
-                    data.exercises.forEach(ex => {
-                        exercisesHTML += `<li>${ex}</li>`;
-                    });
-                    exercisesHTML += '</ul>';
-
-                    infoPanel.innerHTML = `
-                        <h2>${data.title}</h2>
-                        <p>${data.desc}</p>
-                        <h3>Top Legend's Workouts:</h3>
-                        ${exercisesHTML}
-                    `;
+        // Handle simulated 3D orbit rotation switching logic
+        slider.addEventListener('input', (e) => {
+            const currentVal = e.target.value;
+            
+            // Loop through views and set current visible view angle active
+            Object.keys(views).forEach(key => {
+                if(key == currentVal) {
+                    views[key].classList.add('active');
+                } else {
+                    views[key].classList.remove('active');
                 }
+            });
+        });
+
+        // Track and process item selection mapping across all interactive SVGs
+        document.querySelectorAll('.muscle').forEach(element => {
+            element.addEventListener('click', () => {
+                // Remove previous selected tags everywhere
+                document.querySelectorAll('.muscle').forEach(m => m.classList.remove('selected'));
+                
+                // Highlight the target chosen
+                element.classList.add('selected');
+
+                // Read custom structural data properties
+                const name = element.getAttribute('data-name');
+                const exercises = element.getAttribute('data-ex').split(', ');
+
+                // Build modern tags output
+                let tagsHTML = '<div class="tag-list">';
+                exercises.forEach(ex => {
+                    tagsHTML += `<span class="tag">${ex}</span>`;
+                });
+                tagsHTML += '</div>';
+
+                // Repopulate dynamic output node view UI
+                infoContent.innerHTML = `
+                    <h2>${name}</h2>
+                    <p>Optimized tactical pipeline configurations designed to break muscle hypertrophy thresholds.</p>
+                    <h3 style="margin-bottom:10px; font-size:0.9rem; text-transform:uppercase; color:#666;">Target Routines:</h3>
+                    ${tagsHTML}
+                `;
             });
         });
     </script>
