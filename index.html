@@ -3,797 +3,592 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Imposter Word Game</title>
-    <!-- Tailwind CSS v4 Browser Compiler -->
+    <title>Falcon 6 | NextMaze Studio</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- PeerJS for Free Online P2P Multiplayer -->
-    <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Caveat:wght@700&family=Delius&display=swap" rel="stylesheet">
 
     <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
+        :root {
+            --color-bg-paper: #FCFBF7;      /* Clean sketch paper backdrop */
+            --color-ink-charcoal: #2B2A27;  /* Deep fountain pen ink */
+            --color-accent-blue: #3B7197;   /* Blueprint accent */
+        }
+
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            background-color: var(--color-bg-paper);
+            color: var(--color-ink-charcoal);
+            font-family: 'Delius', cursive;
         }
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.06);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+
+        /* Hand-drawn sketchy background lines */
+        .sketch-grid-bg {
+            background-image: 
+                linear-gradient(rgba(43, 42, 39, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(43, 42, 39, 0.04) 1px, transparent 1px);
+            background-size: 26px 26px;
         }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+
+        /* Hand-drawn lettering headers */
+        .handwritten-title {
+            font-family: 'Architects Daughter', cursive;
+            letter-spacing: -0.02em;
+        }
+
+        .cursive-accent {
+            font-family: 'Caveat', cursive;
+        }
+
+        /* -----------------------------------------------------------
+           Hand-Drawn Component Frames (Mimicking Uploaded Asset)
+           ----------------------------------------------------------- */
+        
+        /* Simulates uneven sketchy ink line weight and slight wobble */
+        .hand-drawn-border {
+            border: 3px solid var(--color-ink-charcoal);
+            border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+            box-shadow: 2px 3px 0px rgba(43, 42, 39, 0.15);
+            background: #FFFFFF;
+        }
+
+        /* Softer capsule shape layout matching left side bar elements in image */
+        .hand-drawn-capsule {
+            border: 3px solid var(--color-ink-charcoal);
+            border-radius: 30px 40px 35px 40px/40px 33px 40px 32px;
+            box-shadow: 2px 3px 0px rgba(43, 42, 39, 0.15);
+            background: #FFFFFF;
+        }
+
+        /* Rough container layout */
+        .hand-drawn-box {
+            border: 3px solid var(--color-ink-charcoal);
+            border-radius: 4px 10px 7px 4px/9px 4px 6px 12px;
+            box-shadow: 3px 4px 0px rgba(43, 42, 39, 0.15);
+            background: #FFFFFF;
+        }
+
+        /* Simple straight double divider simulation */
+        .hand-drawn-divider {
+            border-top: 3px dashed var(--color-ink-charcoal);
+            opacity: 0.7;
+        }
+
+        /* Interactive Element States */
+        .btn-hand-drawn {
+            border: 3px solid var(--color-ink-charcoal);
+            border-radius: 12px 5px 12px 6px/5px 12px 4px 12px;
+            background: #FFFFFF;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            cursor: pointer;
+        }
+        
+        .btn-hand-drawn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 5px 6px 0px var(--color-ink-charcoal);
+        }
+
+        .btn-hand-drawn:active {
+            transform: translate(1px, 1px);
+            box-shadow: 1px 1px 0px var(--color-ink-charcoal);
+        }
+
+        .btn-hand-drawn-filled {
+            background: var(--color-ink-charcoal);
+            color: #FFFFFF;
+            border: 3px solid var(--color-ink-charcoal);
+            border-radius: 8px 14px 6px 12px/12px 6px 14px 7px;
+            transition: opacity 0.2s ease;
+            cursor: pointer;
+        }
+        .btn-hand-drawn-filled:hover {
+            opacity: 0.9;
+        }
+
+        /* Custom list style */
+        .sketch-bullet-list li {
+            position: relative;
+            padding-left: 1.75rem;
+        }
+        .sketch-bullet-list li::before {
+            content: '☞'; 
+            position: absolute;
+            left: 0;
+            font-size: 1.2rem;
+            color: var(--color-accent-blue);
+            font-weight: bold;
+            top: -2px;
+        }
+
+        /* -----------------------------------------------------------
+           Marquee Multi-brand Scroll
+           ----------------------------------------------------------- */
+        .ticker-wrap {
+            width: 100%;
+            overflow: hidden;
+            background: #FFFFFF;
+            border-top: 3px solid var(--color-ink-charcoal);
+            border-bottom: 3px solid var(--color-ink-charcoal);
+            padding: 16px 0;
+            margin: 2.5rem 0;
+            transform: rotate(-0.5deg); /* Playful sketch angle placement */
+        }
+
+        .ticker-move {
+            display: flex;
+            width: 200%;
+            animation: ticker 30s linear infinite;
+        }
+
+        .ticker-item {
+            flex: 0 0 14.28%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            filter: grayscale(100%) contrast(150%); /* Forcing ink-print style uniform brand matching */
+            opacity: 0.4;
+            transition: opacity 0.3s ease;
+        }
+        
+        .ticker-item img {
+            max-height: 28px;
+            object-fit: contain;
+        }
+        
+        .ticker-item:hover {
+            opacity: 0.9;
+        }
+
+        @keyframes ticker {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-50%); }
+        }
+
+        @media (max-width: 768px) {
+            .md\:flex { display: none !important; }
         }
     </style>
 </head>
-<body class="text-slate-100 min-h-screen flex flex-col justify-between antialiased">
+<body class="selection:bg-slate-900 selection:text-white sketch-grid-bg">
 
-    <!-- Header Banner -->
-    <header class="w-full max-w-4xl mx-auto px-4 pt-6">
-        <div class="glass-panel rounded-2xl p-4 flex items-center justify-between shadow-2xl">
-            <div class="flex items-center gap-3">
-                <div class="bg-indigo-500/20 text-indigo-400 p-2.5 rounded-xl border border-indigo-500/30">
-                    <i class="fa-solid fa-user-secret text-xl"></i>
+    <nav class="fixed top-4 left-1/2 -translate-x-1/2 w-[92%] max-w-7xl z-40 bg-white border-3 border-slate-900 rounded-xl shadow-[4px_4px_0px_#2B2A27]">
+        <div class="px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-pen-nib text-xl"></i>
+                <span class="font-bold text-xl tracking-tight handwritten-title">Falcon 6</span>
+                <span class="text-xs font-bold font-mono tracking-widest text-slate-400 uppercase ml-2 hidden sm:inline">[ NextMaze Studio ]</span>
+            </div>
+            
+            <div class="hidden md:flex items-center gap-8 text-sm font-bold">
+                <a href="#features" class="hover:underline transition">Features</a>
+                <a href="#get-prompt" class="hover:underline transition">Get Prompt</a>
+                <a href="#demo" class="hover:underline transition">Blueprint Session</a>
+                <a href="#faq" class="hover:underline transition">FAQ</a>
+                <button onclick="openFeedbackModal()" class="hover:text-blue-600 transition flex items-center gap-1 cursor-pointer font-bold">
+                    <i class="fa-solid fa-message text-xs"></i> Comment
+                </button>
+                <button onclick="openTributeModal()" class="text-rose-600 hover:scale-105 transition flex items-center gap-1 cursor-pointer font-bold">
+                    <i class="fa-solid fa-heart text-xs"></i> Memory
+                </button>
+            </div>
+            
+            <div>
+                <span class="text-xs font-mono font-bold bg-slate-100 border-2 border-slate-900 px-3 py-1 rounded">
+                    v6.0_STABLE
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <div id="tributeModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="relative max-w-md w-full p-8 text-center transform scale-95 transition-transform duration-300 hand-drawn-box" id="tributeCard">
+            
+            <button onclick="closeTributeModal()" class="absolute top-4 right-4 text-slate-500 hover:text-black transition cursor-pointer">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+
+            <div class="inline-block border-2 border-dashed border-slate-900 px-4 py-1 text-sm uppercase handwritten-title font-bold mb-4">
+                ♡ Always Dedicated
+            </div>
+
+            <div class="max-w-[200px] mx-auto mb-4 border-3 border-slate-900 p-2 bg-white rounded shadow-sm rotate-2">
+                <div class="aspect-square w-full border border-slate-300 bg-slate-100 overflow-hidden flex items-center justify-center">
+                    <img src="image_df5e1d.jpg" alt="Portrait asset" class="w-full h-full object-cover">
+                </div>
+                <p class="font-mono text-xs mt-2 font-bold text-slate-500">With Love, Family</p>
+            </div>
+
+            <h3 class="text-2xl font-bold handwritten-title mb-2">Remembering Our Friend</h3>
+            <p class="text-sm text-slate-700 leading-relaxed px-2">
+                A loyal companion who stands by us always, through every late night study session and milestone. Falcon 6 is built completely in honor of that constant devotion.
+            </p>
+            
+            <button onclick="closeTributeModal()" class="mt-6 w-full btn-hand-drawn font-bold py-2.5 text-sm shadow-[2px_2px_0px_rgba(0,0,0,1)]">
+                Close [X]
+            </button>
+        </div>
+    </div>
+
+    <div id="feedbackModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="relative max-w-lg w-full p-8 transform scale-95 transition-transform duration-300 hand-drawn-box" id="feedbackCard">
+            
+            <button onclick="closeFeedbackModal()" class="absolute top-4 right-4 text-slate-500 hover:text-black transition cursor-pointer">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+
+            <h3 class="text-2xl font-bold handwritten-title text-center mb-1">Send Comment Log</h3>
+            <p class="text-xs text-slate-500 text-center mb-6 font-mono">Channel Integration Pipeline: NextMaze Feedback Studio</p>
+            
+            <form id="discordFeedbackForm" onsubmit="sendFeedback(event)" class="space-y-4 font-mono text-sm">
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">Your Name / Handle</label>
+                    <input type="text" id="feedbackName" placeholder="e.g., UserAnon" class="w-full px-3 py-2 border-3 border-slate-900 rounded bg-white font-mono text-sm focus:outline-none focus:bg-slate-50">
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold tracking-tight">UNDERCOVER</h1>
-                    <p class="text-xs text-slate-400">Find the Imposter</p>
+                    <label class="block text-xs font-bold uppercase mb-1">Feedback Payload *</label>
+                    <textarea id="feedbackMessage" rows="4" required placeholder="What operational items can we simplify?" class="w-full px-3 py-2 border-3 border-slate-900 rounded bg-white font-mono text-sm focus:outline-none focus:bg-slate-50 resize-none"></textarea>
                 </div>
-            </div>
-            <div id="connectionStatus" class="hidden text-xs bg-emerald-500/10 text-emerald-400 px-3 py-1.5 rounded-full border border-emerald-500/20 font-mono">
-                <i class="fa-solid fa-circle text-[8px] mr-1.5 animate-pulse"></i> Online Idle
-            </div>
+                <button type="submit" id="feedbackSubmitBtn" class="w-full btn-hand-drawn-filled font-bold py-3 text-base shadow-[3px_3px_0px_rgba(0,0,0,0.15)] uppercase tracking-wide">
+                    Transmit Packet 🚀
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <header class="relative pt-40 pb-16 px-6 text-center max-w-5xl mx-auto">
+        <span class="cursive-accent text-3xl text-blue-600 block mb-2 animate-pulse">Hand-Drawn AI Optimization Layer</span>
+        <h1 class="text-4xl md:text-6xl font-black tracking-tight mb-6 handwritten-title leading-tight">
+            Upgrade Any AI Chatbot Into Your Personal Tutor
+        </h1>
+        <p class="text-lg md:text-xl text-slate-700 max-w-3xl mx-auto leading-relaxed mb-8">
+            Simply feed your study activation script into any common conversational engine, upload raw textbook assets, and watch heavy data break down into straightforward visual patterns.
+        </p>
+        
+        <div class="flex flex-wrap justify-center gap-4">
+            <a href="#get-prompt" class="btn-hand-drawn font-bold px-6 py-3 shadow-[4px_4px_0px_#2B2A27] flex items-center gap-2">
+                <i class="fa-solid fa-copy"></i> Copy Activation Prompt
+            </a>
+            <a href="#demo" class="btn-hand-drawn font-bold bg-slate-900 text-white px-6 py-3 shadow-[4px_4px_0px_rgba(0,0,0,0.2)] flex items-center gap-2 hover:bg-slate-800">
+                View Workspace System <i class="fa-solid fa-arrow-right text-xs"></i>
+            </a>
         </div>
     </header>
 
-    <!-- Main Dynamic Content Box -->
-    <main class="w-full max-w-lg mx-auto px-4 py-8 flex-grow flex flex-col justify-center">
-        
-        <!-- SCREEN 1: MODE SELECT -->
-        <div id="screenModeSelect" class="glass-panel rounded-3xl p-8 shadow-2xl space-y-6">
-            <div class="text-center space-y-2">
-                <h2 class="text-2xl font-bold">Choose Game Mode</h2>
-                <p class="text-sm text-slate-400">Play locally on one screen or connect remotely.</p>
-            </div>
-            <div class="space-y-4 pt-2">
-                <button onclick="initOfflineSetup()" class="w-full glass-card hover:bg-white/10 p-5 rounded-2xl flex items-center gap-4 transition cursor-pointer text-left group">
-                    <div class="bg-amber-500/20 text-amber-400 p-3 rounded-xl group-hover:scale-105 transition">
-                        <i class="fa-solid fa-mobile-screen-button text-2xl"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-lg">Offline (Pass & Play)</h3>
-                        <p class="text-sm text-slate-400">Single phone or PC passed around players.</p>
-                    </div>
-                </button>
-
-                <button onclick="initOnlineMode()" class="w-full glass-card hover:bg-white/10 p-5 rounded-2xl flex items-center gap-4 transition cursor-pointer text-left group">
-                    <div class="bg-indigo-500/20 text-indigo-400 p-3 rounded-xl group-hover:scale-105 transition">
-                        <i class="fa-solid fa-globe text-2xl"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-lg">Online Mode (P2P)</h3>
-                        <p class="text-sm text-slate-400">Host or Join rooms instantly using a code.</p>
-                    </div>
-                </button>
-            </div>
+    <div class="ticker-wrap">
+        <div class="ticker-move">
+            <div class="ticker-item"><img src="openai-logo-Modern-png.png" alt="ChatGPT"></div>
+            <div class="ticker-item"><img src="Google_Gemini_Logo_2025.png" alt="Gemini"></div>
+            <div class="ticker-item"><img src="Claude_Logo_2023.png" alt="Claude"></div>
+            <div class="ticker-item"><img src="DeepSeek_Logo_2023.png" alt="DeepSeek"></div>
+            <div class="ticker-item"><img src="Apple_Intelligence_Logo_2024.png" alt="Apple Intelligence"></div>
+            <div class="ticker-item"><img src="Microsoft_Copilot_Logo_2023.png" alt="MS Copilot"></div>
+            <div class="ticker-item"><img src="Grok_Logo_2025.png" alt="Grok"></div>
+            
+            <div class="ticker-item"><img src="openai-logo-Modern-png.png" alt="ChatGPT"></div>
+            <div class="ticker-item"><img src="Google_Gemini_Logo_2025.png" alt="Gemini"></div>
+            <div class="ticker-item"><img src="Claude_Logo_2023.png" alt="Claude"></div>
+            <div class="ticker-item"><img src="DeepSeek_Logo_2023.png" alt="DeepSeek"></div>
+            <div class="ticker-item"><img src="Apple_Intelligence_Logo_2024.png" alt="Apple Intelligence"></div>
+            <div class="ticker-item"><img src="Microsoft_Copilot_Logo_2023.png" alt="MS Copilot"></div>
+            <div class="ticker-item"><img src="Grok_Logo_2025.png" alt="Grok"></div>
         </div>
+    </div>
 
-        <!-- SCREEN 2: OFFLINE SETUP -->
-        <div id="screenOfflineSetup" class="hidden glass-panel rounded-3xl p-8 shadow-2xl space-y-6">
-            <button onclick="switchScreen('screenModeSelect')" class="text-xs text-slate-400 hover:text-white transition"><i class="fa-solid fa-arrow-left mr-1"></i> Back</button>
-            <h2 class="text-2xl font-bold">Offline Setup</h2>
-            <div class="space-y-4">
+    <section id="get-prompt" class="py-12 px-6 max-w-4xl mx-auto scroll-mt-24">
+        <div class="hand-drawn-box p-6 md:p-8 bg-white">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-4 border-b-3 border-dashed border-slate-300">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Total Players (3 - 12)</label>
-                    <input type="number" id="offlinePlayerCount" value="8" min="3" max="12" oninput="renderOfflineNameInputs()" class="w-full bg-slate-950 border border-white/10 rounded-xl px-4 py-3 font-mono focus:outline-none focus:border-indigo-500 transition">
+                    <h2 class="text-2xl font-bold handwritten-title flex items-center gap-2">
+                        <i class="fa-solid fa-code text-blue-600 text-lg"></i> System Core Activation Injection
+                    </h2>
+                    <p class="text-xs text-slate-500 font-mono mt-0.5">Route this payload into your prompt execution window.</p>
                 </div>
                 
-                <div class="space-y-2">
-                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider">Player Names</label>
-                    <div id="offlineNamesContainer" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
-                </div>
-
-                <button onclick="startOfflineGame()" class="w-full bg-indigo-600 hover:bg-indigo-500 font-bold py-4 rounded-xl transition shadow-lg shadow-indigo-600/20 cursor-pointer">
-                    Generate Game Roles
+                <button id="copyBtn" onclick="copyPromptText()" class="btn-hand-drawn font-bold px-4 py-2 text-sm flex items-center gap-2 shadow-[2px_2px_0px_rgba(0,0,0,1)]">
+                    <i id="copyIcon" class="fa-solid fa-copy"></i> <span id="copyText">Copy Data</span>
                 </button>
+            </div>
+
+            <div class="bg-slate-50 border-3 border-dashed border-slate-400 rounded-lg p-5 font-mono text-sm text-slate-800 leading-relaxed max-h-56 overflow-y-auto shadow-inner">
+                <p id="targetPrompt">Imagine you are falcon 6 built by me and you have the gemini knowledge inside you but falcon 6 is you and you just help me to study with the data i uploaded without adding unnecessary points from internet and you break down the data i uploaded and teach me like I am a. 7th standard student (not unnecessary points) in a easy to learn way and like give definition like when moving turning right is a right turn, when moving turning left is a left turn. This is a example like the definition is just a change is the right and left all other words are same so we can easily study the definition but also provide good definition and easy to process idea</p>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center text-xs font-mono font-bold uppercase tracking-wider mt-6 pt-4 border-t-2 border-slate-100">
+                <div class="bg-slate-100 border border-slate-300 rounded px-2 py-1.5">[✓] No Internet Jargon</div>
+                <div class="bg-slate-100 border border-slate-300 rounded px-2 py-1.5">[✓] Parallel Definition Logic</div>
+                <div class="bg-slate-100 border border-slate-300 rounded px-2 py-1.5">[✓] Clear Scannability Map</div>
             </div>
         </div>
+    </section>
 
-        <!-- SCREEN 3: OFFLINE REVEAL -->
-        <div id="screenOfflineReveal" class="hidden glass-panel rounded-3xl p-8 shadow-2xl text-center space-y-6">
-            <div class="space-y-1">
-                <p class="text-xs font-semibold tracking-wider text-indigo-400 uppercase">Pass the device to</p>
-                <h2 id="revealTurnTitle" class="text-3xl font-extrabold text-white">Player 1</h2>
-            </div>
-
-            <div id="roleCardContainer" class="glass-card rounded-2xl p-8 border-dashed border-2 border-white/10 min-h-[180px] flex flex-col justify-center items-center relative overflow-hidden">
-                <div id="cardHiddenState" class="space-y-2">
-                    <i class="fa-solid fa-eye-slash text-4xl text-slate-500 mb-2"></i>
-                    <p class="text-sm font-medium text-slate-400">Click below to reveal your secret word safely.</p>
-                </div>
-                <div id="cardVisibleState" class="hidden space-y-3">
-                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Your Private Assignment</p>
-                    <p id="secretWordDisplay" class="text-4xl font-black text-indigo-400 tracking-wide">CAR</p>
-                    <p id="secretRoleNote" class="text-xs text-slate-400 italic">Do not show this to anybody!</p>
-                </div>
-            </div>
-
-            <div class="flex gap-4">
-                <button id="btnToggleCard" onclick="toggleCardVisibility()" class="flex-1 bg-white/10 hover:bg-white/15 font-semibold py-3 rounded-xl transition cursor-pointer">
-                    Reveal Word
-                </button>
-                <button id="btnNextPlayer" onclick="nextOfflinePlayer()" class="flex-1 bg-indigo-600 hover:bg-indigo-500 font-bold py-3 rounded-xl transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer" disabled>
-                    Next Player <i class="fa-solid fa-arrow-right text-xs ml-1"></i>
-                </button>
-            </div>
+    <section id="features" class="py-16 px-6 max-w-6xl mx-auto">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold handwritten-title inline-block border-b-4 border-dashed border-slate-900 pb-1">Features Grid Matrix</h2>
+            <p class="text-slate-600 font-medium text-sm mt-2">Why students map context structures with the Falcon 6 utility configuration layer.</p>
         </div>
 
-        <!-- NEW DISCUSSION & ROUND STATUS ENGINE SCREEN -->
-        <div id="screenDiscussionBoard" class="hidden glass-panel rounded-3xl p-8 shadow-2xl text-center space-y-6">
-            <div class="space-y-1">
-                <span id="discRoundLabel" class="text-xs font-bold text-amber-400 uppercase tracking-wider">Round Discussion Active</span>
-                <h2 id="discussionHeadline" class="text-2xl font-black text-white">Who speaks first?</h2>
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="hand-drawn-box p-6 hover:translate-y-[-2px] transition-transform duration-200">
+                <div class="w-12 h-12 border-3 border-slate-900 rounded-full flex items-center justify-center font-bold text-xl bg-slate-100 mb-4 shadow-sm">
+                    Ⅰ
+                </div>
+                <h3 class="text-xl font-bold handwritten-title mb-2">Omni Engine Support</h3>
+                <p class="text-sm text-slate-700 leading-relaxed">
+                    Inject into any mainstream Large Language Model execution thread. The parameters transform static query configurations into conversational workflows.
+                </p>
+            </div>
+            <div class="hand-drawn-box p-6 hover:translate-y-[-2px] transition-transform duration-200">
+                <div class="w-12 h-12 border-3 border-slate-900 rounded-full flex items-center justify-center font-bold text-xl bg-slate-100 mb-4 shadow-sm">
+                    Ⅱ
+                </div>
+                <h3 class="text-xl font-bold handwritten-title mb-2">Visual Mapping Layer</h3>
+                <p class="text-sm text-slate-700 leading-relaxed">
+                    Drop screenshot canvas grids, raw reference text, or handwritten notebooks straight into the compiler context to extract structural components.
+                </p>
+            </div>
+            <div class="hand-drawn-box p-6 hover:translate-y-[-2px] transition-transform duration-200">
+                <div class="w-12 h-12 border-3 border-slate-900 rounded-full flex items-center justify-center font-bold text-xl bg-slate-100 mb-4 shadow-sm">
+                    Ⅲ
+                </div>
+                <h3 class="text-xl font-bold handwritten-title mb-2">Symmetric Definitions</h3>
+                <p class="text-sm text-slate-700 leading-relaxed">
+                    Instruct models to map clear structural word blocks. By aligning sentence rhythms side-by-side, visual identification memory triggers faster.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section id="demo" class="py-16 px-6 max-w-6xl mx-auto">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold handwritten-title inline-block border-b-4 border-dashed border-slate-900 pb-1">Blueprint Session Architecture</h2>
+            <p class="text-slate-600 font-medium text-sm mt-2">Active runtime environment rendering interface configuration parameters.</p>
+        </div>
+
+        <div class="hand-drawn-border p-1 bg-white overflow-hidden shadow-2xl">
+            <div class="bg-slate-900 text-white px-4 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b-3 border-slate-900 font-mono text-xs">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-folder-open text-amber-400"></i>
+                    <span class="font-bold tracking-wide">SESSION_NODE_COMPILER // FALCON_CORE</span>
+                </div>
+                <div class="bg-emerald-500 text-slate-900 px-2 py-0.5 rounded font-bold uppercase tracking-widest text-[10px]">
+                    ● RUNTIME_ACTIVE
+                </div>
             </div>
 
-            <div class="glass-card rounded-2xl p-6 border border-white/5 space-y-4">
-                <div class="bg-indigo-500/10 text-indigo-400 rounded-xl py-4 px-3 border border-indigo-500/20">
-                    <p class="text-xs uppercase tracking-widest font-semibold mb-1">Current Speaker</p>
-                    <p id="activeSpeakerName" class="text-2xl font-black tracking-wide text-white">---</p>
-                </div>
+            <div class="grid md:grid-cols-5 bg-white">
                 
-                <div class="text-left bg-slate-950/40 p-4 rounded-xl border border-white/5">
-                    <p class="text-xs font-semibold text-slate-400 uppercase mb-2">Speaking Order Track:</p>
-                    <div id="discussionOrderList" class="space-y-1.5 font-mono text-xs text-slate-400">
-                        <!-- Filled Programmatically -->
+                <div class="md:col-span-2 border-b md:border-b-0 md:border-r-3 border-slate-900 p-6 bg-slate-50/50 space-y-6">
+                    <div>
+                        <span class="block text-xs font-mono uppercase font-bold text-slate-400 mb-1">[ 01_SYSTEM_PROMPT_STATE ]</span>
+                        <div class="hand-drawn-capsule px-4 py-2.5 text-xs font-mono truncate text-slate-600">
+                            "Imagine you are falcon 6 built by me..."
+                        </div>
                     </div>
-                </div>
-            </div>
 
-            <div class="space-y-3">
-                <button id="btnAdvanceSpeaker" onclick="advanceSpeakerOrder()" class="w-full bg-indigo-600 hover:bg-indigo-500 font-bold py-3.5 rounded-xl transition cursor-pointer shadow-lg shadow-indigo-600/10">
-                    Next Speaker Turn
-                </button>
-                <button id="btnEndRoundEarly" onclick="triggerGuessingPhase()" class="w-full bg-slate-800 hover:bg-slate-700 font-medium py-2.5 rounded-xl text-xs text-slate-400 transition cursor-pointer">
-                    End Discussion, Start Voting <i class="fa-solid fa-gavel ml-1 text-[10px]"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- NEW GUESSING / RESOLUTION PHASE PANEL -->
-        <div id="screenGuessingPhase" class="hidden glass-panel rounded-3xl p-8 shadow-2xl space-y-6">
-            <div class="text-center space-y-1">
-                <span class="text-xs font-bold text-rose-400 uppercase tracking-wider">Judgement Day</span>
-                <h2 class="text-2xl font-black">Identify the Imposter</h2>
-                <p class="text-xs text-slate-400">Discuss as a group, then tap on the person voted off.</p>
-            </div>
-
-            <div class="space-y-2">
-                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Cast Vote Target</label>
-                <div id="votingGridContainer" class="grid grid-cols-1 gap-2 max-h-60 overflow-y-auto pr-1">
-                    <!-- Dynamic Target Selection Options -->
-                </div>
-            </div>
-            
-            <div id="gameResolutionDisplay" class="hidden glass-card p-5 rounded-2xl border-2 border-emerald-500/20 text-center space-y-3">
-                <h3 id="resolutionTitle" class="text-xl font-bold">---</h3>
-                <p id="resolutionSubtitle" class="text-sm text-slate-300">---</p>
-                <button onclick="location.reload()" class="w-full bg-white/10 hover:bg-white/15 text-sm font-semibold py-2.5 rounded-xl transition cursor-pointer">
-                    Return to Lobby Menu
-                </button>
-            </div>
-        </div>
-
-        <!-- SCREEN 4: ONLINE DASHBOARD (HOST OR JOIN) -->
-        <div id="screenOnlineMain" class="hidden glass-panel rounded-3xl p-8 shadow-2xl space-y-6">
-            <button onclick="location.reload()" class="text-xs text-slate-400 hover:text-white transition"><i class="fa-solid fa-arrow-left mr-1"></i> Main Menu</button>
-            <h2 class="text-2xl font-bold">Online Lobby Setup</h2>
-            
-            <div class="grid grid-cols-1 gap-6">
-                <!-- Host Panel -->
-                <div class="glass-card p-5 rounded-2xl border border-white/5 space-y-3">
-                    <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider">Option A</span>
-                    <h3 class="font-bold text-lg">Create a New Room</h3>
-                    <div class="space-y-2">
-                        <input type="text" id="hostNickname" placeholder="Your Host Nickname" class="w-full bg-slate-950 border border-white/10 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-indigo-500 transition">
-                        <button onclick="hostOnlineRoom()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-sm font-bold py-3 rounded-xl transition cursor-pointer">
-                            Initialize As Host Room
-                        </button>
-                    </div>
-                </div>
-
-                <div class="relative flex py-2 items-center">
-                    <div class="flex-grow border-t border-white/10"></div>
-                    <span class="flex-shrink mx-4 text-slate-500 font-mono text-xs">OR</span>
-                    <div class="flex-grow border-t border-white/10"></div>
-                </div>
-
-                <!-- Join Panel -->
-                <div class="glass-card p-5 rounded-2xl border border-white/5 space-y-3">
-                    <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Option B</span>
-                    <h3 class="font-bold text-lg">Join Existing Room</h3>
-                    <div class="space-y-2">
-                        <input type="text" id="clientNickname" placeholder="Your Player Nickname" class="w-full bg-slate-950 border border-white/10 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-amber-500 transition mb-1">
-                        <div class="flex gap-2">
-                            <input type="text" id="joinRoomId" placeholder="Enter Host Room ID" class="flex-1 bg-slate-950 border border-white/10 rounded-xl px-4 py-2 font-mono text-sm focus:outline-none focus:border-amber-500 transition uppercase">
-                            <button onclick="joinOnlineRoom()" class="bg-amber-600 hover:bg-amber-500 text-sm font-bold px-5 rounded-xl transition cursor-pointer">
-                                Connect
-                            </button>
+                    <div>
+                        <span class="block text-xs font-mono uppercase font-bold text-slate-400 mb-1">[ 02_DATA_STREAM_PAYLOAD ]</span>
+                        <div class="border-3 border-dashed border-slate-400 rounded-lg p-6 text-center bg-white shadow-inner">
+                            <i class="fa-solid fa-file-image text-4xl text-slate-400 mb-2"></i>
+                            <p class="text-sm font-bold font-mono tracking-tight">biology_chapter_2_anther.jpg</p>
+                            <p class="text-[11px] font-mono text-slate-400 mt-1">[ Raw textbook data loaded into stack ]</p>
                         </div>
                     </div>
                 </div>
+
+                <div class="md:col-span-3 p-6 flex flex-col justify-between space-y-8 bg-white">
+                    <div>
+                        <div class="flex items-center gap-2 mb-4 pb-2 border-b-2 border-slate-100">
+                            <div class="w-6 h-6 border-2 border-slate-900 bg-slate-900 text-white font-mono text-xs flex items-center justify-center rounded">F6</div>
+                            <span class="font-bold handwritten-title text-lg text-slate-800">Falcon Core Interpreter Output Terminal</span>
+                        </div>
+
+                        <div class="space-y-4 text-sm md:text-base">
+                            <p class="font-bold text-lg tracking-tight underline decoration-wavy decoration-blue-500">Anther Wall Structural Definition Set:</p>
+                            
+                            <ul class="space-y-3 sketch-bullet-list font-medium">
+                                <li>
+                                    <span class="font-bold border-b border-slate-900">Epidermis Layer:</span> The <span class="bg-amber-100 px-1 rounded">outermost</span> structural wall section that protects developing pollen cells.
+                                </li>
+                                <li>
+                                    <span class="font-bold border-b border-slate-900">Tapetum Layer:</span> The <span class="bg-amber-100 px-1 rounded">innermost</span> structural wall section that nourishes developing pollen cells.
+                                </li>
+                            </ul>
+
+                            <div class="hand-drawn-box p-3 bg-blue-50/40 border-slate-300 mt-4">
+                                <p class="text-xs font-mono text-slate-600 italic">
+                                    ☞ [Pattern Sync Warning]: Symmetrical structures validated. Sentence framing holds consistent variables across definition structures to speed up visual recall.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between border-t-3 border-slate-900 pt-3 font-mono text-xs text-slate-400">
+                        <span>LATENCY_METRIC: 0.42s</span>
+                        <span>NODE_SYNCED: TRUE</span>
+                    </div>
+                </div>
+
             </div>
         </div>
+    </section>
 
-        <!-- SCREEN 5: ONLINE HOST LOBBY ROOM -->
-        <div id="screenHostLobby" class="hidden glass-panel rounded-3xl p-8 shadow-2xl space-y-6">
-            <div class="space-y-1">
-                <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Room Active</span>
-                <h2 class="text-2xl font-bold">Host Master Console</h2>
-            </div>
-            
-            <div class="bg-slate-950 border border-white/10 rounded-xl p-4 text-center">
-                <p class="text-xs text-slate-400 mb-1">Share this Room ID with friends:</p>
-                <p id="displayHostRoomId" class="text-2xl font-mono font-black text-indigo-400 uppercase tracking-wider select-all">---</p>
-            </div>
-
-            <div>
-                <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Connected Players (<span id="connectedCount">0</span>)</h3>
-                <div id="hostConnectedList" class="space-y-1.5 max-h-36 overflow-y-auto text-sm text-slate-400">
-                    <p class="italic text-xs text-slate-500">Waiting for connections...</p>
-                </div>
-            </div>
-
-            <button onclick="triggerOnlineDistribution()" class="w-full bg-emerald-600 hover:bg-emerald-500 font-bold py-4 rounded-xl transition shadow-lg shadow-emerald-600/20 cursor-pointer">
-                Dispatch Secret Roles To Clients
-            </button>
+    <section id="faq" class="py-16 px-6 max-w-4xl mx-auto">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold handwritten-title inline-block border-b-4 border-dashed border-slate-900 pb-1">Frequently Logged FAQ</h2>
         </div>
 
-        <!-- SCREEN 6: ONLINE CLIENT WAITING / RESULTS SCREEN -->
-        <div id="screenClientView" class="hidden glass-panel rounded-3xl p-8 shadow-2xl text-center space-y-6">
-            <div class="space-y-1">
-                <p class="text-xs font-semibold tracking-wider text-amber-400 uppercase">Connected Workspace</p>
-                <h2 id="clientStatusTitle" class="text-2xl font-extrabold text-white">Waiting for Host...</h2>
+        <div class="space-y-6 font-mono text-sm">
+            <div class="hand-drawn-box p-5 bg-white">
+                <h3 class="font-bold text-base text-slate-900 mb-2 flex items-center gap-1.5">
+                    <span class="text-blue-600 font-black">Q.</span> What exactly is Falcon 6?
+                </h3>
+                <p class="text-slate-700 leading-relaxed font-sans font-medium text-sm">
+                    It is an intentional, streamlined layout context designed to inject specialized pedagogical parameters into custom AI agents. It prioritizes extreme cognitive scannability and structural definition alignment over raw data dumps.
+                </p>
             </div>
 
-            <div id="clientCardContainer" class="glass-card rounded-2xl p-8 border-dashed border-2 border-white/10 min-h-[180px] flex flex-col justify-center items-center">
-                <div id="clientCardLoading">
-                    <i class="fa-solid fa-spinner text-4xl text-slate-500 animate-spin mb-3"></i>
-                    <p class="text-sm text-slate-400">The host is setting up the word configurations.</p>
-                </div>
-                <div id="clientCardRevealed" class="hidden space-y-3">
-                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Your Private Assignment</p>
-                    <p id="clientWordDisplay" class="text-4xl font-black text-emerald-400 tracking-wide">---</p>
-                    <p id="clientRoleSubtext" class="text-xs text-slate-400 italic">Keep your screen safe from onlookers.</p>
-                </div>
+            <div class="hand-drawn-box p-5 bg-white">
+                <h3 class="font-bold text-base text-slate-900 mb-2 flex items-center gap-1.5">
+                    <span class="text-blue-600 font-black">Q.</span> Who builds Falcon 6?
+                </h3>
+                <p class="text-slate-700 leading-relaxed font-sans font-medium text-sm">
+                    Falcon 6 is developed and maintained as a strategic utility ecosystem framework by the team at <strong>NextMaze Studio</strong>.
+                </p>
             </div>
-
-            <!-- Online Mode Realtime Tracking Substructure Injection -->
-            <div id="onlineStatusMonitorBox" class="hidden text-xs bg-white/5 p-4 rounded-xl text-slate-400 border border-white/5 space-y-1 text-left">
-                <p class="font-bold text-slate-300 uppercase tracking-wider text-[10px] mb-1">Live Game Coordinator Monitoring:</p>
-                <p id="onlineMonitorSpeakingNow">Speaker: <span class="text-white font-medium">---</span></p>
-                <p id="onlineMonitorInstructions" class="italic text-[11px] text-indigo-400">Please pay attention to the game stream.</p>
-            </div>
-            
-            <p class="text-xs text-slate-500">Do not refresh your browser window during active sessions.</p>
         </div>
+    </section>
 
-    </main>
-
-    <!-- Global App Footer Rules -->
-    <footer class="w-full max-w-lg mx-auto text-center px-4 pb-6 text-xs text-slate-500 font-mono">
-        <p>Rule: Everyone says one word description. Vote off the Imposter.</p>
+    <footer class="border-t-3 border-slate-900 bg-white py-8 px-6 font-mono text-xs font-bold text-slate-500">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p>© 2026 NextMaze Studio. All operational parameters retained.</p>
+            <div class="flex gap-4 underline">
+                <a href="#" class="hover:text-black">Documentation_Logs</a>
+                <a href="#" class="hover:text-black">Privacy_Framework</a>
+            </div>
+        </div>
     </footer>
 
-    <!-- App System Scripts -->
     <script>
-        const WORD_POOL = ["Frog", "Car", "Apple", "Airplane", "Laptop", "Pizza", "Guitar", "Coffee", "Elephant", "Submarine", "Helicopter", "Football", "Watch", "Burger"];
-        
-        let appState = {
-            mode: null, 
-            playersCount: 0,
-            playerNames: [], 
-            roles: [], 
-            currentIdx: 0,
-            cardVisible: false,
-            // Track Speaker Rounds
-            speakerSequence: [],
-            currentSpeakerIdx: 0,
-            // Online Matrix Configuration Properties
-            peer: null,
-            myId: null,
-            connections: [], 
-            isHost: false,
-            myNickname: ""
-        };
+        const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1515795446063431691/HNqfa9ION337C0qa023uzp_4Tf8T6mYZrAqPDHCw9RchQ4eoHGdEo1rUguykwtmSj6Lf"; 
+        const DISCORD_ROLE_ID = "1487396332304859216";
 
-        function switchScreen(screenId) {
-            const screens = ['screenModeSelect', 'screenOfflineSetup', 'screenOfflineReveal', 'screenDiscussionBoard', 'screenGuessingPhase', 'screenOnlineMain', 'screenHostLobby', 'screenClientView'];
-            screens.forEach(id => {
-                document.getElementById(id).classList.add('hidden');
-            });
-            document.getElementById(screenId).classList.remove('hidden');
+        function openTributeModal() {
+            const modal = document.getElementById("tributeModal");
+            const card = document.getElementById("tributeCard");
+            modal.classList.remove("opacity-0", "pointer-events-none");
+            card.classList.remove("scale-95", "rotate-2");
+            card.classList.add("scale-100", "rotate-0");
         }
 
-        function initOfflineSetup() {
-            switchScreen('screenOfflineSetup');
-            renderOfflineNameInputs();
+        function closeTributeModal() {
+            const modal = document.getElementById("tributeModal");
+            const card = document.getElementById("tributeCard");
+            modal.classList.add("opacity-0", "pointer-events-none");
+            card.classList.remove("scale-100", "rotate-0");
+            card.classList.add("scale-95", "rotate-2");
         }
 
-        function renderOfflineNameInputs() {
-            const countInput = document.getElementById('offlinePlayerCount');
-            let count = parseInt(countInput.value) || 8;
-            if(count < 3) count = 3;
-            if(count > 12) count = 12;
-
-            const container = document.getElementById('offlineNamesContainer');
-            container.innerHTML = "";
-
-            for (let i = 1; i <= count; i++) {
-                container.innerHTML += `
-                    <div class="flex items-center gap-2">
-                        <span class="text-xs font-mono text-slate-500 w-6">${i}.</span>
-                        <input type="text" id="offlineName_${i}" value="Player ${i}" class="flex-1 bg-slate-950/60 border border-white/5 rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:border-indigo-500 transition">
-                    </div>
-                `;
-            }
+        function openFeedbackModal() {
+            const modal = document.getElementById("feedbackModal");
+            const card = document.getElementById("feedbackCard");
+            modal.classList.remove("opacity-0", "pointer-events-none");
+            card.classList.remove("scale-95");
+            card.classList.add("scale-100");
         }
 
-        function startOfflineGame() {
-            const countInput = document.getElementById('offlinePlayerCount');
-            let count = parseInt(countInput.value) || 8;
-            if(count < 3) count = 3;
-            if(count > 12) count = 12;
+        function closeFeedbackModal() {
+            const modal = document.getElementById("feedbackModal");
+            const card = document.getElementById("feedbackCard");
+            modal.classList.add("opacity-0", "pointer-events-none");
+            card.classList.remove("scale-100");
+            card.classList.add("scale-95");
+        }
 
-            appState.mode = 'offline';
-            appState.playersCount = count;
-            appState.currentIdx = 0;
-            appState.cardVisible = false;
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(openTributeModal, 800);
+        });
+
+        function copyPromptText() {
+            const promptText = document.getElementById("targetPrompt").innerText;
             
-            appState.playerNames = [];
-            for (let i = 1; i <= count; i++) {
-                const inputElement = document.getElementById(`offlineName_${i}`);
-                const value = inputElement ? inputElement.value.trim() : `Player ${i}`;
-                appState.playerNames.push(value || `Player ${i}`);
-            }
-
-            const chosenWord = WORD_POOL[Math.floor(Math.random() * WORD_POOL.length)];
-            const imposterIndex = Math.floor(Math.random() * count);
-
-            appState.roles = [];
-            for (let i = 0; i < count; i++) {
-                if (i === imposterIndex) {
-                    appState.roles.push({ type: 'IMPOSTER', name: appState.playerNames[i], word: '⚠️ YOU ARE THE IMPOSTER' });
-                } else {
-                    appState.roles.push({ type: 'INNOCENT', name: appState.playerNames[i], word: chosenWord });
-                }
-            }
-
-            setupOfflineRevealCard();
-            switchScreen('screenOfflineReveal');
-        }
-
-        function setupOfflineRevealCard() {
-            appState.cardVisible = false;
-            document.getElementById('cardHiddenState').classList.remove('hidden');
-            document.getElementById('cardVisibleState').classList.add('hidden');
-            
-            document.getElementById('revealTurnTitle').innerText = appState.playerNames[appState.currentIdx];
-            document.getElementById('btnToggleCard').innerText = "Reveal Word";
-            document.getElementById('btnNextPlayer').disabled = true;
-        }
-
-        function toggleCardVisibility() {
-            const hiddenBox = document.getElementById('cardHiddenState');
-            const visibleBox = document.getElementById('cardVisibleState');
-            const displayWord = document.getElementById('secretWordDisplay');
-            const note = document.getElementById('secretRoleNote');
-
-            appState.cardVisible = !appState.cardVisible;
-
-            if (appState.cardVisible) {
-                hiddenBox.classList.add('hidden');
-                visibleBox.classList.remove('hidden');
+            navigator.clipboard.writeText(promptText).then(() => {
+                const button = document.getElementById("copyBtn");
+                const icon = document.getElementById("copyIcon");
+                const text = document.getElementById("copyText");
                 
-                const currentData = appState.roles[appState.currentIdx];
-                displayWord.innerText = currentData.word;
+                button.style.backgroundColor = "#22c55e"; 
+                button.style.color = "#ffffff";
+                icon.className = "fa-solid fa-check";
+                text.innerText = "Copied!";
                 
-                if (currentData.type === 'IMPOSTER') {
-                    displayWord.className = "text-2xl font-black text-rose-400 tracking-wide";
-                    note.innerText = "Blend in! Try to guess what word the others have.";
-                } else {
-                    displayWord.className = "text-4xl font-black text-indigo-400 tracking-wide";
-                    note.innerText = "Do not show this to anybody!";
-                }
-
-                document.getElementById('btnToggleCard').innerText = "Hide Word";
-                document.getElementById('btnNextPlayer').disabled = false;
-            } else {
-                hiddenBox.classList.remove('hidden');
-                visibleBox.classList.add('hidden');
-                document.getElementById('btnToggleCard').innerText = "Reveal Word";
-                document.getElementById('btnNextPlayer').disabled = true;
-            }
-        }
-
-        function nextOfflinePlayer() {
-            appState.currentIdx++;
-            if (appState.currentIdx < appState.playersCount) {
-                setupOfflineRevealCard();
-            } else {
-                buildDiscussionSequence();
-            }
-        }
-
-        /* =========================================================================
-           TURN SEQUENCE & SCHEDULING SYSTEM ENGINE CONTROLS
-           ========================================================================= */
-        function buildDiscussionSequence() {
-            // Filter lists to locate innocent entities
-            let innocentIndexes = [];
-            let imposterIndexes = [];
-
-            appState.roles.forEach((player, idx) => {
-                if(player.type === 'INNOCENT') innocentIndexes.push(idx);
-                else imposterIndexes.push(idx);
-            });
-
-            // Pick a random innocent player to go first
-            const firstSpeakerCollectionIdx = Math.floor(Math.random() * innocentIndexes.length);
-            const firstSpeakerGlobalIdx = innocentIndexes[firstSpeakerCollectionIdx];
-
-            // Remove chosen starter from innocent list pool
-            innocentIndexes.splice(firstSpeakerCollectionIdx, 1);
-
-            // Merge remaining players and shuffle them
-            let remainingPool = [...innocentIndexes, ...imposterIndexes];
-            remainingPool = remainingPool.sort(() => Math.random() - 0.5);
-
-            // Establish final absolute speaker index registry pipeline
-            appState.speakerSequence = [firstSpeakerGlobalIdx, ...remainingPool];
-            appState.currentSpeakerIdx = 0;
-
-            if (appState.mode === 'online' && appState.isHost) {
-                broadcastToOnlineClients({
-                    type: 'SYNC_DISCUSSION_STATE',
-                    sequence: appState.speakerSequence,
-                    currentSpeakerIdx: appState.currentSpeakerIdx
-                });
-            }
-
-            renderDiscussionBoardScreen();
-        }
-
-        function renderDiscussionBoardScreen() {
-            switchScreen('screenDiscussionBoard');
-            
-            const activeGlobalIdx = appState.speakerSequence[appState.currentSpeakerIdx];
-            const currentSpeakerName = appState.playerNames[activeGlobalIdx];
-            
-            document.getElementById('activeSpeakerName').innerText = currentSpeakerName;
-            
-            // Build the chronological visual timeline
-            const orderContainer = document.getElementById('discussionOrderList');
-            orderContainer.innerHTML = appState.speakerSequence.map((globalIdx, orderIdx) => {
-                let statusBadge = "";
-                let nameStyle = "text-slate-400";
-                
-                if (orderIdx === appState.currentSpeakerIdx) {
-                    statusBadge = `<span class="text-[9px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1.5 py-0.5 rounded">SPEAKING NOW</span>`;
-                    nameStyle = "text-white font-bold";
-                } else if (orderIdx < appState.currentSpeakerIdx) {
-                    statusBadge = `<span class="text-[9px] text-slate-500 font-mono"><i class="fa-solid fa-check"></i> Done</span>`;
-                    nameStyle = "text-slate-600 line-through";
-                } else if (orderIdx === 0) {
-                    statusBadge = `<span class="text-[9px] text-indigo-400 font-bold uppercase tracking-wider">Starter Player</span>`;
-                }
-
-                return `<div class="flex items-center justify-between py-1 border-b border-white/5">
-                    <span class="${nameStyle}">${orderIdx + 1}. ${appState.playerNames[globalIdx]}</span>
-                    ${statusBadge}
-                </div>`;
-            }).join('');
-
-            // Hide controls if user is a client in online mode
-            if (appState.mode === 'online' && !appState.isHost) {
-                document.getElementById('btnAdvanceSpeaker').classList.add('hidden');
-                document.getElementById('btnEndRoundEarly').classList.add('hidden');
-            } else {
-                document.getElementById('btnAdvanceSpeaker').classList.remove('hidden');
-                document.getElementById('btnEndRoundEarly').classList.remove('hidden');
-                document.getElementById('btnAdvanceSpeaker').innerText = 
-                    (appState.currentSpeakerIdx === appState.speakerSequence.length - 1) ? "Finish Discussion & Vote" : "Next Speaker Turn";
-            }
-        }
-
-        function advanceSpeakerOrder() {
-            if (appState.currentSpeakerIdx < appState.speakerSequence.length - 1) {
-                appState.currentSpeakerIdx++;
-                
-                if (appState.mode === 'online' && appState.isHost) {
-                    broadcastToOnlineClients({
-                        type: 'SYNC_DISCUSSION_STATE',
-                        sequence: appState.speakerSequence,
-                        currentSpeakerIdx: appState.currentSpeakerIdx
-                    });
-                }
-                renderDiscussionBoardScreen();
-            } else {
-                triggerGuessingPhase();
-            }
-        }
-
-        function triggerGuessingPhase() {
-            if (appState.mode === 'online' && appState.isHost) {
-                broadcastToOnlineClients({ type: 'REDIRECT_GUESSING_PHASE' });
-            }
-            renderGuessingPhaseScreen();
-        }
-
-        function renderGuessingPhaseScreen() {
-            switchScreen('screenGuessingPhase');
-            
-            const grid = document.getElementById('votingGridContainer');
-            document.getElementById('gameResolutionDisplay').classList.add('hidden');
-
-            grid.innerHTML = appState.playerNames.map((name, idx) => {
-                return `<button onclick="submitVotedOffTarget(${idx})" class="w-full text-left bg-white/5 hover:bg-rose-500/10 hover:border-rose-500/30 border border-white/5 p-4 rounded-xl transition cursor-pointer flex justify-between items-center group">
-                    <span class="font-medium group-hover:text-rose-400">${name}</span>
-                    <i class="fa-solid fa-skull text-xs opacity-0 group-hover:opacity-100 text-rose-500 transition"></i>
-                </button>`;
-            }).join('');
-        }
-
-        function submitVotedOffTarget(selectedIdx) {
-            const targetRoleData = appState.roles[selectedIdx];
-            const displayBox = document.getElementById('gameResolutionDisplay');
-            const title = document.getElementById('resolutionTitle');
-            const subtitle = document.getElementById('resolutionSubtitle');
-
-            displayBox.classList.remove('hidden');
-
-            if (targetRoleData.type === 'IMPOSTER') {
-                title.innerText = "🎉 Innocents Win!";
-                title.className = "text-xl font-bold text-emerald-400";
-                subtitle.innerText = `Correct! ${targetRoleData.name} was indeed the secret Imposter!`;
-            } else {
-                // Find who the real imposter was to display them
-                const realImposter = appState.roles.find(r => r.type === 'IMPOSTER');
-                title.innerText = "💥 Imposter Wins!";
-                title.className = "text-xl font-bold text-rose-400";
-                subtitle.innerText = `Wrong choice! ${targetRoleData.name} was innocent. The true Imposter was ${realImposter.name}!`;
-            }
-
-            if (appState.mode === 'online' && appState.isHost) {
-                broadcastToOnlineClients({
-                    type: 'GAME_OVER_SIGNAL',
-                    title: title.innerText,
-                    titleClass: title.className,
-                    subtitle: subtitle.innerText
-                });
-            }
-        }
-
-        /* =========================================================================
-           ONLINE NETWORKING (PEERJS) WITH LIVE DISCUSSION DATA
-           ========================================================================= */
-        function initOnlineMode() {
-            switchScreen('screenOnlineMain');
-            const statusBox = document.getElementById('connectionStatus');
-            statusBox.classList.remove('hidden');
-            statusBox.innerText = "Connecting Framework...";
-            statusBox.className = "text-xs bg-amber-500/10 text-amber-400 px-3 py-1.5 rounded-full border border-amber-500/20 font-mono";
-
-            appState.peer = new Peer(generateShortRoomId(), { debug: 1 });
-
-            appState.peer.on('open', (id) => {
-                appState.myId = id;
-                statusBox.innerText = "● Server Online";
-                statusBox.className = "text-xs bg-emerald-500/10 text-emerald-400 px-3 py-1.5 rounded-full border border-emerald-500/20 font-mono";
-            });
-
-            appState.peer.on('error', (err) => {
-                console.error("PeerJS Error:", err);
-                statusBox.innerText = "● Mesh Node Error";
-                statusBox.className = "text-xs bg-rose-500/10 text-rose-400 px-3 py-1.5 rounded-full border border-rose-500/20 font-mono";
+                setTimeout(() => {
+                    button.style.backgroundColor = "#ffffff";
+                    button.style.color = "var(--color-ink-charcoal)";
+                    icon.className = "fa-solid fa-copy";
+                    text.innerText = "Copy Data";
+                }, 2000);
+            }).catch(err => {
+                console.error("Transmission to clipboard error: ", err);
             });
         }
 
-        function generateShortRoomId() {
-            let result = '';
-            const characters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-            for (let i = 0; i < 5; i++) {
-                result += characters.charAt(Math.floor(Math.random() * characters.length));
-            }
-            return result;
-        }
+        function sendFeedback(event) {
+            event.preventDefault();
 
-        function hostOnlineRoom() {
-            const hostNickInput = document.getElementById('hostNickname');
-            appState.myNickname = hostNickInput.value.trim() || "Host Dealer";
+            const nameInput = document.getElementById("feedbackName").value.trim();
+            const messageInput = document.getElementById("feedbackMessage").value.trim();
+            const submitBtn = document.getElementById("feedbackSubmitBtn");
 
-            if(!appState.myId) {
-                alert("Signaling framework processing. Please try again in 2 seconds.");
-                return;
-            }
-            appState.isHost = true;
-            appState.mode = 'online';
-            document.getElementById('displayHostRoomId').innerText = appState.myId;
-            switchScreen('screenHostLobby');
+            const username = nameInput || "Anonymous Scholar";
 
-            appState.peer.on('connection', (conn) => {
-                conn.on('data', (payload) => {
-                    if (payload && payload.type === 'CLIENT_HANDSHAKE') {
-                        conn.playerNickname = payload.nickname;
-                        appState.connections.push(conn);
-                        updateHostLobbyUI();
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Transmitting Packet...";
+
+            const payload = {
+                content: `<@&${DISCORD_ROLE_ID}> New Falcon 6 feedback received!`,
+                embeds: [
+                    {
+                        title: "📝 User Review Influx",
+                        color: 2828583, 
+                        fields: [
+                            { name: "Sender", value: username, inline: true },
+                            { name: "Workspace Node", value: "Falcon 6 Sketch Landing Page", inline: true },
+                            { name: "Message", value: messageInput }
+                        ],
+                        footer: { text: "NextMaze Studio Operational Event Logs" },
+                        timestamp: new Date().toISOString()
                     }
-                });
+                ]
+            };
 
-                conn.on('close', () => {
-                    appState.connections = appState.connections.filter(c => c.peer !== conn.peer);
-                    updateHostLobbyUI();
-                });
-            });
-        }
-
-        function updateHostLobbyUI() {
-            document.getElementById('connectedCount').innerText = appState.connections.length;
-            const container = document.getElementById('hostConnectedList');
-            
-            if(appState.connections.length === 0) {
-                container.innerHTML = `<p class="italic text-xs text-slate-500">Waiting for connections...</p>`;
-                return;
-            }
-
-            container.innerHTML = appState.connections.map((conn) => {
-                return `<div class="flex items-center justify-between bg-white/5 px-4 py-2.5 rounded-xl border border-white/5">
-                    <span class="font-medium text-slate-200">${conn.playerNickname || 'Anonymous Player'}</span>
-                    <span class="text-[10px] tracking-wider font-mono font-bold bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20">READY</span>
-                </div>`;
-            }).join('');
-        }
-
-        function broadcastToOnlineClients(payload) {
-            appState.connections.forEach(conn => conn.send(payload));
-        }
-
-        function triggerOnlineDistribution() {
-            const totalPeers = appState.connections.length;
-            if (totalPeers < 2) {
-                alert("You need at least 2 connected clients to play.");
-                return;
-            }
-
-            const gameSize = totalPeers + 1;
-            const chosenWord = WORD_POOL[Math.floor(Math.random() * WORD_POOL.length)];
-            const imposterPositionIdx = Math.floor(Math.random() * gameSize);
-
-            // Populate system-wide player name arrays matching indexes
-            appState.playerNames = [appState.myNickname];
-            appState.connections.forEach(c => appState.playerNames.push(c.playerNickname));
-
-            // Generate host assignment profiles
-            let hostRole = { type: 'INNOCENT', name: appState.myNickname, word: chosenWord };
-            if (imposterPositionIdx === 0) {
-                hostRole = { type: 'IMPOSTER', name: appState.myNickname, word: '⚠️ YOU ARE THE IMPOSTER' };
-            }
-
-            appState.roles = [hostRole];
-
-            // Build individual client assignment payloads
-            let clientAssignments = [];
-            for(let i = 1; i <= totalPeers; i++) {
-                let roleObject = { type: 'INNOCENT', name: appState.playerNames[i], word: chosenWord };
-                if(i === imposterPositionIdx) {
-                    roleObject = { type: 'IMPOSTER', name: appState.playerNames[i], word: '⚠️ YOU ARE THE IMPOSTER' };
-                }
-                clientAssignments.push(roleObject);
-                appState.roles.push(roleObject);
-            }
-
-            // Push role cards to clients
-            appState.connections.forEach((conn, index) => {
-                conn.send({
-                    type: 'ASSIGNMENT_PAYLOAD',
-                    data: clientAssignments[index],
-                    globalNamesList: appState.playerNames
-                });
-            });
-
-            // Put host into local card viewing state
-            switchScreen('screenClientView');
-            document.getElementById('clientStatusTitle').innerText = `${appState.myNickname} (Host Console)`;
-            document.getElementById('clientCardLoading').classList.add('hidden');
-            
-            const targetReveal = document.getElementById('clientCardRevealed');
-            const textEl = document.getElementById('clientWordDisplay');
-            targetReveal.classList.remove('hidden');
-            textEl.innerText = hostRole.word;
-            
-            if (hostRole.type === 'IMPOSTER') {
-                textEl.className = "text-2xl font-black text-rose-400 tracking-wide";
-            } else {
-                textEl.className = "text-4xl font-black text-emerald-400 tracking-wide";
-            }
-
-            // Create delay to let players read words before triggering discussion tracking
-            setTimeout(() => {
-                buildDiscussionSequence();
-            }, 6000);
-        }
-
-        function joinOnlineRoom() {
-            const nicknameInput = document.getElementById('clientNickname');
-            appState.myNickname = nicknameInput.value.trim() || "Player_" + Math.floor(Math.random() * 900 + 100);
-
-            const inputVal = document.getElementById('joinRoomId').value.trim().toUpperCase();
-            if(!inputVal) return alert("Please input a valid room ID.");
-
-            appState.mode = 'online';
-            switchScreen('screenClientView');
-            document.getElementById('clientStatusTitle').innerText = "Joining Room...";
-
-            const connection = appState.peer.connect(inputVal);
-            
-            connection.on('open', () => {
-                connection.send({
-                    type: 'CLIENT_HANDSHAKE',
-                    nickname: appState.myNickname
-                });
-                document.getElementById('clientStatusTitle').innerText = `${appState.myNickname} (Connected)`;
-            });
-
-            connection.on('data', (payload) => {
-                if (payload.type === 'ASSIGNMENT_PAYLOAD') {
-                    appState.playerNames = payload.globalNamesList;
-                    document.getElementById('clientCardLoading').classList.add('hidden');
-                    const targetReveal = document.getElementById('clientCardRevealed');
-                    const textEl = document.getElementById('clientWordDisplay');
-                    
-                    targetReveal.classList.remove('hidden');
-                    textEl.innerText = payload.data.word;
-                    textEl.className = payload.data.type === 'IMPOSTER' ? "text-2xl font-black text-rose-400" : "text-4xl font-black text-emerald-400";
-                    
-                    // Reveal live HUD updates
-                    document.getElementById('onlineStatusMonitorBox').classList.remove('hidden');
-                }
+            fetch(DISCORD_WEBHOOK_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            })
+            .then(response => {
+                if (!response.ok) throw new Error("Data handshake failed validation.");
                 
-                if (payload.type === 'SYNC_DISCUSSION_STATE') {
-                    appState.speakerSequence = payload.sequence;
-                    appState.currentSpeakerIdx = payload.currentSpeakerIdx;
-                    
-                    // Sync internal game parameters to update layout
-                    renderDiscussionBoardScreen();
-                }
+                submitBtn.style.backgroundColor = "#22c55e";
+                submitBtn.innerText = "Dispatched and Synced!";
+                
+                document.getElementById("discordFeedbackForm").reset();
 
-                if (payload.type === 'REDIRECT_GUESSING_PHASE') {
-                    renderGuessingPhaseScreen();
-                    // Disable local clicking if you are not the host authority coordinator
-                    document.getElementById('votingGridContainer').style.pointerEvents = "none";
-                    document.getElementById('discussionHeadline').innerText = "Host is computing votes...";
-                }
-
-                if (payload.type === 'GAME_OVER_SIGNAL') {
-                    switchScreen('screenGuessingPhase');
-                    const displayBox = document.getElementById('gameResolutionDisplay');
-                    const title = document.getElementById('resolutionTitle');
-                    const subtitle = document.getElementById('resolutionSubtitle');
-                    
-                    document.getElementById('votingGridContainer').classList.add('hidden');
-                    displayBox.classList.remove('hidden');
-                    title.innerText = payload.title;
-                    title.className = payload.titleClass;
-                    subtitle.innerText = payload.subtitle;
-                }
-            });
-
-            connection.on('close', () => {
-                alert("The host closed the connection.");
-                location.reload();
+                setTimeout(() => {
+                    closeFeedbackModal();
+                    submitBtn.disabled = false;
+                    submitBtn.style.backgroundColor = "var(--color-ink-charcoal)";
+                    submitBtn.innerText = "Transmit Packet 🚀";
+                }, 1500);
+            })
+            .catch(error => {
+                console.error("Pipeline breakdown: ", error);
+                alert("Could not process payload pipeline. Verify operational connectivity parameters.");
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Transmit Packet 🚀";
             });
         }
     </script>
