@@ -3,131 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spindice Core | Manage Operations Smarter</title>
-    <!-- FontAwesome for Icons -->
+    <title>Spindice Core — Operations Platform</title>
+    
+    <!-- External Dependencies for Video-Perfect Replication -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
     <style>
-        /* --- CORE DESIGN SYSTEM VARIABLES --- */
         :root {
-            --bg-base: #020617;
-            --bg-surface: #0b1329;
-            --accent-neon: #00f0ff;
-            --accent-glow: rgba(0, 240, 255, 0.15);
-            --text-main: #f8fafc;
-            --text-muted: #64748b;
-            --border-clean: rgba(255, 255, 255, 0.05);
-            --border-active: rgba(0, 240, 255, 0.3);
-            --curve: cubic-bezier(0.16, 1, 0.3, 1);
-            --transition: all 0.5s var(--curve);
+            --bg-dark: #030712;
+            --bg-card: #0b1329;
+            --neon-teal: #00f0ff;
+            --text-white: #f8fafc;
+            --text-gray: #64748b;
+            --border-glow: rgba(0, 240, 255, 0.15);
+            --border-dim: rgba(255, 255, 255, 0.05);
+            --ease-fluid: cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            scroll-behavior: smooth;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
         body {
-            background-color: var(--bg-base);
-            color: var(--text-main);
+            background-color: var(--bg-dark);
+            color: var(--text-white);
             overflow-x: hidden;
             letter-spacing: -0.01em;
         }
 
-        /* --- GLOBAL LAYOUT REUSABLES --- */
-        section {
-            padding: 140px 8% 100px 8%;
-            position: relative;
-            border-bottom: 1px solid var(--border-clean);
-        }
-
-        .container-header {
-            max-width: 800px;
-            margin: 0 auto 70px auto;
-            text-align: center;
-        }
-
-        .pill-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--border-clean);
-            padding: 6px 16px;
-            border-radius: 30px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-main);
-            margin-bottom: 24px;
-        }
-        .pill-badge i { color: var(--accent-neon); }
-
-        .section-title {
-            font-size: 48px;
-            font-weight: 800;
-            line-height: 1.15;
-            letter-spacing: -0.03em;
-            margin-bottom: 20px;
-        }
-        .section-title span {
-            color: var(--accent-neon);
-            position: relative;
-        }
-
-        .section-subtitle {
-            font-size: 18px;
-            color: var(--text-muted);
-            line-height: 1.6;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        /* --- SCROLL REVEAL UTILITIES --- */
-        .reveal-on-scroll {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.8s var(--curve), transform 0.8s var(--curve);
-        }
-        .reveal-on-scroll.revealed {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* --- STICKY NAVIGATION --- */
+        /* --- STICKY NAV --- */
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 8%;
+            padding: 24px 8%;
             position: fixed;
             width: 100%;
             top: 0;
             z-index: 1000;
-            background: rgba(2, 6, 23, 0.7);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--border-clean);
+            background: rgba(3, 7, 18, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-dim);
         }
 
-        .logo-block {
+        .brand {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             font-size: 20px;
             font-weight: 800;
-            text-decoration: none;
-            color: var(--text-main);
+            cursor: pointer;
         }
-        .logo-box {
+
+        .brand-icon {
             width: 24px;
             height: 24px;
-            border: 2px solid var(--accent-neon);
+            border: 2px solid var(--neon-teal);
             border-radius: 6px;
-            box-shadow: 0 0 10px var(--accent-glow);
+            box-shadow: 0 0 10px var(--border-glow);
         }
 
         nav ul {
@@ -135,798 +74,648 @@
             list-style: none;
             gap: 32px;
         }
+
         nav ul li a {
-            color: var(--text-muted);
+            color: var(--text-gray);
             text-decoration: none;
             font-size: 14px;
             font-weight: 500;
-            transition: var(--transition);
+            transition: color 0.3s;
         }
-        nav ul li a:hover { color: var(--text-main); }
 
-        .nav-actions { display: flex; gap: 16px; align-items: center; }
-        .btn-text {
-            color: var(--text-main);
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 600;
-        }
-        .btn-prime {
-            background: var(--text-main);
-            color: var(--bg-base);
+        nav ul li a:hover { color: var(--text-white); }
+
+        .auth-buttons { display: flex; gap: 16px; align-items: center; }
+        .btn-login { color: var(--text-white); text-decoration: none; font-size: 14px; font-weight: 600; }
+        
+        .btn-signup {
+            background: var(--text-white);
+            color: var(--bg-dark);
             padding: 10px 20px;
             border-radius: 8px;
             text-decoration: none;
             font-size: 14px;
             font-weight: 600;
-            transition: var(--transition);
+            transition: transform 0.3s var(--ease-fluid), background 0.3s;
         }
-        .btn-prime:hover {
-            background: var(--accent-neon);
-            box-shadow: 0 0 20px var(--accent-glow);
+        .btn-signup:hover { background: var(--neon-teal); transform: translateY(-2px); }
+
+        /* --- HERO SECTIONS --- */
+        section {
+            padding: 140px 8% 100px 8%;
+            position: relative;
         }
 
-        /* --- HERO VIEWPORT BLOCK --- */
-        .hero-section {
+        .hero {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding-top: 160px;
-            background: radial-gradient(circle at 50% -20%, rgba(0, 240, 255, 0.08) 0%, rgba(2, 6, 23, 1) 70%);
+            background: radial-gradient(circle at 50% -20%, rgba(0, 240, 255, 0.12) 0%, rgba(3, 7, 18, 1) 60%);
         }
 
-        .hero-title {
-            font-size: 68px;
+        .badge-pill {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-dim);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 28px;
+        }
+        .badge-pill i { color: var(--neon-teal); }
+
+        .hero h1 {
+            font-size: 64px;
             font-weight: 800;
             line-height: 1.1;
-            letter-spacing: -0.04em;
+            letter-spacing: -0.03em;
             max-width: 900px;
             margin-bottom: 24px;
         }
 
-        /* Dynamic Blinking Typewriter Cursor */
+        .typewriter-text { color: var(--neon-teal); position: relative; }
         .typewriter-cursor::after {
             content: '|';
-            color: var(--accent-neon);
-            animation: blink 0.8s infinite;
+            color: var(--neon-teal);
+            animation: caretBlink 0.8s infinite;
         }
-        @keyframes blink { 50% { opacity: 0; } }
+        @keyframes caretBlink { 50% { opacity: 0; } }
 
-        .hero-actions {
-            display: flex;
-            gap: 16px;
-            margin-top: 36px;
-            margin-bottom: 60px;
+        .hero p {
+            font-size: 18px;
+            color: var(--text-gray);
+            max-width: 620px;
+            line-height: 1.6;
+            margin-bottom: 40px;
         }
-        .btn-glow {
-            background: rgba(0, 240, 255, 0.1);
-            border: 1px solid var(--accent-neon);
-            color: var(--accent-neon);
-            padding: 12px 28px;
+
+        .action-cluster { display: flex; gap: 16px; margin-bottom: 80px; }
+        .btn-primary {
+            background: var(--neon-teal);
+            color: var(--bg-dark);
+            padding: 14px 32px;
             border-radius: 8px;
             text-decoration: none;
             font-weight: 600;
-            font-size: 15px;
-            transition: var(--transition);
+            box-shadow: 0 0 24px var(--border-glow);
+            transition: all 0.3s;
         }
-        .btn-glow:hover {
-            background: var(--accent-neon);
-            color: var(--bg-base);
-            box-shadow: 0 0 30px var(--accent-glow);
+        .btn-primary:hover { background: var(--text-white); box-shadow: 0 0 30px rgba(255,255,255,0.2); }
+        .btn-secondary {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-dim);
+            color: var(--text-white);
+            padding: 14px 32px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
         }
+        .btn-secondary:hover { border-color: var(--neon-teal); background: rgba(0,240,255,0.02); }
 
-        /* --- OPERATIONAL CORE INTERACTIVE DASHBOARD DISPLAY --- */
-        .dashboard-mockup {
+        /* --- THE OPERATIONAL PIPELINE CANVAS (EXACT LOOK) --- */
+        .app-shell {
             width: 100%;
             max-width: 1100px;
-            background: var(--bg-surface);
-            border: 1px solid var(--border-clean);
+            background: var(--bg-card);
+            border: 1px solid var(--border-dim);
             border-radius: 16px;
-            box-shadow: 0 40px 80px rgba(0,0,0,0.5);
-            overflow: hidden;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.6);
             display: grid;
             grid-template-columns: 260px 1fr;
-            height: 520px;
+            height: 540px;
+            overflow: hidden;
             text-align: left;
         }
 
-        .dash-sidebar {
+        .app-sidebar {
             background: rgba(0,0,0,0.2);
-            border-right: 1px solid var(--border-clean);
+            border-right: 1px solid var(--border-dim);
             padding: 24px;
         }
-        .dash-nav-item {
+
+        .side-heading {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-gray);
+            margin-bottom: 16px;
+        }
+
+        .side-node {
             display: flex;
             align-items: center;
             gap: 12px;
             padding: 12px 16px;
-            color: var(--text-muted);
-            border-radius: 8px;
-            cursor: pointer;
+            color: var(--text-gray);
             font-size: 14px;
             font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
             margin-bottom: 8px;
-            transition: var(--transition);
+            transition: all 0.3s;
         }
-        .dash-nav-item:hover, .dash-nav-item.active {
-            color: var(--text-main);
+        .side-node:hover, .side-node.active {
+            color: var(--text-white);
             background: rgba(255,255,255,0.03);
         }
-        .dash-nav-item.active {
-            border-left: 3px solid var(--accent-neon);
+        .side-node.active {
+            border-left: 3px solid var(--neon-teal);
             padding-left: 13px;
+            background: rgba(0, 240, 255, 0.02);
         }
 
-        .dash-viewport {
+        .app-main {
             padding: 40px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
             position: relative;
-        }
-        .workflow-visualizer {
             display: flex;
             align-items: center;
-            justify-content: space-around;
-            position: relative;
-            width: 100%;
+            justify-content: center;
         }
-        .workflow-visualizer::before {
-            content: '';
+
+        /* SVG Node Architecture */
+        .pipeline-svg-container {
             position: absolute;
-            width: 80%;
-            height: 2px;
-            background: linear-gradient(90deg, var(--accent-neon) 50%, var(--border-clean) 50%);
-            background-size: 200% 100%;
-            animation: lineFlow 4s linear infinite;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
             z-index: 1;
         }
-        @keyframes lineFlow {
-            0% { background-position: 100% 0; }
-            100% { background-position: 0% 0; }
+
+        .pipeline-svg-container path {
+            fill: none;
+            stroke: var(--border-dim);
+            stroke-width: 2;
+            transition: stroke 0.5s;
         }
 
-        .node-box {
-            background: var(--bg-base);
-            border: 1px solid var(--border-clean);
-            padding: 20px;
-            border-radius: 12px;
-            z-index: 2;
-            width: 180px;
-            text-align: center;
-            transition: var(--transition);
+        .pipeline-svg-container path.active-path {
+            stroke: var(--neon-teal);
+            stroke-dasharray: 8;
+            animation: dashFlow 30s linear infinite;
         }
-        .node-box.active {
-            border-color: var(--accent-neon);
-            box-shadow: 0 0 20px var(--accent-glow);
-        }
-        .node-box i {
-            font-size: 24px;
-            color: var(--accent-neon);
-            margin-bottom: 12px;
-        }
-        .node-box h4 { font-size: 15px; margin-bottom: 4px; }
-        .node-box p { font-size: 12px; color: var(--text-muted); }
+        @keyframes dashFlow { to { stroke-dashoffset: -1000; } }
 
-        /* --- TRUSTED LOGO ROW MODULE --- */
-        .logos-ticker-section {
-            padding: 60px 8%;
-            text-align: center;
-            background: #01040f;
-        }
-        .ticker-caption {
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-muted);
-            margin-bottom: 30px;
-        }
-        .ticker-grid {
+        .canvas-grid-nodes {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            gap: 64px;
-            flex-wrap: wrap;
-            opacity: 0.6;
+            width: 100%;
+            z-index: 2;
+            position: relative;
         }
-        .ticker-grid i { font-size: 28px; }
 
-        /* --- GRID MATRIX ARCHITECTURE --- */
-        .matrix-grid {
+        .live-node-box {
+            background: var(--bg-dark);
+            border: 1px solid var(--border-dim);
+            border-radius: 12px;
+            padding: 24px;
+            width: 200px;
+            text-align: center;
+            transform: scale(0.95);
+            opacity: 0.5;
+            transition: all 0.6s var(--ease-fluid);
+        }
+
+        .live-node-box.active {
+            opacity: 1;
+            transform: scale(1);
+            border-color: var(--neon-teal);
+            box-shadow: 0 0 30px var(--border-glow);
+        }
+
+        .live-node-box i { font-size: 28px; color: var(--neon-teal); margin-bottom: 16px; }
+        .live-node-box h4 { font-size: 16px; margin-bottom: 6px; font-weight: 700; }
+        .live-node-box p { font-size: 13px; color: var(--text-gray); }
+
+        /* --- REVEAL MATRIX ZONE --- */
+        .section-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+        .section-header h2 { font-size: 40px; font-weight: 800; letter-spacing: -0.02em; }
+        .section-header h2 span { color: var(--neon-teal); }
+
+        .feature-matrix {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 24px;
         }
-        .matrix-card {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-clean);
+
+        .matrix-tile {
+            background: var(--bg-card);
+            border: 1px solid var(--border-dim);
             border-radius: 16px;
             padding: 40px;
-            position: relative;
-            overflow: hidden;
-            transition: var(--transition);
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s var(--ease-fluid);
         }
-        .matrix-card:hover {
-            border-color: var(--border-active);
-            transform: translateY(-4px);
-        }
-        .matrix-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at top right, rgba(0, 240, 255, 0.05), transparent 60%);
-            pointer-events: none;
-        }
-        .matrix-card i {
-            font-size: 32px;
-            color: var(--accent-neon);
-            margin-bottom: 24px;
-        }
-        .matrix-card h3 { font-size: 22px; margin-bottom: 12px; font-weight: 700; }
-        .matrix-card p { color: var(--text-muted); font-size: 15px; line-height: 1.6; }
 
-        /* --- INFOGRAPHIC METRICS AND ANALYTICS BAR SYSTEM --- */
-        .analytics-split {
+        .matrix-tile i { font-size: 32px; color: var(--neon-teal); margin-bottom: 24px; }
+        .matrix-tile h3 { font-size: 20px; margin-bottom: 12px; font-weight: 700; }
+        .matrix-tile p { color: var(--text-gray); font-size: 15px; line-height: 1.6; }
+
+        /* --- METRICS / RADIAL PROGRESS DISPLAY --- */
+        .analytics-block {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 80px;
+            gap: 60px;
             align-items: center;
+            background: #02050e;
         }
-        .metrics-display-box {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-clean);
+
+        .dashboard-stats-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-dim);
             border-radius: 20px;
             padding: 48px;
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 40px;
         }
-        .data-metric-node { position: relative; }
-        .metric-value {
-            font-size: 56px;
-            font-weight: 800;
-            color: var(--text-main);
-            margin-bottom: 8px;
+
+        .stat-card-unit { position: relative; }
+        .stat-value { font-size: 52px; font-weight: 800; margin-bottom: 8px; }
+        .stat-lbl { font-size: 14px; color: var(--text-gray); font-weight: 500; }
+
+        /* Custom Track Bars */
+        .horizontal-progress-track {
+            height: 6px; width: 100%; background: rgba(255,255,255,0.05);
+            border-radius: 4px; margin-top: 16px; overflow: hidden;
         }
-        .metric-label { font-size: 14px; color: var(--text-muted); font-weight: 500; }
-        
-        /* Interactive Pure CSS/JS Visual Chart bars */
-        .bar-chart-wrapper {
-            margin-top: 16px;
-            width: 100%;
-            height: 6px;
-            background: rgba(255,255,255,0.05);
+        .horizontal-progress-fill {
+            height: 100%; width: 0%; background: var(--neon-teal);
             border-radius: 4px;
-            overflow: hidden;
-        }
-        .bar-chart-fill {
-            height: 100%;
-            width: 0%;
-            background: var(--accent-neon);
-            border-radius: 4px;
-            transition: width 1.5s cubic-bezier(0.1, 1, 0.1, 1);
         }
 
-        /* Radial progress element mirroring video framework */
-        .radial-progress-container {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-        .radial-svg {
-            width: 80px;
-            height: 80px;
-            transform: rotate(-90deg);
-        }
-        .radial-svg circle {
-            width: 100%;
-            height: 100%;
-            fill: none;
-            stroke-width: 6;
-            stroke-linecap: round;
-        }
-        .radial-track { stroke: rgba(255,255,255,0.05); }
-        .radial-fill {
-            stroke: var(--accent-neon);
+        /* Radial Wheel */
+        .radial-wheel-box { display: flex; align-items: center; gap: 24px; }
+        .svg-wheel { width: 80px; height: 80px; transform: rotate(-90deg); }
+        .svg-wheel circle { fill: none; stroke-width: 6; stroke-linecap: round; }
+        .wheel-bg { stroke: rgba(255,255,255,0.05); }
+        .wheel-fill {
+            stroke: var(--neon-teal);
             stroke-dasharray: 226;
             stroke-dashoffset: 226;
-            transition: stroke-dashoffset 1.5s ease-out;
         }
 
-        /* --- PRICE LAYOUT WITH TRANSITION SWITCH --- */
-        .billing-toggle-rail {
+        /* --- PRICE REGISTRY WITH SWITCH LOGIC --- */
+        .toggle-row {
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 16px;
-            margin-bottom: 50px;
+            margin-bottom: 48px;
         }
-        .toggle-label {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-muted);
-        }
-        .toggle-label.active { color: var(--text-main); }
-        
-        .switch-frame {
-            position: relative; width: 56px; height: 30px;
-        }
-        .switch-frame input { opacity: 0; width: 0; height: 0; }
-        .switch-slider {
-            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(255,255,255,0.05); border: 1px solid var(--border-clean);
-            border-radius: 34px; transition: .3s;
-        }
-        .switch-slider:before {
-            position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px;
-            background-color: var(--text-main); border-radius: 50%; transition: .3s;
-        }
-        input:checked + .switch-slider { background-color: rgba(0, 240, 255, 0.2); border-color: var(--accent-neon); }
-        input:checked + .switch-slider:before { transform: translateX(26px); background-color: var(--accent-neon); }
+        .toggle-lbl { font-size: 14px; font-weight: 600; color: var(--text-gray); }
+        .toggle-lbl.active { color: var(--text-white); }
 
-        .pricing-grid {
+        .switch-housing { position: relative; width: 56px; height: 30px; }
+        .switch-housing input { opacity: 0; width: 0; height: 0; }
+        .slider-node {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(255,255,255,0.05); border: 1px solid var(--border-dim);
+            border-radius: 34px; transition: 0.3s;
+        }
+        .slider-node:before {
+            position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px;
+            background-color: var(--text-white); border-radius: 50%; transition: 0.3s;
+        }
+        input:checked + .slider-node { background-color: rgba(0, 240, 255, 0.2); border-color: var(--neon-teal); }
+        input:checked + .slider-node:before { transform: translateX(26px); background-color: var(--neon-teal); }
+
+        .price-layout {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 32px;
             max-width: 900px;
             margin: 0 auto;
         }
-        .price-card {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-clean);
+
+        .tier-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-dim);
             border-radius: 24px;
             padding: 48px;
             display: flex;
             flex-direction: column;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: border-color 0.3s, transform 0.6s;
         }
-        .price-card.premium-glow {
-            border-color: var(--accent-neon);
-            box-shadow: 0 0 30px rgba(0, 240, 255, 0.05);
-        }
-        .price-card h3 { font-size: 20px; margin-bottom: 8px; }
-        .price-card p { color: var(--text-muted); font-size: 14px; margin-bottom: 32px; }
-        .price-amount { font-size: 56px; font-weight: 800; margin-bottom: 40px; }
-        .price-amount span { font-size: 16px; color: var(--text-muted); font-weight: 400; }
-        
-        .feature-check-list { list-style: none; margin-bottom: 40px; }
-        .feature-check-list li { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; font-size: 15px; color: #cbd5e1; }
-        .feature-check-list li i { color: var(--accent-neon); font-size: 14px; }
+        .tier-box.featured-glow { border-color: var(--neon-teal); }
 
-        .btn-action-pricing {
+        .tier-box h3 { font-size: 20px; margin-bottom: 8px; }
+        .tier-box p { color: var(--text-gray); font-size: 14px; margin-bottom: 32px; }
+        .tier-rate { font-size: 56px; font-weight: 800; margin-bottom: 32px; }
+        .tier-rate span { font-size: 16px; color: var(--text-gray); font-weight: 400; }
+
+        .features-list { list-style: none; margin-bottom: 40px; }
+        .features-list li { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; font-size: 15px; }
+        .features-list li i { color: var(--neon-teal); }
+
+        .btn-tier {
             display: block; width: 100%; text-align: center; padding: 14px; border-radius: 10px;
-            background: rgba(255,255,255,0.03); border: 1px solid var(--border-clean); color: var(--text-main);
-            text-decoration: none; font-weight: 600; font-size: 15px; transition: var(--transition);
-            margin-top: auto;
+            background: rgba(255,255,255,0.03); border: 1px solid var(--border-dim); color: var(--text-white);
+            text-decoration: none; font-weight: 600; transition: all 0.3s; margin-top: auto;
         }
-        .price-card.premium-glow .btn-action-pricing, .btn-action-pricing:hover {
-            background: var(--text-main); color: var(--bg-base); border-color: var(--text-main);
-        }
-
-        /* --- ACCORDION FAQ BLOCK --- */
-        .faq-wrapper {
-            max-width: 760px;
-            margin: 0 auto;
-        }
-        .faq-node {
-            border-bottom: 1px solid var(--border-clean);
-            padding: 24px 0;
-        }
-        .faq-trigger {
-            display: flex; justify-content: space-between; align-items: center;
-            width: 100%; background: none; border: none; text-align: left;
-            color: var(--text-main); font-size: 18px; font-weight: 600; cursor: pointer;
-        }
-        .faq-trigger i { transition: var(--transition); color: var(--text-muted); }
-        .faq-content {
-            max-height: 0; overflow: hidden; transition: max-height 0.4s var(--curve);
-        }
-        .faq-content p { color: var(--text-muted); font-size: 15px; line-height: 1.6; padding-top: 16px; }
-        .faq-node.open .faq-trigger i { transform: rotate(180deg); color: var(--accent-neon); }
-
-        /* --- FOOTER REGION SYSTEM --- */
-        footer {
-            background: #01040f;
-            padding: 80px 8% 40px 8%;
-            border-top: 1px solid var(--border-clean);
-        }
-        .footer-top {
-            display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 64px; margin-bottom: 60px;
-        }
-        .footer-desc { color: var(--text-muted); font-size: 14px; line-height: 1.6; margin-top: 16px; max-width: 300px; }
-        .footer-column h4 { font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 24px; color: var(--text-main); }
-        .footer-column ul { list-style: none; }
-        .footer-column ul li { margin-bottom: 12px; }
-        .footer-column ul li a { color: var(--text-muted); text-decoration: none; font-size: 14px; transition: var(--transition); }
-        .footer-column ul li a:hover { color: var(--text-main); }
-        
-        .footer-bottom {
-            display: flex; justify-content: space-between; align-items: center;
-            padding-top: 40px; border-top: 1px solid var(--border-clean); color: var(--text-muted); font-size: 13px;
+        .tier-box.featured-glow .btn-tier, .btn-tier:hover {
+            background: var(--text-white); color: var(--bg-dark); border-color: var(--text-white);
         }
 
-        /* --- SYSTEM RESPONSIVE SCALING ADAPTERS --- */
-        @media (max-width: 1024px) {
-            .hero-title { font-size: 48px; }
-            .matrix-grid { grid-template-columns: 1fr; }
-            .analytics-split { grid-template-columns: 1fr; gap: 48px; }
-            .dashboard-mockup { grid-template-columns: 1fr; height: auto; }
-            .dash-sidebar { display: flex; overflow-x: auto; padding: 12px; gap: 8px; }
-            .dash-nav-item { margin-bottom: 0; white-space: nowrap; }
-            .dash-viewport { padding: 32px 16px; }
-            .pricing-grid { grid-template-columns: 1fr; }
-            .footer-top { grid-template-columns: 1fr 1fr; gap: 40px; }
+        /* --- RESPONSIVE FIXES --- */
+        @media (max-width: 968px) {
+            .feature-matrix, .price-layout, .analytics-block { grid-template-columns: 1fr; }
+            .app-shell { grid-template-columns: 1fr; height: auto; }
+            .canvas-grid-nodes { flex-direction: column; gap: 24px; }
+            .pipeline-svg-container { display: none; }
+            .hero h1 { font-size: 42px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- STICKY HEADER COMPONENT -->
+    <!-- NAV GRID SYSTEM -->
     <header>
-        <a href="#" class="logo-block">
-            <div class="logo-box"></div> Spindice
-        </a>
+        <div class="brand"><div class="brand-icon"></div>Spindice</div>
         <nav>
             <ul>
                 <li><a href="#features">Features</a></li>
                 <li><a href="#metrics">Analytics</a></li>
                 <li><a href="#pricing">Pricing</a></li>
-                <li><a href="#faq">FAQ</a></li>
             </ul>
         </nav>
-        <div class="nav-actions">
-            <a href="#" class="btn-text">Log in</a>
-            <a href="#" class="btn-prime">Sign Up</a>
+        <div class="auth-buttons">
+            <a href="#" class="btn-login">Log In</a>
+            <a href="#" class="btn-signup">Sign Up</a>
         </div>
     </header>
 
-    <!-- HERO SECTION WITH DYNAMIC TYPEWRITER ENGINE -->
-    <section class="hero-section">
-        <div class="pill-badge"><i class="fa-solid fa-bolt"></i> Now Live: Smart Automation</div>
-        <h1 class="hero-title">
-            Manage operations smarter with <br><span id="typewriter-target" class="typewriter-cursor">one platform</span>
-        </h1>
-        <p class="section-subtitle">Spindice helps companies design, deploy, and scale internal dashboards, workflows, and operations metrics instantly.</p>
+    <!-- HERO COMPONENT -->
+    <section class="hero">
+        <div class="badge-pill"><i class="fa-solid fa-circle-dot"></i> Now Live: Smart Automation</div>
+        <h1>Manage operations smarter with <br><span id="typewriter" class="typewriter-text typewriter-cursor">one platform</span></h1>
+        <p>Spindice helps companies design, deploy, and scale internal dashboards, workflows, and analytics tracking.</p>
         
-        <div class="hero-actions">
-            <a href="#" class="btn-prime" style="padding:12px 28px;">Get started</a>
-            <a href="#" class="btn-glow">How it works</a>
+        <div class="action-cluster">
+            <a href="#" class="btn-primary">Get Started</a>
+            <a href="#" class="btn-secondary">How it works</a>
         </div>
 
-        <!-- LIVE WORKFLOW MOVEMENT MODULE -->
-        <div class="dashboard-mockup reveal-on-scroll">
-            <div class="dash-sidebar">
-                <div class="dash-nav-item active" onclick="switchMockNode(0)"><i class="fa-solid fa-circle-nodes"></i> Data Ingestion</div>
-                <div class="dash-nav-item" onclick="switchMockNode(1)"><i class="fa-solid fa-sliders"></i> Transformation</div>
-                <div class="dash-nav-item" onclick="switchMockNode(2)"><i class="fa-solid fa-chart-simple"></i> Live Analytics</div>
+        <!-- DYNAMIC PIPELINE CANVAS WORKFLOW -->
+        <div class="app-shell">
+            <div class="app-sidebar">
+                <div class="side-heading">Nodes Library</div>
+                <div class="side-node active" onclick="triggerPipelineStep(0)"><i class="fa-solid fa-bolt"></i> Trigger Source</div>
+                <div class="side-node" onclick="triggerPipelineStep(1)"><i class="fa-solid fa-code-branch"></i> Conditional Logic</div>
+                <div class="side-node" onclick="triggerPipelineStep(2)"><i class="fa-solid fa-circle-check"></i> Final Execution</div>
             </div>
-            <div class="dash-viewport">
-                <div class="workflow-visualizer">
-                    <div class="node-box active" id="node-0">
+            
+            <div class="app-main">
+                <!-- SVG Vector Alignment Paths -->
+                <svg class="pipeline-svg-container" id="svg-canvas">
+                    <path id="path-1" d="M 210, 230 L 390, 230" />
+                    <path id="path-2" d="M 430, 230 L 610, 230" />
+                </svg>
+
+                <div class="canvas-grid-nodes">
+                    <div class="live-node-box active" id="node-box-0">
                         <i class="fa-solid fa-database"></i>
-                        <h4>Connect Source</h4>
-                        <p>SQL, API, Webhooks</p>
+                        <h4>Identify Source</h4>
+                        <p>Webhook / API Payload</p>
                     </div>
-                    <div class="node-box" id="node-1">
-                        <i class="fa-solid fa-gear"></i>
-                        <h4>Parse Rules</h4>
-                        <p>Mapping & Validation</p>
+                    <div class="live-node-box" id="node-box-1">
+                        <i class="fa-solid fa-filter"></i>
+                        <h4>Check Condition</h4>
+                        <p>Evaluate Properties</p>
                     </div>
-                    <div class="node-box" id="node-2">
-                        <i class="fa-solid fa-share-nodes"></i>
-                        <h4>Deploy Engine</h4>
-                        <p>Production Ready</p>
+                    <div class="live-node-box" id="node-box-2">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <h4>Notify Platform</h4>
+                        <p>Production Delivery</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- TRUSTED ROW LOGO DISPLAY -->
-    <div class="logos-ticker-section">
-        <p class="ticker-caption">Trusted by over 10k+ companies of all sizes</p>
-        <div class="ticker-grid">
-            <i class="fa-brands fa-shopify"></i>
-            <i class="fa-brands fa-mailchimp"></i>
-            <i class="fa-brands fa-stripe"></i>
-            <i class="fa-brands fa-slack"></i>
-            <i class="fa-brands fa-aws"></i>
-        </div>
-    </div>
-
-    <!-- GEOMETRIC GRID MATRIX ARCHITECTURE -->
+    <!-- METRIC MATRIX TRANSITIONS -->
     <section id="features">
-        <div class="container-header reveal-on-scroll">
-            <div class="pill-badge"><i class="fa-solid fa-layer-group"></i> Core Value</div>
-            <h2 class="section-title">Stop duct-taping spreadsheets. <br>Start building <span>structured systems</span></h2>
+        <div class="section-header">
+            <h2>Stop duct-taping spreadsheets. <br>Start building <span>structured systems</span></h2>
         </div>
-
-        <div class="matrix-grid">
-            <div class="matrix-card reveal-on-scroll">
-                <i class="fa-solid fa-bolt-lightning"></i>
+        <div class="feature-matrix">
+            <div class="matrix-tile">
+                <i class="fa-solid fa-gauge-high"></i>
                 <h3>Faster Time to Value</h3>
-                <p>Deploy operational dashboards in minutes instead of engineering sprints. Connect variables seamlessly without architectural load.</p>
+                <p>Deploy operational dashboards in minutes instead of engineering sprints. Connect variables without architectural loads.</p>
             </div>
-            <div class="matrix-card reveal-on-scroll">
-                <i class="fa-solid fa-eye"></i>
-                <h3>Real-time Visibility</h3>
-                <p>Observe state transformations as they happen. Maintain telemetry clarity across distributed client application endpoints.</p>
+            <div class="matrix-tile">
+                <i class="fa-solid fa-chart-line"></i>
+                <h3>Real-Time Visibility</h3>
+                <p>Observe your automation workflows as they execute. Maintain constant state synchronization across teams.</p>
             </div>
-            <div class="matrix-card reveal-on-scroll">
-                <i class="fa-solid fa-shield-halved"></i>
-                <h3>Scalable by Design</h3>
-                <p>Enterprise grade isolation systems that scale effortlessly from MVP iterations up to massive concurrent data operations.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- INFOGRAPHIC METRICS & COUNTER PROGRESS ENGINE -->
-    <section id="metrics" style="background: #01040f;">
-        <div class="analytics-split">
-            <div class="reveal-on-scroll">
-                <div class="pill-badge"><i class="fa-solid fa-chart-pie"></i> Efficiency Metrics</div>
-                <h2 class="section-title" style="font-size: 40px;">Engineered for high performance operations</h2>
-                <p class="section-subtitle" style="margin: 0; text-align: left;">Centralize processing pipelines. Maximize resource utilization vectors without needing dedicated tracking clusters or operational maintenance debt.</p>
-            </div>
-            
-            <div class="metrics-display-box reveal-on-scroll" id="counters-trigger-zone">
-                <div class="data-metric-node">
-                    <div class="metric-value" data-target="89">0%</div>
-                    <div class="metric-label">Workflow Acceleration</div>
-                    <div class="bar-chart-wrapper">
-                        <div class="bar-chart-fill" data-width="89%"></div>
-                    </div>
-                </div>
-                <div class="data-metric-node">
-                    <div class="radial-progress-container">
-                        <div class="metric-label">
-                            <div class="metric-value" data-target="82">0%</div>
-                            Team Adoption Rate
-                        </div>
-                    </div>
-                </div>
+            <div class="matrix-tile">
+                <i class="fa-solid fa-cubes"></i>
+                <h3>Scalable By Design</h3>
+                <p>Enterprise grade isolation layers that process millions of records effortlessly without performance drops.</p>
             </div>
         </div>
     </section>
 
-    <!-- DYNAMIC PRICING TOGGLE ARCHITECTURE -->
+    <!-- RADIAL COUNTER STATS SECTION -->
+    <section id="metrics" class="analytics-block">
+        <div>
+            <div class="badge-pill"><i class="fa-solid fa-chart-pie"></i> Performance Logs</div>
+            <h2 style="font-size: 38px; margin-bottom: 20px; font-weight: 800;">Built for operations who move fast</h2>
+            <p style="color: var(--text-gray); line-height: 1.6;">Centralize multiple processing lines cleanly. Maximize runtime resources metrics with instant visual analytics verification loops.</p>
+        </div>
+
+        <div class="dashboard-stats-panel" id="scroll-stats-trigger">
+            <div class="stat-card-unit">
+                <div class="stat-value" id="count-1" data-val="89">0%</div>
+                <div class="stat-lbl">Faster Workflow Execution</div>
+                <div class="horizontal-progress-track">
+                    <div class="horizontal-progress-fill" id="fill-bar-1"></div>
+                </div>
+            </div>
+
+            <div class="stat-card-unit radial-wheel-box">
+                <svg class="svg-wheel">
+                    <circle class="wheel-bg" cx="40" cy="40" r="36"></circle>
+                    <circle class="wheel-fill" id="radial-fill-circle" cx="40" cy="40" r="36"></circle>
+                </svg>
+                <div>
+                    <div class="stat-value" id="count-2" data-val="82">0%</div>
+                    <div class="stat-lbl">Team Adoption Rate</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONVERTIBLE PRICING ENGINE -->
     <section id="pricing">
-        <div class="container-header reveal-on-scroll">
-            <div class="pill-badge"><i class="fa-solid fa-credit-card"></i> Flexible Plans</div>
-            <h2 class="section-title">Pricing that scales with your growth</h2>
+        <div class="section-header">
+            <h2>Flexible pricing that <span>scales</span> with your team</h2>
         </div>
 
-        <div class="billing-toggle-rail reveal-on-scroll">
-            <span class="toggle-label active" id="label-monthly">Monthly Billing</span>
-            <label class="switch-frame">
-                <input type="checkbox" id="pricing-checkbox" onchange="togglePricingFrequencies()">
-                <span class="switch-slider"></span>
+        <div class="toggle-row">
+            <span class="toggle-lbl active" id="lbl-month">Monthly Rate</span>
+            <label class="switch-housing">
+                <input type="checkbox" id="pricing-engine-toggle" onchange="switchRates()">
+                <span class="slider-node"></span>
             </label>
-            <span class="toggle-label" id="label-yearly">Yearly Protocol (Save 20%)</span>
+            <span class="toggle-lbl" id="lbl-year">Yearly Strategy (-20%)</span>
         </div>
 
-        <div class="pricing-grid">
-            <div class="price-card reveal-on-scroll">
-                <h3>Starter Engine</h3>
-                <p>Bespoke operational architecture foundational toolkits for expanding teams.</p>
-                <div class="price-amount" id="price-starter">$29<span>/mo</span></div>
-                <ul class="feature-check-list">
-                    <li><i class="fa-solid fa-circle-check"></i> Up to 10 active dashboards</li>
-                    <li><i class="fa-solid fa-circle-check"></i> 3 Core Database connectors</li>
-                    <li><i class="fa-solid fa-circle-check"></i> Basic event-driven webhooks</li>
+        <div class="price-layout">
+            <div class="tier-box">
+                <h3>Starter Workspace</h3>
+                <p>Perfect for growing groups managing internal tools framework.</p>
+                <div class="tier-rate" id="rate-starter">$29<span>/mo</span></div>
+                <ul class="features-list">
+                    <li><i class="fa-solid fa-circle-check"></i> Up to 10 workspaces</li>
+                    <li><i class="fa-solid fa-circle-check"></i> 3 Shared database connectors</li>
+                    <li><i class="fa-solid fa-circle-check"></i> API & Webhook monitoring logs</li>
                 </ul>
-                <a href="#" class="btn-action-pricing">Deploy Starter</a>
+                <a href="#" class="btn-tier">Get Started</a>
             </div>
-            
-            <div class="price-card premium-glow reveal-on-scroll">
+
+            <div class="tier-box featured-glow">
                 <h3>Growth Pro+</h3>
-                <p>Unrestricted infrastructure scale, deep audit logs, and compliance isolation.</p>
-                <div class="price-amount" id="price-growth">$79<span>/mo</span></div>
-                <ul class="feature-check-list">
-                    <li><i class="fa-solid fa-circle-check"></i> Unlimited running dashboards</li>
-                    <li><i class="fa-solid fa-circle-check"></i> Enterprise metrics scaling modules</li>
-                    <li><i class="fa-solid fa-circle-check"></i> Dedicated isolated worker access</li>
+                <p>Unrestricted scaling architecture configurations with dedicated logs.</p>
+                <div class="tier-rate" id="rate-growth">$79<span>/mo</span></div>
+                <ul class="features-list">
+                    <li><i class="fa-solid fa-circle-check"></i> Unlimited workspaces</li>
+                    <li><i class="fa-solid fa-circle-check"></i> Isolated computing tracks</li>
+                    <li><i class="fa-solid fa-circle-check"></i> SSO & Advanced Security Audits</li>
                 </ul>
-                <a href="#" class="btn-action-pricing">Acquire Pro Ecosystem</a>
+                <a href="#" class="btn-tier">Book a Demo</a>
             </div>
         </div>
     </section>
 
-    <!-- INTERACTIVE ACCORDION MODULE -->
-    <section id="faq" style="background: #01040f;">
-        <div class="container-header reveal-on-scroll">
-            <h2 class="section-title">Questions? We got <span>answers</span></h2>
-        </div>
-
-        <div class="faq-wrapper reveal-on-scroll">
-            <div class="faq-node">
-                <button class="faq-trigger" onclick="toggleFaqAccordion(this)">
-                    Do we need engineers to configure platforms?
-                    <i class="fa-solid fa-chevron-down"></i>
-                </button>
-                <div class="faq-content">
-                    <p>No. Spindice is designed to interface via graphical flow layouts and structured configurations, entirely decoupling the dashboard pipeline deployment steps from native code maintenance cycles.</p>
-                </div>
-            </div>
-            <div class="faq-node">
-                <button class="faq-trigger" onclick="toggleFaqAccordion(this)">
-                    Is structural asset encryption supported out-of-the-box?
-                    <i class="fa-solid fa-chevron-down"></i>
-                </button>
-                <div class="faq-content">
-                    <p>Absolutely. Every connection pathway utilizes hardware-isolated AES-256 state arrays matching rigorous SOC2 enterprise transmission standards completely.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- FOOTER ARCHITECTURE MODULE -->
-    <footer>
-        <div class="footer-top">
-            <div>
-                <a href="#" class="logo-block">
-                    <div class="logo-box"></div> Spindice
-                </a>
-                <p class="footer-desc">Build operational tracking internal frameworks smoothly without technical development overhead metrics.</p>
-            </div>
-            <div class="footer-column">
-                <h4>Products</h4>
-                <ul>
-                    <li><a href="#">Features</a></li>
-                    <li><a href="#">Integrations</a></li>
-                    <li><a href="#">Pricing Metrics</a></li>
-                </ul>
-            </div>
-            <div class="footer-column">
-                <h4>Company</h4>
-                <ul>
-                    <li><a href="#">About Identity</a></li>
-                    <li><a href="#">Careers</a></li>
-                    <li><a href="#">Contact Desk</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <span>&copy; 2026 Spindice Corp. All platform operational rights preserved.</span>
-            <span>Security Framework: SOC2 Compliant Matrix</span>
-        </div>
-    </footer>
-
-    <!-- INTERACTIVE SCRIPT SYSTEM -->
+    <!-- GSAP LOGIC CONTROLLER SCRIPT -->
     <script>
-        /* ==========================================================================
-           1. TYPEWRITER HEADING ANIMATION ENGINE
-           ========================================================================== */
-        const wordsArray = ["one platform", "structured code", "live analytics"];
-        let mainWordIndex = 0;
-        let characterIndex = 0;
-        let isDeletingCharacter = false;
-        const typewriterTargetElement = document.getElementById("typewriter-target");
+        // Register GSAP Scrolling Plugins
+        gsap.registerPlugin(ScrollTrigger);
 
-        function processTypewriterLoop() {
-            const currentFullWord = wordsArray[mainWordIndex];
-            
-            if (isDeletingCharacter) {
-                typewriterTargetElement.innerText = currentFullWord.substring(0, characterIndex - 1);
-                characterIndex--;
+        /* ==========================================================================
+           1. TYPEWRITER EFFECT
+           ========================================================================== */
+        const textArray = ["one platform", "structured infrastructure", "live dashboards"];
+        let textIndex = 0, charIndex = 0, isDeleting = false;
+        const targetElement = document.getElementById("typewriter");
+
+        function typeLoop() {
+            let currentString = textArray[textIndex];
+            if (isDeleting) {
+                targetElement.innerText = currentString.substring(0, charIndex - 1);
+                charIndex--;
             } else {
-                typewriterTargetElement.innerText = currentFullWord.substring(0, characterIndex + 1);
-                characterIndex++;
+                targetElement.innerText = currentString.substring(0, charIndex + 1);
+                charIndex++;
             }
 
-            let calculatedPacingSpeed = isDeletingCharacter ? 40 : 90;
-
-            if (!isDeletingCharacter && characterIndex === currentFullWord.length) {
-                calculatedPacingSpeed = 2000; // Delay duration while word is fully displayed
-                isDeletingCharacter = true;
-            } else if (isDeletingCharacter && characterIndex === 0) {
-                isDeletingCharacter = false;
-                mainWordIndex = (mainWordIndex + 1) % wordsArray.length;
-                calculatedPacingSpeed = 400; // Short transitional break before starting new word
+            let typeSpeed = isDeleting ? 40 : 100;
+            if (!isDeleting && charIndex === currentString.length) {
+                typeSpeed = 2000;
+                isDeleting = true;
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                textIndex = (textIndex + 1) % textArray.length;
+                typeSpeed = 500;
             }
-
-            setTimeout(processTypewriterLoop, calculatedPacingSpeed);
+            setTimeout(typeLoop, typeSpeed);
         }
-        // Initiate processing loop on structural payload initialization
-        document.addEventListener("DOMContentLoaded", () => setTimeout(processTypewriterLoop, 800));
+        document.addEventListener("DOMContentLoaded", () => setTimeout(typeLoop, 500));
 
         /* ==========================================================================
-           2. INTERACTIVE DASHBOARD SEQUENCE CONTROLLER
+           2. INTERACTIVE CANVAS CONNECTORS
            ========================================================================== */
-        function switchMockNode(nodeIndex) {
-            document.querySelectorAll('.dash-nav-item').forEach((item, idx) => {
-                item.classList.toggle('active', idx === nodeIndex);
-            });
-            document.querySelectorAll('.node-box').forEach((box, idx) => {
-                box.classList.toggle('active', idx === nodeIndex);
-            });
-        }
-
-        /* ==========================================================================
-           3. SCROLL INTERSECTION OBSERVER FOR STAGGERED REVEALS
-           ========================================================================== */
-        const elementScrollObserver = new IntersectionObserver((detectedEntries) => {
-            detectedEntries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('revealed');
-                    
-                    // Trigger tracking chart animations automatically upon section entrance
-                    if (entry.target.id === 'counters-trigger-zone' || entry.target.contains(document.getElementById('counters-trigger-zone'))) {
-                        executeNumericalCounters();
-                    }
-                }
-            });
-        }, { threshold: 0.15 });
-
-        document.querySelectorAll('.reveal-on-scroll').forEach(el => elementScrollObserver.observe(el));
-
-        /* ==========================================================================
-           4. DATA METRICS AND CHART PROGRESSION ENGINE
-           ========================================================================== */
-        let countersExecutedFlag = false;
-        function executeNumericalCounters() {
-            if (countersExecutedFlag) return;
-            countersExecutedFlag = true;
-
-            // Animate structural bar charts
-            document.querySelectorAll('.bar-chart-fill').forEach(bar => {
-                bar.style.width = bar.getAttribute('data-width');
-            });
-
-            // Animate numerical counters
-            document.querySelectorAll('.metric-value').forEach(metric => {
-                const targetLimitValue = parseInt(metric.getAttribute('data-target'));
-                let runningCurrentValue = 0;
-                const progressTicks = setInterval(() => {
-                    runningCurrentValue += 1;
-                    metric.innerText = runningCurrentValue + '%';
-                    if (runningCurrentValue >= targetLimitValue) {
-                        metric.innerText = targetLimitValue + '%';
-                        clearInterval(progressTicks);
-                    }
-                }, 20);
-            });
-        }
-
-        /* ==========================================================================
-           5. MEMBERSHIP RATIO FREQUENCY CONVERTER
-           ========================================================================== */
-        function togglePricingFrequencies() {
-            const isYearlyChecked = document.getElementById('pricing-checkbox').checked;
-            const starterPriceElement = document.getElementById('price-starter');
-            const growthPriceElement = document.getElementById('price-growth');
+        function triggerPipelineStep(stepIndex) {
+            document.querySelectorAll('.side-node').forEach((n, idx) => n.classList.toggle('active', idx === stepIndex));
+            document.querySelectorAll('.live-node-box').forEach((b, idx) => b.classList.toggle('active', idx === stepIndex));
             
-            document.getElementById('label-monthly').classList.toggle('active', !isYearlyChecked);
-            document.getElementById('label-yearly').classList.toggle('active', isYearlyChecked);
+            // Toggle active path stroke metrics
+            document.getElementById('path-1').classList.toggle('active-path', stepIndex >= 1);
+            document.getElementById('path-2').classList.toggle('active-path', stepIndex >= 2);
+        }
+        // Auto-cycle timeline for live visual effects
+        let step = 0;
+        setInterval(() => { step = (step + 1) % 3; triggerPipelineStep(step); }, 4000);
 
-            if (isYearlyChecked) {
-                starterPriceElement.innerHTML = "$23<span>/mo billed annually</span>";
-                growthPriceElement.innerHTML = "$63<span>/mo billed annually</span>";
-            } else {
-                starterPriceElement.innerHTML = "$29<span>/mo</span>";
-                growthPriceElement.innerHTML = "$79<span>/mo</span>";
+        /* ==========================================================================
+           3. SCROLL TRIGGER ANIMATION PACKS (GSAP STAGGER)
+           ========================================================================== */
+        gsap.to(".matrix-tile", {
+            opacity: 1, y: 0, duration: 1, ease: "power4.out", stagger: 0.2,
+            scrollTrigger: { trigger: ".feature-matrix", start: "top 80%" }
+        });
+
+        gsap.to(".tier-box", {
+            opacity: 1, y: 0, duration: 1, ease: "power4.out", stagger: 0.2,
+            scrollTrigger: { trigger: ".price-layout", start: "top 85%" }
+        });
+
+        /* ==========================================================================
+           4. NUMERICAL RUNNER + SVG PROGRESS WHEEL
+           ========================================================================== */
+        ScrollTrigger.create({
+            trigger: "#scroll-stats-trigger",
+            start: "top 80%",
+            onEnter: () => {
+                // Bar Chart Growth
+                document.getElementById('fill-bar-1').style.transition = "width 2s cubic-bezier(0.16, 1, 0.3, 1)";
+                document.getElementById('fill-bar-1').style.width = "89%";
+
+                // Radial Offset Math Calculation
+                let strokeOffsetValue = 226 - (226 * 82) / 100;
+                let circleFillElement = document.getElementById('radial-fill-circle');
+                circleFillElement.style.transition = "stroke-dashoffset 2s cubic-bezier(0.16, 1, 0.3, 1)";
+                circleFillElement.style.strokeDashoffset = strokeOffsetValue;
+
+                // Animate Text Counters
+                animateTextCounterValue("count-1", 89);
+                animateTextCounterValue("count-2", 82);
             }
+        });
+
+        function animateTextCounterValue(id, target) {
+            let el = document.getElementById(id);
+            let current = 0;
+            let stepTimer = setInterval(() => {
+                current++;
+                el.innerText = current + "%";
+                if (current >= target) clearInterval(stepTimer);
+            }, 20);
         }
 
         /* ==========================================================================
-           6. ACCORDION ACCORD ENGINE
+           5. INTERACTIVE PRICING MATRIX FREQUENCY SHIFT
            ========================================================================== */
-        function toggleFaqAccordion(clickedTriggerButton) {
-            const targetParentNode = clickedTriggerButton.parentNode;
-            const targetedContentContainer = targetParentNode.querySelector('.faq-content');
-            const isAlreadyOpen = targetParentNode.classList.contains('open');
+        function switchRates() {
+            const toggleState = document.getElementById('pricing-engine-toggle').checked;
+            document.getElementById('lbl-month').classList.toggle('active', !toggleState);
+            document.getElementById('lbl-year').classList.toggle('active', toggleState);
 
-            // Close all open sibling tracks
-            document.querySelectorAll('.faq-node').forEach(node => {
-                node.classList.remove('open');
-                node.querySelector('.faq-content').style.maxHeight = null;
-            });
+            const starterNode = document.getElementById('price-starter');
+            const growthNode = document.getElementById('price-growth');
 
-            if (!isAlreadyOpen) {
-                targetParentNode.classList.add('open');
-                targetedContentContainer.style.maxHeight = targetedContentContainer.scrollHeight + "px";
+            if (toggleState) {
+                starterNode.innerHTML = "$23<span>/mo billed annually</span>";
+                growthNode.innerHTML = "$63<span>/mo billed annually</span>";
+            } else {
+                starterNode.innerHTML = "$29<span>/mo</span>";
+                growthNode.innerHTML = "$79<span>/mo</span>";
             }
         }
     </script>
