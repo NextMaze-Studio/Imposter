@@ -4,34 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Legend's Gym | Sculpt Your Body, Elevate Your Spirit</title>
+    <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* --- THEME VARIABLES (Electric Cyan/Blue Shift) --- */
+        /* --- BRAND CONFIGURATION & SYSTEM VARIABLES --- */
         :root {
-            --primary-blue: #c2f900; /* Replaced with crisp neon cyan-blue below */
             --neon-blue: #00f0ff;
-            --dark-blue: #0072ff;
-            --bg-dark: #07080a;
-            --card-glass: rgba(20, 24, 33, 0.65);
-            --card-border: rgba(0, 240, 255, 0.25);
-            --text-glow: rgba(0, 240, 255, 0.4);
+            --electric-blue: #0072ff;
+            --bg-deep: #060709;
+            --glass-card: rgba(18, 22, 31, 0.75);
+            --border-glow: rgba(0, 240, 255, 0.25);
+            --text-muted: #8e96a7;
+            --transition-smooth: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Arial, sans-serif;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
             scroll-behavior: smooth;
         }
 
         body {
-            background-color: var(--bg-dark);
+            background-color: var(--bg-deep);
             color: #ffffff;
             overflow-x: hidden;
         }
 
-        /* --- NAVIGATION --- */
+        /* --- GLOBAL LAYOUT UTILITIES --- */
+        section {
+            padding: 120px 8% 80px 8%;
+            min-height: 100vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+            z-index: 10;
+        }
+
+        .section-header h2 {
+            font-size: 46px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+        }
+
+        .section-header h2 span { color: var(--neon-blue); }
+
+        /* --- FIXED BACKGROUND INTERACTIVE CANVAS --- */
+        #ambient-particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.4;
+        }
+
+        /* --- STICKY NAVIGATION --- */
         header {
             display: flex;
             justify-content: space-between;
@@ -41,23 +79,29 @@
             width: 100%;
             top: 0;
             z-index: 1000;
-            background: linear-gradient(to bottom, rgba(7,8,10,0.8), rgba(7,8,10,0));
-            backdrop-filter: blur(4px);
+            transition: var(--transition-smooth);
+            background: linear-gradient(to bottom, rgba(6,7,9,0.9), rgba(6,7,9,0));
+        }
+
+        header.sticky-active {
+            background: rgba(6, 7, 9, 0.95);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 15px 6%;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.1);
         }
 
         .logo {
             font-size: 24px;
             font-weight: 900;
-            letter-spacing: -0.5px;
             display: flex;
             align-items: center;
-            gap: 8px;
-            color: #fff;
+            gap: 10px;
+            color: #ffffff;
             text-decoration: none;
         }
-
         .logo span { color: var(--neon-blue); }
-        .logo i { color: var(--neon-blue); font-size: 20px; }
+        .logo i { color: var(--neon-blue); }
 
         nav ul {
             display: flex;
@@ -66,384 +110,786 @@
         }
 
         nav ul li a {
-            color: #8a92a6;
+            color: var(--text-muted);
             text-decoration: none;
             font-size: 13px;
             font-weight: 600;
             letter-spacing: 0.5px;
-            transition: 0.3s;
+            text-transform: uppercase;
+            transition: var(--transition-smooth);
         }
 
-        nav ul li a:hover, nav ul li a.active {
+        nav ul li a:hover, nav ul li a.nav-active {
             color: #ffffff;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
         }
 
-        .nav-buttons {
-            display: flex;
-            gap: 12px;
-        }
-
-        .btn-contact {
+        .header-actions { display: flex; gap: 15px; }
+        
+        .btn-ui-accent {
             background-color: var(--neon-blue);
             color: #000000;
-            padding: 10px 22px;
-            border-radius: 20px;
+            padding: 10px 24px;
+            border-radius: 25px;
             text-decoration: none;
             font-weight: 700;
             font-size: 13px;
-            transition: 0.3s ease;
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+            transition: var(--transition-smooth);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.25);
         }
 
-        .btn-contact:hover {
+        .btn-ui-accent:hover {
             background-color: #ffffff;
-            box-shadow: 0 0 25px rgba(255, 255, 255, 0.5);
-            transform: translateY(-1px);
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.6);
+            transform: translateY(-2px);
         }
 
-        .btn-started {
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: #ffffff;
-            padding: 10px 22px;
-            border-radius: 20px;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 13px;
-            transition: 0.3s;
-        }
-
-        .btn-started:hover {
-            border-color: var(--neon-blue);
-            color: var(--neon-blue);
-        }
-
-        /* --- HERO CANVAS VIEW --- */
+        /* --- HERO VIEWPORT (Direct image_81f264.jpg Blueprint Transformation) --- */
         .hero {
-            position: relative;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             padding: 0 6%;
-            background: radial-gradient(circle at 50% 50%, rgba(0, 114, 255, 0.1) 0%, rgba(7, 8, 10, 1) 80%);
-            overflow: hidden;
+            background: radial-gradient(circle at 50% 50%, rgba(0, 114, 255, 0.12) 0%, rgba(6, 7, 9, 1) 80%);
+            z-index: 2;
         }
 
-        /* Vertical Trim Indicators */
-        .side-tag {
+        /* Absolute Vertical Sidebar Anchors */
+        .sidebar-tag {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
             display: flex;
             flex-direction: column;
-            gap: 18px;
-            color: rgba(255, 255, 255, 0.2);
+            gap: 20px;
+            color: rgba(255, 255, 255, 0.15);
             font-weight: 700;
-            letter-spacing: 2px;
-            font-size: 15px;
+            letter-spacing: 5px;
+            font-size: 14px;
             user-select: none;
             z-index: 10;
         }
-        .side-tag.prev { left: 4%; }
-        .side-tag.next { right: 4%; }
-        .side-tag span { writing-mode: vertical-rl; text-orientation: upright; }
+        .sidebar-tag.prev { left: 4%; }
+        .sidebar-tag.next { right: 4%; }
+        .sidebar-tag span { writing-mode: vertical-rl; text-orientation: upright; }
 
-        .hero-viewport {
+        .hero-wrapper {
             position: relative;
             width: 100%;
             max-width: 1200px;
-            height: 85vh;
+            height: 90vh;
+            margin: 80px auto 0 auto;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            margin-top: 80px;
         }
 
-        /* Exact Typography Styling Layout */
-        .hero-headline {
+        /* Exact Typography Re-creation */
+        .hero-title {
             text-align: center;
-            font-size: 72px;
-            font-weight: 800;
+            font-size: 76px;
+            font-weight: 900;
             line-height: 1.05;
             z-index: 10;
-            margin-top: 15px;
-            letter-spacing: -0.5px;
-            color: #f4f6fa;
+            margin-top: 30px;
+            letter-spacing: -1px;
+            color: #f8fafc;
         }
+        .hero-title span { color: #f8fafc; }
+        .hero-title .blend-word { color: rgba(255,255,255,0.85); }
 
-        .hero-headline span {
-            color: #e2e8f0;
-        }
-        .hero-headline .accent-word {
-            color: #d1f73c; /* Keeps slight contrast blend like image */
-            color: rgba(255,255,255,0.9);
-            text-shadow: 0 0 1px rgba(0,0,0,0.5);
-        }
-        
-        /* High-contrast Central Athlete Image Layer */
-        .athlete-backdrop {
+        /* Crisp High-Contrast Athlete Centerpiece Layer */
+        .centerpiece-athlete {
             position: absolute;
-            bottom: -20px;
+            bottom: 0;
             left: 50%;
             transform: translateX(-50%);
-            height: 90%;
+            height: 85%;
             z-index: 2;
-            opacity: 0.78;
+            opacity: 0.8;
             pointer-events: none;
-            /* Replicates ultra-sharp dramatic lighting profile */
-            filter: grayscale(100%) contrast(125%) brightness(95%);
+            filter: grayscale(100%) contrast(125%) brightness(90%);
         }
 
-        /* Exact Angled Glassmorphic Stat Pill Cards from image */
-        .angled-card {
+        /* True-to-Image Angled Micro-Dash Glass Panels with Parallax Handles */
+        .live-pill-card {
             position: absolute;
-            background: var(--card-glass);
-            border: 1px solid var(--card-border);
+            background: var(--glass-card);
+            border: 1px solid var(--border-glow);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            padding: 16px 20px;
+            padding: 18px;
             border-radius: 24px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-width: 115px;
-            height: 115px;
+            width: 120px;
+            height: 120px;
             z-index: 5;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255,255,255,0.1);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.75), inset 0 1px 2px rgba(255,255,255,0.15);
+            transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
-        /* Exact card tilts matches source mockup template precisely */
-        .card-1 { top: 32%; left: 23%; transform: rotate(-8deg); }
-        .card-2 { top: 32%; right: 23%; transform: rotate(8deg); }
-        .card-3 { bottom: 24%; left: 21%; transform: rotate(-6deg); }
-        .card-4 { bottom: 24%; right: 21%; transform: rotate(6deg); }
+        /* Precision Alignment Rotation Matrix mapped from image_81f264.jpg */
+        .p-1 { top: 34%; left: 22%; transform: rotate(-8deg); }
+        .p-2 { top: 34%; right: 22%; transform: rotate(8deg); }
+        .p-3 { bottom: 22%; left: 20%; transform: rotate(-6deg); }
+        .p-4 { bottom: 22%; right: 20%; transform: rotate(6deg); }
 
-        .angled-card:hover {
-            transform: scale(1.08) rotate(0deg);
-            border-color: var(--neon-blue);
-            box-shadow: 0 0 25px rgba(0, 240, 255, 0.3);
-        }
-
-        .angled-card i {
+        .live-pill-card i {
             color: var(--neon-blue);
-            font-size: 24px;
+            font-size: 26px;
             margin-bottom: 6px;
-            filter: drop-shadow(0 0 8px var(--text-glow));
+            filter: drop-shadow(0 0 10px rgba(0, 240, 255, 0.5));
         }
+        .live-pill-card .lbl { font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
+        .live-pill-card .val { font-size: 22px; font-weight: 800; color: #ffffff; margin-top: 2px; }
 
-        .angled-card .metric-label {
-            font-size: 12px;
-            color: #a0aec0;
-            font-weight: 500;
-        }
-
-        .angled-card .metric-value {
-            font-size: 20px;
-            font-weight: 800;
-            color: #ffffff;
-            margin-top: 1px;
-        }
-
-        /* --- LOWER LAYER ACTIONS --- */
-        .hero-base-row {
+        /* Hero Execution Footer Bar */
+        .hero-footer-bar {
             width: 100%;
             display: flex;
             justify-content: space-between;
             align-items: center;
             z-index: 10;
-            padding: 0 15px 25px 15px;
+            padding-bottom: 40px;
         }
 
-        /* Left Side Profile Proof Grouping */
-        .social-proof-group {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
-        .avatar-stack {
-            display: flex;
-        }
-
+        .social-proof-wrapper { display: flex; align-items: center; gap: 15px; }
+        .avatar-row { display: flex; }
         .avatar-node {
-            width: 38px;
-            height: 38px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            border: 2px solid var(--bg-dark);
-            margin-right: -10px;
+            border: 2px solid var(--bg-deep);
+            margin-right: -12px;
             background-size: cover;
             background-position: center;
-            background-color: #1a202c;
         }
 
-        .proof-caption {
-            display: flex;
-            flex-direction: column;
-            line-height: 1.2;
-        }
+        .proof-info-meta .num-head { font-size: 24px; font-weight: 900; color: #fff; display: block; }
+        .proof-info-meta .sub-head { font-size: 12px; color: var(--text-muted); font-weight: 500; }
 
-        .proof-caption .headline-count {
-            font-size: 22px;
-            font-weight: 800;
-            color: #fff;
-        }
-
-        .proof-caption .sub-label {
-            font-size: 12px;
-            color: #718096;
-            font-weight: 500;
-        }
-
-        /* Right Side Highlight Let's Start Action Button */
-        .action-pulse-btn {
+        .cta-trigger-btn {
             background-color: var(--neon-blue);
             color: #000000;
-            padding: 16px 32px;
-            border-radius: 28px;
+            padding: 16px 36px;
+            border-radius: 30px;
             text-decoration: none;
-            font-weight: 700;
+            font-weight: 800;
             font-size: 14px;
             display: flex;
             align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 20px rgba(0, 240, 255, 0.35);
-            transition: all 0.3s ease;
+            gap: 10px;
+            box-shadow: 0 8px 30px rgba(0, 240, 255, 0.35);
+            transition: var(--transition-smooth);
         }
-
-        .action-pulse-btn:hover {
+        .cta-trigger-btn:hover {
             background-color: #ffffff;
-            box-shadow: 0 4px 25px rgba(255, 255, 255, 0.5);
-            transform: translateY(-2px);
+            box-shadow: 0 8px 35px rgba(255, 255, 255, 0.5);
+            transform: translateY(-3px);
         }
 
-        .action-pulse-btn i {
-            font-size: 11px;
-            transition: 0.2s;
+        /* --- FEATURES SECTION --- */
+        .features-matrix {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            z-index: 10;
         }
+
+        .feature-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 24px;
+            padding: 50px 40px;
+            transition: var(--transition-smooth);
+        }
+        .feature-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--border-glow);
+            background: rgba(0, 240, 255, 0.01);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        .feature-card i { font-size: 44px; color: var(--neon-blue); margin-bottom: 30px; }
+        .feature-card h3 { font-size: 24px; margin-bottom: 15px; font-weight: 800; }
+        .feature-card p { color: var(--text-muted); font-size: 15px; line-height: 1.7; }
+
+        /* --- SCHEDULE SECTION (Interactive Filter Module) --- */
+        .day-filter-rail {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 50px;
+            z-index: 10;
+        }
+
+        .filter-node {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: #fff;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+        .filter-node.active, .filter-node:hover {
+            background: var(--neon-blue);
+            color: #000;
+            border-color: var(--neon-blue);
+            box-shadow: 0 5px 20px rgba(0, 240, 255, 0.3);
+        }
+
+        .schedule-display-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 25px;
+            z-index: 10;
+            min-height: 160px;
+        }
+
+        .timetable-row-card {
+            background: var(--glass-card);
+            border: 1px solid rgba(255,255,255,0.03);
+            border-radius: 20px;
+            padding: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition-smooth);
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        .timetable-row-card:hover { border-color: var(--border-glow); transform: scale(1.02); }
+        .class-meta h4 { font-size: 20px; margin-bottom: 6px; font-weight: 800; }
+        .class-meta p { color: var(--text-muted); font-size: 14px; }
+        .class-timestamp {
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            color: var(--neon-blue);
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 13px;
+        }
+
+        /* --- MEMBERSHIP PLANS (Interactive Dynamic Switch) --- */
+        .toggle-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 60px;
+            z-index: 10;
+            font-weight: 700;
+        }
+        .switch-track {
+            position: relative; display: inline-block; width: 64px; height: 36px;
+        }
+        .switch-track input { opacity: 0; width: 0; height: 0; }
+        .switch-slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            transition: .4s; border-radius: 34px;
+        }
+        .switch-slider:before {
+            position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px;
+            background-color: var(--neon-blue); transition: .4s; border-radius: 50%;
+            box-shadow: 0 0 10px var(--neon-blue);
+        }
+        input:checked + .switch-slider:before { transform: translateX(28px); }
+
+        .plans-matrix {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 35px;
+            max-width: 1050px;
+            margin: 0 auto;
+            width: 100%;
+            z-index: 10;
+        }
+
+        .tier-card {
+            background: var(--glass-card);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 28px;
+            padding: 60px 45px;
+            text-align: center;
+            position: relative;
+            transition: var(--transition-smooth);
+        }
+        .tier-card.featured-tier {
+            border-color: var(--neon-blue);
+            background: linear-gradient(180deg, rgba(0,240,255,0.03) 0%, rgba(6,7,9,1) 100%);
+            transform: scale(1.04);
+        }
+        .tier-badge {
+            position: absolute; top: 25px; right: 25px;
+            background: var(--neon-blue); color: #000;
+            padding: 6px 14px; font-size: 11px; font-weight: 800; border-radius: 30px;
+        }
+        .tier-card h3 { font-size: 26px; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .tier-card .price-display { font-size: 58px; font-weight: 900; margin-bottom: 35px; }
+        .tier-card .price-display span { font-size: 16px; color: var(--text-muted); font-weight: 400; }
         
-        .action-pulse-btn:hover i {
-            transform: translateX(3px);
+        .tier-features { list-style: none; margin-bottom: 45px; text-align: left; }
+        .tier-features li { margin-bottom: 18px; color: var(--text-muted); display: flex; gap: 12px; align-items: center; font-size: 15px; }
+        .tier-features li i { color: var(--neon-blue); font-size: 16px; }
+
+        .btn-tier-action {
+            display: block; width: 100%; background: none; border: 1px solid rgba(255,255,255,0.15);
+            color: #fff; padding: 16px; border-radius: 35px; font-weight: 700; text-decoration: none;
+            transition: var(--transition-smooth);
+        }
+        .tier-card.featured-tier .btn-tier-action, .btn-tier-action:hover {
+            background: var(--neon-blue); color: #000; border-color: var(--neon-blue);
+            box-shadow: 0 6px 20px rgba(0, 240, 255, 0.25);
         }
 
-        /* --- RESPONSIVE SCALING HANDLERS --- */
-        @media (max-width: 1150px) {
-            .hero-headline { font-size: 54px; }
-            .card-1 { left: 14%; } .card-2 { right: 14%; }
-            .card-3 { left: 12%; } .card-4 { right: 12%; }
+        /* --- CONTACT INFRASTRUCTURE --- */
+        .contact-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            max-width: 1100px;
+            margin: 0 auto;
+            width: 100%;
+            z-index: 10;
+        }
+        .contact-details h3 { font-size: 36px; margin-bottom: 20px; font-weight: 800; }
+        .contact-details p { color: var(--text-muted); margin-bottom: 45px; line-height: 1.7; font-size: 16px; }
+        
+        .meta-row { display: flex; gap: 20px; margin-bottom: 30px; align-items: center; }
+        .meta-row i { width: 54px; height: 54px; background: rgba(0,240,255,0.03); border: 1px solid var(--border-glow); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: var(--neon-blue); font-size: 22px; }
+
+        .interactive-form { display: flex; flex-direction: column; gap: 20px; }
+        .input-node-wrapper input, .input-node-wrapper textarea {
+            width: 100%; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08);
+            padding: 18px; border-radius: 12px; color: #fff; outline: none; transition: var(--transition-smooth); font-size: 15px;
+        }
+        .input-node-wrapper input:focus, .input-node-wrapper textarea:focus { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0,240,255,0.15); }
+        .btn-submit-form { background: var(--neon-blue); color: #000; padding: 18px; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; transition: var(--transition-smooth); text-transform: uppercase; letter-spacing: 0.5px; }
+        .btn-submit-form:hover { background: #ffffff; transform: translateY(-2px); }
+
+        /* --- CSS ANIMATION KEYFRAMES --- */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        @media (max-width: 850px) {
+        /* --- SYSTEM RESPONSIVE SCALING ADAPTERS --- */
+        @media (max-width: 1200px) {
+            .hero-title { font-size: 58px; }
+            .p-1 { left: 12%; } .p-2 { right: 12%; }
+            .p-3 { left: 10%; } .p-4 { right: 10%; }
+        }
+
+        @media (max-width: 880px) {
             header { padding: 20px 4%; }
-            nav, .nav-buttons, .side-tag { display: none; }
-            .hero-headline { font-size: 40px; margin-top: 40px; }
-            .athlete-backdrop { height: 65%; bottom: 60px; }
+            nav, .header-actions, .sidebar-tag { display: none; }
+            section { padding: 100px 4% 60px 4%; }
+            .hero-title { font-size: 42px; margin-top: 50px; }
+            .centerpiece-athlete { height: 60%; bottom: 80px; }
             
-            /* Snap floating cards into grid for clear view on mobile devices */
-            .mobile-snapped-grid {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 15px;
-                margin-top: 40px;
-                z-index: 10;
-                width: 100%;
-                padding: 0 10px;
+            .mobile-cards-grid {
+                display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 50px; z-index: 10; width: 100%;
             }
-            .angled-card {
-                position: static !important;
-                transform: none !important;
-                height: 100px;
-                width: 100%;
-            }
-            .hero-base-row { flex-direction: column; gap: 25px; text-align: center; }
-            .social-proof-group { justify-content: center; }
+            .live-pill-card { position: static !important; transform: none !important; width: 100%; height: 110px; }
+            .hero-wrapper { height: auto; gap: 40px; }
+            .hero-footer-bar { flex-direction: column; gap: 30px; text-align: center; }
+            .social-proof-wrapper { justify-content: center; }
+            .contact-layout { grid-template-columns: 1fr; gap: 40px; }
+            .tier-card.featured-tier { transform: scale(1); }
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <a href="#" class="logo">
+    <!-- LAYER 0: ANIMATED FLUID CANVAS BACKDROP -->
+    <canvas id="ambient-particle-canvas"></canvas>
+
+    <!-- LAYER 1: BRAND FIXED HEADER SYSTEM -->
+    <header id="navbar-fixed">
+        <a href="#home" class="logo">
             <i class="fa-solid fa-bolt"></i> LEGEND'S<span>GYM</span>
         </a>
         <nav>
             <ul>
-                <li><a href="#" class="active">Home</a></li>
-                <li><a href="#">About</a></li>
-                <li><a href="#">Features</a></li>
-                <li><a href="#">Service</a></li>
-                <li><a href="#">Exercise</a></li>
+                <li><a href="#home" class="nav-target active-nav">Home</a></li>
+                <li><a href="#features" class="nav-target">Features</a></li>
+                <li><a href="#schedule" class="nav-target">Schedule</a></li>
+                <li><a href="#pricing" class="nav-target">Pricing</a></li>
             </ul>
         </nav>
-        <div class="nav-buttons">
-            <a href="#" class="btn-contact">Contact Us</a>
-            <a href="#" class="btn-started">Get Started</a>
+        <div class="header-actions">
+            <a href="#contact" class="btn-ui-accent">Concierge Access</a>
         </div>
     </header>
 
-    <section class="hero">
-        <div class="side-tag prev"><span>P</span><span>R</span><span>E</span><span>V</span></div>
-        <div class="side-tag next"><span>N</span><span>E</span><span>X</span><span>T</span></div>
+    <!-- LAYER 2: HERO INTERACTIVE DASHBOARD SECTION -->
+    <section id="home" class="hero">
+        <div class="sidebar-tag prev"><span>P</span><span>R</span><span>E</span><span>V</span></div>
+        <div class="sidebar-tag next"><span>N</span><span>E</span><span>X</span><span>T</span></div>
 
-        <div class="hero-viewport">
-            <h1 class="hero-headline">
-                Sculpt <span class="accent-word">Your</span> Body,<br><span>Elevate Your Spirit</span>
+        <div class="hero-wrapper">
+            <h1 class="hero-title">
+                Sculpt <span class="blend-word">Your</span> Body,<br><span>Elevate Your Spirit</span>
             </h1>
 
-            <img class="athlete-backdrop" src="https://images.unsplash.com/photo-1574680096145-d05b474e2155?q=80&w=1200&auto=format&fit=crop" alt="High contrast athlete graphic element mapping layout composition">
+            <!-- Image mapping setup mimicking high-contrast dark visual framework from mockup image -->
+            <img class="centerpiece-athlete" src="https://images.unsplash.com/photo-1574680096145-d05b474e2155?q=80&w=1200&auto=format&fit=crop" alt="image_81f264.jpg visual background matching profile">
 
-            <div class="mobile-snapped-grid">
-                <div class="angled-card card-1">
+            <!-- Floating 3D/Parallax Enabled Analytical Dashboard Badges -->
+            <div class="mobile-cards-grid">
+                <div class="live-pill-card p-1" data-parallax-speed="1.5">
                     <i class="fa-regular fa-clock"></i>
-                    <span class="metric-label">Hours</span>
-                    <span class="metric-value">1.5</span>
+                    <span class="lbl">Hours</span>
+                    <span class="val" data-count-target="1.5">0.0</span>
                 </div>
 
-                <div class="angled-card card-2">
+                <div class="live-pill-card p-2" data-parallax-speed="-1.2">
                     <i class="fa-solid fa-person-running"></i>
-                    <span class="metric-label">Poses</span>
-                    <span class="metric-value">20</span>
+                    <span class="lbl">Poses</span>
+                    <span class="val" data-count-target="20">0</span>
                 </div>
 
-                <div class="angled-card card-3">
+                <div class="live-pill-card p-3" data-parallax-speed="-1.8">
                     <i class="fa-solid fa-fire-flame-simple"></i>
-                    <span class="metric-label">Kcal</span>
-                    <span class="metric-value">550</span>
+                    <span class="lbl">Kcal</span>
+                    <span class="val" data-count-target="550">0</span>
                 </div>
 
-                <div class="angled-card card-4">
+                <div class="live-pill-card p-4" data-parallax-speed="1.3">
                     <i class="fa-solid fa-dumbbell"></i>
-                    <span class="metric-label">Sets</span>
-                    <span class="metric-value">5</span>
+                    <span class="lbl">Sets</span>
+                    <span class="val" data-count-target="5">0</span>
                 </div>
             </div>
 
-            <div class="hero-base-row">
-                <div class="social-proof-group">
-                    <div class="avatar-stack">
-                        <div class="avatar-node" style="background-image: url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&auto=format&fit=crop&q=60');"></div>
-                        <div class="avatar-node" style="background-image: url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&auto=format&fit=crop&q=60');"></div>
-                        <div class="avatar-node" style="background-image: url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&auto=format&fit=crop&q=60');"></div>
+            <!-- Lower Action Row Toolbar -->
+            <div class="hero-footer-bar">
+                <div class="social-proof-wrapper">
+                    <div class="avatar-row">
+                        <div class="avatar-node" style="background-image: url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=60');"></div>
+                        <div class="avatar-node" style="background-image: url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=60');"></div>
+                        <div class="avatar-node" style="background-image: url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=60');"></div>
                     </div>
-                    <div class="proof-caption">
-                        <span class="headline-count">12k+</span>
-                        <span class="sub-label">Happy Spirits</span>
+                    <div class="proof-info-meta">
+                        <span class="num-head">12k+</span>
+                        <span class="sub-head">Happy Spirits</span>
                     </div>
                 </div>
 
-                <a href="#" class="action-pulse-btn">
+                <a href="#pricing" class="cta-trigger-btn">
                     Let's Start 
-                    <span style="display: flex; align-items:center; margin-left:4px;">
+                    <span style="display:flex; align-items:center; margin-left:6px; letter-spacing:-2px;">
                         <i class="fa-solid fa-chevron-right"></i>
-                        <i class="fa-solid fa-chevron-right" style="opacity: 0.5;"></i>
-                        <i class="fa-solid fa-chevron-right" style="opacity: 0.2;"></i>
+                        <i class="fa-solid fa-chevron-right" style="opacity:0.5"></i>
+                        <i class="fa-solid fa-chevron-right" style="opacity:0.2"></i>
                     </span>
                 </a>
             </div>
         </div>
     </section>
 
+    <!-- LAYER 3: FEATURE ARCHITECTURE FREEWEIGHT / TRACKING -->
+    <section id="features">
+        <div class="section-header">
+            <h2>Why Elite <span>Legends</span> Train Here</h2>
+        </div>
+        <div class="features-matrix">
+            <div class="feature-card">
+                <i class="fa-solid fa-heart-pulse"></i>
+                <h3>Cardio Matrix Area</h3>
+                <p>Fully networked intelligent tracking running machines engineered with instant customized heart monitoring docks.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fa-solid fa-weight-hanging"></i>
+                <h3>Olympic Free Iron</h3>
+                <p>Heavy-duty impact zones boasting structural pro dumbbells climbing flawlessly to 150lb thresholds.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fa-solid fa-user-shield"></i>
+                <h3>Biometric Mentorship</h3>
+                <p>Elite personal sports coaches creating bespoke fitness roadmaps built strictly around your metabolic parameters.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- LAYER 4: LIVE WORKOUT CALENDAR & SCHEDULING MODULE -->
+    <section id="schedule">
+        <div class="section-header">
+            <h2>Weekly Workout <span>Schedules</span></h2>
+        </div>
+        <div class="day-filter-rail">
+            <button class="filter-node active" onclick="switchDayView('mon', this)">Monday</button>
+            <button class="filter-node" onclick="switchDayView('tue', this)">Tuesday</button>
+            <button class="filter-node" onclick="switchDayView('wed', this)">Wednesday</button>
+        </div>
+        <div class="schedule-display-grid" id="schedule-render-target">
+            <!-- Dynamic UI components injected smoothly via JavaScript engine below -->
+        </div>
+    </section>
+
+    <!-- LAYER 5: INTERACTIVE CONVERTIBLE SUBSCRIPTION CARDS -->
+    <section id="pricing">
+        <div class="section-header">
+            <h2>Select Your <span>Tier</span> Upgrade</h2>
+        </div>
+        <div class="toggle-container">
+            <span>Monthly Rate</span>
+            <label class="switch-track">
+                <input type="checkbox" id="billing-engine-toggle" onchange="processPricingTierSwap()">
+                <span class="switch-slider"></span>
+            </label>
+            <span>Annual Protocol (Save 20%)</span>
+        </div>
+        <div class="plans-matrix">
+            <div class="tier-card">
+                <h3>Standard Force</h3>
+                <div class="price-display" id="rate-standard">$39<span>/mo</span></div>
+                <ul class="tier-features">
+                    <li><i class="fa-solid fa-circle-check"></i> Standard Training Floor Access</li>
+                    <li><i class="fa-solid fa-circle-check"></i> Digital Smart Locker Profile</li>
+                    <li><i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> Recovery Pool & Spa Restrict</li>
+                </ul>
+                <a href="#" class="btn-tier-action">Initiate Membership</a>
+            </div>
+            <div class="tier-card featured-tier">
+                <div class="tier-badge">RECOMMENDED</div>
+                <h3>Legend VIP Black</h3>
+                <div class="price-display" id="rate-elite">$79<span>/mo</span></div>
+                <ul class="tier-features">
+                    <li><i class="fa-solid fa-circle-check"></i> 24/7 Premium Gym Floor Access</li>
+                    <li><i class="fa-solid fa-circle-check"></i> Unlimited Spa, Cold Plunge & Sauna</li>
+                    <li><i class="fa-solid fa-circle-check"></i> 2 Bi-Weekly Coach Micro-Reviews</li>
+                </ul>
+                <a href="#" class="btn-tier-action">Initiate Membership</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- LAYER 6: CONCIERGE RESPONSE GATEWAY -->
+    <section id="contact">
+        <div class="section-header">
+            <h2>Contact <span>Headquarters</span></h2>
+        </div>
+        <div class="contact-layout">
+            <div class="contact-details">
+                <h3>Let's Lock in Your Assessment.</h3>
+                <p>Have operational questions about parameters or training configurations? Drop by our physical front desk floors or submit your communication metrics below.</p>
+                <div class="meta-row">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <div><strong>Main Campus HQ:</strong> 500 Iron Core Boulevard, Suite 10</div>
+                </div>
+                <div class="meta-row">
+                    <i class="fa-solid fa-envelope"></i>
+                    <div><strong>Operational Mailbox:</strong> concierge@legendsgym.com</div>
+                </div>
+            </div>
+            <form class="interactive-form" onsubmit="executeFormConciergeCallback(event)">
+                <div class="input-node-wrapper"><input type="text" placeholder="Full Identity Name" required></div>
+                <div class="input-node-wrapper"><input type="email" placeholder="Email Communication Endpoint" required></div>
+                <div class="input-node-wrapper"><textarea rows="5" placeholder="Elaborate your physiological performance goals..." required></textarea></div>
+                <button type="submit" class="btn-submit-form">Submit Verification Request</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- --- CORE FUNCTIONAL INTERACTIVE ENGINE (JAVASCRIPT) --- -->
+    <script>
+        /* ==========================================================================
+           COMPONENT 1: BACKGROUND ENGINE LAYER (HTML5 DIGITAL PARTICLES)
+           ========================================================================== */
+        const canvas = document.getElementById('ambient-particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let particleArray = [];
+
+        function configureCanvasSize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', configureCanvasSize);
+        configureCanvasSize();
+
+        class ParticleNode {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = (Math.random() - 0.5) * 0.4;
+                this.speedY = (Math.random() - 0.5) * 0.4;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > canvas.width) this.x = 0;
+                else if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                else if (this.y < 0) this.y = canvas.height;
+            }
+            draw() {
+                ctx.fillStyle = '#00f0ff';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticlePool() {
+            particleArray = [];
+            for (let i = 0; i < 65; i++) {
+                particleArray.push(new ParticleNode());
+            }
+        }
+
+        function animateParticleLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particleArray.length; i++) {
+                particleArray[i].update();
+                particleArray[i].draw();
+            }
+            requestAnimationFrame(animateParticleLoop);
+        }
+        initParticlePool();
+        animateParticleLoop();
+
+        /* ==========================================================================
+           COMPONENT 2: MOUSE INTERACTION TRACKER (3D PARALLAX SYSTEM FOR METRICS)
+           ========================================================================== */
+        if (window.innerWidth > 880) {
+            window.addEventListener('mousemove', (e) => {
+                const cards = document.querySelectorAll('.live-pill-card');
+                const mouseX = (e.clientX - window.innerWidth / 2) / 45;
+                const mouseY = (e.clientY - window.innerHeight / 2) / 45;
+
+                cards.forEach(card => {
+                    const speed = parseFloat(card.getAttribute('data-parallax-speed'));
+                    // Blends base structural layout rotations cleanly with physical dynamic movement coordinates
+                    const baseRotation = card.classList.contains('p-1') ? -8 : 
+                                         card.classList.contains('p-2') ? 8 : 
+                                         card.classList.contains('p-3') ? -6 : 6;
+                    
+                    card.style.transform = `translate(${mouseX * speed}px, ${mouseY * speed}px) rotate(${baseRotation}deg)`;
+                });
+            });
+        }
+
+        /* ==========================================================================
+           COMPONENT 3: VIEWPORT SCROLL & ACTIVE STICKY HEADER INTERACTION
+           ========================================================================== */
+        const navbar = document.getElementById('navbar-fixed');
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-target');
+
+        window.addEventListener('scroll', () => {
+            // Sticky alpha shifts
+            if (window.scrollY > 40) navbar.classList.add('sticky-active');
+            else navbar.classList.remove('sticky-active');
+
+            // Active structural highlighting on scrolling
+            let activeId = '';
+            sections.forEach(sec => {
+                const secTop = sec.offsetTop - 160;
+                if (window.scrollY >= secTop) activeId = sec.getAttribute('id');
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active-nav');
+                if (link.getAttribute('href').includes(activeId)) {
+                    link.classList.add('active-nav');
+                }
+            });
+        });
+
+        /* ==========================================================================
+           COMPONENT 4: DYNAMIC DASHBOARD METRIC ANIMATION ENGINE
+           ========================================================================== */
+        let countersInitialized = false;
+        function runCountersEngine() {
+            if (countersInitialized) return;
+            const elements = document.querySelectorAll('.live-pill-card .val');
+            
+            elements.forEach(el => {
+                const rawTarget = el.getAttribute('data-count-target');
+                const target = parseFloat(rawTarget);
+                
+                if (rawTarget.includes('.')) { // Handles decimal floating points like Hours: 1.5
+                    let current = 0.0;
+                    const increment = setInterval(() => {
+                        current += 0.1;
+                        el.innerText = current.toFixed(1);
+                        if (current >= target) { el.innerText = target.toFixed(1); clearInterval(increment); }
+                    }, 40);
+                } else { // Handles entire metric blocks like Kcal: 550
+                    let current = 0;
+                    const step = Math.ceil(target / 25);
+                    const increment = setInterval(() => {
+                        current += step;
+                        if (current >= target) { el.innerText = target; clearInterval(increment); }
+                        else { el.innerText = current; }
+                    }, 25);
+                }
+            });
+            countersInitialized = true;
+        }
+        
+        // Triggers the numerical dashboards as soon as user opens browser viewport
+        setTimeout(runCountersEngine, 400);
+
+        /* ==========================================================================
+           COMPONENT 5: DYNAMIC TRAINING TIMETABLE SCHEDULER DATA ENGINE
+           ========================================================================== */
+        const timetableDataset = {
+            mon: [ { name: "Hypertrophy Power Chest", time: "07:00 AM" }, { name: "HIIT Endurance Burnout", time: "10:30 AM" }, { name: "Olympic Barbell Technique", time: "06:15 PM" } ],
+            tue: [ { name: "Metabolic Shred Speed", time: "08:15 AM" }, { name: "Functional Kinetic Mobility", time: "11:00 AM" }, { name: "Core Compression Drills", time: "05:30 PM" } ],
+            wed: [ { name: "Posterior Chain Mechanics", time: "06:30 AM" }, { name: "Advanced Calisthenics Level 2", time: "04:00 PM" } ]
+        };
+
+        function switchDayView(dayId, activeBtn) {
+            document.querySelectorAll('.filter-node').forEach(b => b.classList.remove('active'));
+            activeBtn.classList.add('active');
+            
+            const targetContainer = document.getElementById('schedule-render-target');
+            targetContainer.innerHTML = timetableDataset[dayId].map(item => `
+                <div class="timetable-row-card">
+                    <div class="class-meta">
+                        <h4>${item.name}</h4>
+                        <p>Senior Biometrics Coach In Session</p>
+                    </div>
+                    <div class="class-timestamp">${item.time}</div>
+                </div>
+            `).join('');
+        }
+        // Initializing view layer default values smoothly
+        switchDayView('mon', document.querySelector('.filter-node'));
+
+        /* ==========================================================================
+           COMPONENT 6: MEMBERSHIP CONVERTIBLE PRICING ENGINE
+           ========================================================================== */
+        function processPricingTierSwap() {
+            const isAnnualActive = document.getElementById('billing-engine-toggle').checked;
+            
+            const standardEl = document.getElementById('rate-standard');
+            const eliteEl = document.getElementById('rate-elite');
+
+            if (isAnnualActive) {
+                standardEl.innerHTML = "$312<span>/year</span>";
+                eliteEl.innerHTML = "$624<span>/year</span>";
+            } else {
+                standardEl.innerHTML = "$39<span>/mo</span>";
+                eliteEl.innerHTML = "$79<span>/mo</span>";
+            }
+        }
+
+        /* ==========================================================================
+           COMPONENT 7: CLIENT INTAKE FORM CONCIERGE VALIDATION CALLBACK
+           ========================================================================== */
+        function executeFormConciergeCallback(event) {
+            event.preventDefault();
+            alert('Parameters locked down perfectly. Your Legend Gym Assessment Concierge pass is generated. Check email workspace within 2 working hours.');
+            event.target.reset();
+        }
+    </script>
 </body>
 </html>
