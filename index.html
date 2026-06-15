@@ -3,57 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Legend's Gym - Sculpt Your Body</title>
-    <!-- FontAwesome for Icons -->
+    <title>Legend's Gym | Sculpt Your Body, Elevate Your Spirit</title>
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* --- RESET & BASE STYLES --- */
+        /* --- CORE CONFIGURATION & VARIABLES --- */
+        :root {
+            --primary-blue: #00d2ff;
+            --dark-blue: #0072ff;
+            --bg-dark: #0b0c10;
+            --bg-card: rgba(255, 255, 255, 0.04);
+            --border-glow: rgba(0, 210, 255, 0.25);
+            --text-gray: #aaaaaa;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            scroll-behavior: smooth;
         }
 
         body {
-            background-color: #0b0c10;
+            background-color: var(--bg-dark);
             color: #ffffff;
             overflow-x: hidden;
         }
 
-        /* --- THEME VARIABLES (Electric Blue Replace Green) --- */
-        :root {
-            --primary-blue: #00d2ff;
-            --dark-blue: #0072ff;
-            --bg-dark: #0b0c10;
-            --card-bg: rgba(255, 255, 255, 0.05);
-            --card-border: rgba(0, 210, 255, 0.2);
-        }
+        /* --- SCROLLBAR STYLE --- */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #050608; }
+        ::-webkit-scrollbar-thumb { background: #1a2230; border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary-blue); }
 
-        /* --- HEADER NAVIGATION --- */
+        /* --- STICKY NAVIGATION --- */
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 30px 8%;
-            position: absolute;
+            padding: 20px 8%;
+            position: fixed;
             width: 100%;
             top: 0;
-            z-index: 100;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        header.scrolled {
+            background: rgba(11, 12, 16, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 8%;
+            border-bottom: 1px solid rgba(0, 210, 255, 0.1);
         }
 
         .logo {
-            font-size: 28px;
+            font-size: 26px;
             font-weight: 800;
             letter-spacing: 1px;
             display: flex;
             align-items: center;
             gap: 10px;
+            text-decoration: none;
+            color: #fff;
         }
 
-        .logo span {
-            color: var(--primary-blue);
-        }
+        .logo span { color: var(--primary-blue); }
 
         nav ul {
             display: flex;
@@ -62,35 +78,31 @@
         }
 
         nav ul li a {
-            color: #aaaaaa;
+            color: var(--text-gray);
             text-decoration: none;
             font-size: 14px;
             font-weight: 500;
-            transition: 0.3s;
+            transition: var(--transition);
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
         nav ul li a:hover, nav ul li a.active {
-            color: #ffffff;
+            color: var(--primary-blue);
         }
 
-        .nav-buttons {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
+        .nav-buttons { display: flex; gap: 15px; }
 
         .btn-contact {
             background-color: var(--primary-blue);
-            color: #000000;
+            color: #000;
             padding: 10px 24px;
             border-radius: 25px;
             text-decoration: none;
             font-weight: 600;
             font-size: 14px;
-            transition: 0.3s ease;
-            box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+            transition: var(--transition);
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
         }
 
         .btn-contact:hover {
@@ -98,90 +110,72 @@
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
         }
 
-        .btn-started {
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: #ffffff;
-            padding: 10px 24px;
-            border-radius: 25px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 14px;
-            transition: 0.3s;
-        }
-
-        .btn-started:hover {
-            border-color: var(--primary-blue);
-            color: var(--primary-blue);
-        }
-
-        /* --- HERO SECTION --- */
-        .hero {
-            position: relative;
+        /* --- SECTION BASE STYLING --- */
+        section {
+            padding: 100px 8%;
             min-height: 100vh;
             display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: center;
-            padding: 100px 8% 40px 8%;
-            background: radial-gradient(circle at center, rgba(0, 114, 255, 0.15) 0%, rgba(11, 12, 16, 1) 70%);
         }
 
-        /* Sidebar Navigation Indicators (PREV / NEXT) */
+        .section-title {
+            text-align: center;
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 50px;
+            text-transform: uppercase;
+        }
+        .section-title span { color: var(--primary-blue); }
+
+        /* --- HERO SECTION (Replicating layout from image_8205a5.jpg) --- */
+        .hero {
+            position: relative;
+            padding: 0 8%;
+            background: radial-gradient(circle at center, rgba(0, 114, 255, 0.12) 0%, rgba(11, 12, 16, 1) 75%);
+        }
+
         .side-nav {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            color: #444;
-            font-weight: 600;
+            gap: 12px;
+            color: #3a3f4d;
+            font-weight: 700;
             letter-spacing: 4px;
             font-size: 14px;
             user-select: none;
         }
-        .side-nav.prev { left: 4%; }
-        .side-nav.next { right: 4%; }
-        .side-nav span {
-            display: block;
-            margin-bottom: 15px;
-            writing-mode: vertical-rl;
-            text-orientation: upright;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .side-nav span:hover {
-            color: var(--primary-blue);
-        }
+        .side-nav.prev { left: 3%; }
+        .side-nav.next { right: 3%; }
+        .side-nav span { writing-mode: vertical-rl; text-orientation: upright; }
 
-        /* Central Content Area */
         .hero-container {
             position: relative;
             width: 100%;
             max-width: 1200px;
-            height: 700px;
+            height: 85vh;
+            margin: 100px auto 0 auto;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
         }
 
-        /* Headline */
         .hero-title {
             text-align: center;
-            font-size: 64px;
+            font-size: 68px;
             font-weight: 800;
             line-height: 1.1;
             z-index: 10;
-            margin-top: 40px;
+            margin-top: 20px;
             letter-spacing: -1px;
         }
+        .hero-title span { color: var(--primary-blue); }
 
-        .hero-title span {
-            color: var(--primary-blue);
-            position: relative;
-        }
-
-        /* Background Athlete Image Styling (Matching image_8205a5.jpg layout) */
+        /* Center Athlete Silhouette Placeholder matching image_8205a5.jpg composition */
         .hero-center-img {
             position: absolute;
             bottom: 0;
@@ -189,228 +183,363 @@
             transform: translateX(-50%);
             height: 85%;
             z-index: 2;
-            opacity: 0.75;
+            opacity: 0.8;
+            filter: grayscale(100%) contrast(115%);
             pointer-events: none;
-            filter: grayscale(100%) contrast(110%);
         }
 
-        /* Floating Stat Cards */
+        /* Floating Cards Overly */
         .stat-card {
             position: absolute;
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            backdrop-filter: blur(12px);
-            padding: 15px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-glow);
+            backdrop-filter: blur(15px);
+            padding: 16px 22px;
             border-radius: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 5px;
-            min-width: 110px;
+            min-width: 120px;
             z-index: 5;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            transition: transform 0.3s ease;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
         }
 
-        .stat-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--primary-blue);
-        }
+        .stat-card i { color: var(--primary-blue); font-size: 24px; margin-bottom: 6px; }
+        .stat-card .label { font-size: 11px; color: var(--text-gray); text-transform: uppercase; }
+        .stat-card .value { font-size: 20px; font-weight: 700; margin-top: 2px; }
 
-        .stat-card i {
-            color: var(--primary-blue);
-            font-size: 22px;
-            margin-bottom: 2px;
-        }
+        .card-top-left     { top: 32%; left: 20%; }
+        .card-top-right    { top: 32%; right: 20%; }
+        .card-bottom-left  { bottom: 22%; left: 18%; }
+        .card-bottom-right { bottom: 22%; right: 18%; }
 
-        .stat-card .label {
-            font-size: 11px;
-            color: #aaa;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .stat-card .value {
-            font-size: 18px;
-            font-weight: 700;
-        }
-
-        /* Positioning floating cards mirroring image_8205a5.jpg */
-        .card-top-left     { top: 35%; left: 22%; }
-        .card-top-right    { top: 35%; right: 22%; }
-        .card-bottom-left  { bottom: 20%; left: 20%; }
-        .card-bottom-right { bottom: 20%; right: 20%; }
-
-        /* --- HERO FOOTER ELEMENTS --- */
         .hero-footer {
             width: 100%;
             display: flex;
             justify-content: space-between;
             align-items: center;
             z-index: 10;
-            padding: 0 20px;
+            padding-bottom: 30px;
         }
 
-        /* Social Proof Group */
-        .social-proof {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .user-avatars {
-            display: flex;
-        }
-
+        .social-proof { display: flex; align-items: center; gap: 15px; }
+        .user-avatars { display: flex; }
         .avatar {
-            width: 40px;
-            height: 40px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
-            border: 2px solid #0b0c10;
+            border: 2px solid var(--bg-dark);
             margin-right: -12px;
-            background-color: #333;
+            background-color: #222;
             background-size: cover;
-            background-position: center;
         }
 
-        .proof-text {
-            display: flex;
-            flex-direction: column;
-        }
+        .proof-text .count { font-size: 24px; font-weight: 800; display: block; }
+        .proof-text .sub { font-size: 12px; color: var(--text-gray); }
 
-        .proof-text .count {
-            font-size: 22px;
-            font-weight: 800;
-        }
-
-        .proof-text .sub {
-            font-size: 12px;
-            color: #888;
-        }
-
-        /* Call To Action Button Bottom Right */
         .cta-action-btn {
             background-color: var(--primary-blue);
-            color: #000000;
-            padding: 16px 36px;
-            border-radius: 30px;
+            color: #000;
+            padding: 18px 38px;
+            border-radius: 35px;
             text-decoration: none;
             font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 15px;
-            box-shadow: 0 5px 25px rgba(0, 210, 255, 0.4);
-            transition: all 0.3s ease;
+            gap: 12px;
+            box-shadow: 0 8px 25px rgba(0, 210, 255, 0.3);
+            transition: var(--transition);
         }
 
         .cta-action-btn:hover {
-            background-color: #ffffff;
-            box-shadow: 0 5px 30px rgba(255, 255, 255, 0.5);
-            transform: scale(1.03);
+            background-color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255, 255, 255, 0.4);
         }
 
-        /* Responsive Optimization */
+        /* --- FEATURES / SERVICES SECTION --- */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-box {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 40px 30px;
+            border-radius: 20px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 4px; height: 100%;
+            background: var(--primary-blue);
+            transform: scaleY(0);
+            transition: var(--transition);
+            origin-element: top;
+        }
+
+        .feature-box:hover {
+            transform: translateY(-10px);
+            border-color: var(--border-glow);
+            background: rgba(0, 210, 255, 0.02);
+        }
+
+        .feature-box:hover::before { transform: scaleY(1); }
+
+        .feature-box i {
+            font-size: 40px;
+            color: var(--primary-blue);
+            margin-bottom: 25px;
+        }
+
+        .feature-box h3 { font-size: 22px; margin-bottom: 15px; }
+        .feature-box p { color: var(--text-gray); font-size: 15px; line-height: 1.6; }
+
+        /* --- INTERACTIVE SCHEDULE SECTION --- */
+        .schedule-filter {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--primary-blue);
+            color: #000;
+            border-color: var(--primary-blue);
+        }
+
+        .schedule-timetable {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .class-card {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.03);
+            transition: var(--transition);
+        }
+
+        .class-card:hover { border-color: var(--border-glow); }
+        .class-info h4 { font-size: 18px; margin-bottom: 5px; }
+        .class-info p { color: var(--text-gray); font-size: 14px; }
+        .class-time {
+            background: rgba(0, 210, 255, 0.1);
+            color: var(--primary-blue);
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        /* --- MEMBERSHIP PRICING SECTION --- */
+        .pricing-toggle {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 50px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #222; transition: .4s; border-radius: 34px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 26px; width: 26px; left: 3px; bottom: 3px;
+            background-color: var(--primary-blue); transition: .4s; border-radius: 50%;
+        }
+        input:checked + .slider:before { transform: translateX(26px); }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1100px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .price-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 24px;
+            padding: 50px 40px;
+            text-align: center;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .price-card.featured {
+            border-color: var(--primary-blue);
+            background: linear-gradient(180deg, rgba(0,210,255,0.03) 0%, rgba(11,12,16,1) 100%);
+            transform: scale(1.05);
+        }
+
+        .badge {
+            position: absolute; top: 20px; right: 20px;
+            background: var(--primary-blue); color: #000;
+            padding: 5px 12px; font-size: 12px; font-weight: 700; border-radius: 12px;
+        }
+
+        .price-card h3 { font-size: 24px; margin-bottom: 15px; }
+        .price-card .cost { font-size: 54px; font-weight: 800; color: #fff; margin-bottom: 30px; }
+        .price-card .cost span { font-size: 16px; color: var(--text-gray); font-weight: 400; }
+
+        .price-features { list-style: none; margin-bottom: 40px; text-align: left; }
+        .price-features li { margin-bottom: 15px; color: var(--text-gray); display: flex; gap: 10px; align-items: center; }
+        .price-features li i { color: var(--primary-blue); }
+
+        .btn-plan {
+            display: block; width: 100%; background: none; border: 1px solid rgba(255,255,255,0.2);
+            color: #fff; padding: 15px; border-radius: 30px; font-weight: 700; text-decoration: none;
+            transition: var(--transition);
+        }
+        .price-card.featured .btn-plan, .btn-plan:hover {
+            background: var(--primary-blue); color: #000; border-color: var(--primary-blue);
+            box-shadow: 0 5px 15px rgba(0, 210, 255, 0.2);
+        }
+
+        /* --- CONTACT SECTION --- */
+        .contact-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            max-width: 1100px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .contact-info h3 { font-size: 32px; margin-bottom: 20px; }
+        .contact-info p { color: var(--text-gray); margin-bottom: 40px; line-height: 1.6; }
+        
+        .info-item { display: flex; gap: 20px; margin-bottom: 25px; align-items: center; }
+        .info-item i { width: 50px; height: 50px; background: rgba(0,210,255,0.05); border: 1px solid var(--border-glow); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: var(--primary-blue); font-size: 20px; }
+
+        .contact-form { display: flex; flex-direction: column; gap: 20px; }
+        .form-group input, .form-group textarea {
+            width: 100%; background: var(--bg-card); border: 1px solid rgba(255,255,255,0.08);
+            padding: 16px; border-radius: 10px; color: #fff; outline: none; transition: var(--transition);
+        }
+        .form-group input:focus, .form-group textarea:focus { border-color: var(--primary-blue); }
+        .btn-submit { background: var(--primary-blue); color: #000; padding: 16px; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; transition: var(--transition); }
+        .btn-submit:hover { background: #fff; }
+
+        /* --- RESPONSIVE OPTIMIZATION --- */
         @media (max-width: 1024px) {
-            .hero-title { font-size: 48px; }
-            .card-top-left { left: 10%; }
-            .card-top-right { right: 10%; }
-            .card-bottom-left { left: 8%; }
-            .card-bottom-right { right: 8%; }
+            .hero-title { font-size: 46px; }
+            .card-top-left { left: 8%; } .card-top-right { right: 8%; }
+            .card-bottom-left { left: 5%; } .card-bottom-right { right: 5%; }
+            .price-card.featured { transform: scale(1); }
         }
 
         @media (max-width: 768px) {
-            header { padding: 20px 4%; }
-            nav, .nav-buttons { display: none; } /* Simplified for mobile preview */
+            header { padding: 15px 4%; }
+            nav, .nav-buttons { display: none; }
             .side-nav { display: none; }
-            .hero-title { font-size: 36px; margin-top: 80px; }
-            .hero-center-img { height: 60%; }
-            .stat-card { position: static; }
+            .hero { padding: 0 4%; }
+            .hero-title { font-size: 38px; margin-top: 80px; }
+            .hero-center-img { height: 55%; }
+            .stat-card { position: static; transform: none !important; }
             .mobile-grid {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 15px;
-                margin-top: 20px;
-                z-index: 10;
+                display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px; z-index: 10; width: 100%;
             }
-            .hero-container { height: auto; gap: 30px; }
-            .hero-footer { flex-direction: column; gap: 20px; text-align: center; }
+            .hero-container { height: auto; gap: 40px; }
+            .hero-footer { flex-direction: column; gap: 30px; text-align: center; }
+            .contact-container { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-    <!-- HEADER NAVIGATION -->
-    <header>
-        <div class="logo">
-            <i class="fa-solid fa-dumbbell" style="color: var(--primary-blue);"></i>
-            LEGEND'S<span>GYM</span>
-        </div>
+    <!-- STICKY HEADER -->
+    <header id="header">
+        <a href="#home" class="logo">
+            <i class="fa-solid fa-dumbbell"></i> LEGEND'S<span>GYM</span>
+        </a>
         <nav>
             <ul>
-                <li><a href="#" class="active">Home</a></li>
-                <li><a href="#">About</a></li>
-                <li><a href="#">Features</a></li>
-                <li><a href="#">Service</a></li>
-                <li><a href="#">Exercise</a></li>
+                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="#features" class="nav-link">Features</a></li>
+                <li><a href="#schedule" class="nav-link">Schedule</a></li>
+                <li><a href="#pricing" class="nav-link">Pricing</a></li>
             </ul>
         </nav>
         <div class="nav-buttons">
-            <a href="#" class="btn-contact">Contact Us</a>
-            <a href="#" class="btn-started">Get Started</a>
+            <a href="#contact" class="btn-contact">Contact Us</a>
         </div>
     </header>
 
-    <!-- MAIN HERO SECTION -->
-    <section class="hero">
-        
-        <!-- Structural Sidebar Indicators from image_8205a5.jpg -->
-        <div class="side-nav prev">
-            <span>P</span><span>R</span><span>E</span><span>V</span>
-        </div>
-        <div class="side-nav next">
-            <span>N</span><span>E</span><span>X</span><span>T</span>
-        </div>
+    <!-- SECTION 1: HERO CONTAINER (Referencing layout framing from image_8205a5.jpg) -->
+    <section id="home" class="hero">
+        <div class="side-nav prev"><span>P</span><span>R</span><span>E</span><span>V</span></div>
+        <div class="side-nav next"><span>N</span><span>E</span><span>X</span><span>T</span></div>
 
         <div class="hero-container">
-            <!-- Headline -->
             <h1 class="hero-title">
                 Sculpt <span>Your</span> Body,<br>Elevate Your Spirit
             </h1>
 
-            <!-- Centerpiece Athlete Graphic Placeholder -->
-            <!-- Note: Replace the placeholder source below with your actual image file "image_8205a5.jpg" when deploying -->
-            <img class="hero-center-img" src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?q=80&w=1000&auto=format&fit=crop" alt="Athlete Visual Asset from image_8205a5.jpg">
+            <!-- Main Athlete Shadow - Image source remains mapped for swapping out locally with "image_8205a5.jpg" -->
+            <img class="hero-center-img" src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?q=80&w=1000&auto=format&fit=crop" alt="image_8205a5.jpg visual frame asset">
 
-            <!-- Floating Metrics / Stats Panels -->
+            <!-- Real-time Animated Statistics Widgets -->
             <div class="mobile-grid">
                 <div class="stat-card card-top-left">
                     <i class="fa-regular fa-clock"></i>
                     <span class="label">Hours</span>
-                    <span class="value">1.5</span>
+                    <span class="value" data-target="1.5">0</span>
                 </div>
-
                 <div class="stat-card card-top-right">
                     <i class="fa-solid fa-person-running"></i>
                     <span class="label">Poses</span>
-                    <span class="value">20</span>
+                    <span class="value" data-target="20">0</span>
                 </div>
-
                 <div class="stat-card card-bottom-left">
                     <i class="fa-solid fa-fire-flame-simple"></i>
                     <span class="label">Kcal</span>
-                    <span class="value">550</span>
+                    <span class="value" data-target="550">0</span>
                 </div>
-
                 <div class="stat-card card-bottom-right">
                     <i class="fa-solid fa-dumbbell"></i>
                     <span class="label">Sets</span>
-                    <span class="value">5</span>
+                    <span class="value" data-target="5">0</span>
                 </div>
             </div>
 
-            <!-- Hero Footer -->
             <div class="hero-footer">
-                <!-- Social Proof Panel -->
                 <div class="social-proof">
                     <div class="user-avatars">
                         <div class="avatar" style="background-image: url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=60');"></div>
@@ -422,15 +551,195 @@
                         <span class="sub">Happy Spirits</span>
                     </div>
                 </div>
-
-                <!-- Primary Action Trigger -->
-                <a href="#" class="cta-action-btn">
-                    Let's Start <i class="fa-solid fa-chevron-right"></i><i class="fa-solid fa-chevron-right" style="opacity:0.6"></i><i class="fa-solid fa-chevron-right" style="opacity:0.3"></i>
+                <a href="#pricing" class="cta-action-btn">
+                    Let's Start <i class="fa-solid fa-chevron-right"></i>
                 </a>
             </div>
-
         </div>
     </section>
 
+    <!-- SECTION 2: FEATURES -->
+    <section id="features">
+        <h2 class="section-title">Why Choose <span>Legends</span></h2>
+        <div class="features-grid">
+            <div class="feature-box">
+                <i class="fa-solid fa-heart-pulse"></i>
+                <h3>Cardio Elite</h3>
+                <p>High-end modern threadmills, spin cycles, and elliptical setups optimized for peak caloric outputs.</p>
+            </div>
+            <div class="feature-box">
+                <i class="fa-solid fa-weight-hanging"></i>
+                <h3>Heavy Weight Deck</h3>
+                <p>An expansive free weight territory configured up to 150lbs dumbbells alongside precision iron benches.</p>
+            </div>
+            <div class="feature-box">
+                <i class="fa-solid fa-user-shield"></i>
+                <h3>Expert Coaching</h3>
+                <p>Certified clinical fitness specialists designing routines built explicitly for your biometric limits.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: INTERACTIVE SCHEDULE FILTERS -->
+    <section id="schedule">
+        <h2 class="section-title">Weekly <span>Schedule</span></h2>
+        <div class="schedule-filter">
+            <button class="filter-btn active" onclick="filterDay('mon', this)">Monday</button>
+            <button class="filter-btn" onclick="filterDay('tue', this)">Tuesday</button>
+            <button class="filter-btn" onclick="filterDay('wed', this)">Wednesday</button>
+        </div>
+        <div class="schedule-timetable" id="timetable">
+            <!-- Dynamic Injection Area -->
+        </div>
+    </section>
+
+    <!-- SECTION 4: MEMBERSHIP PLANS & TOGGLE -->
+    <section id="pricing">
+        <h2 class="section-title">Membership <span>Plans</span></h2>
+        <div class="pricing-toggle">
+            <span>Monthly</span>
+            <label class="switch">
+                <input type="checkbox" id="billingToggle" onchange="togglePricing()">
+                <span class="slider"></span>
+            </label>
+            <span>Annual (Save 20%)</span>
+        </div>
+        <div class="pricing-grid">
+            <div class="price-card">
+                <h3>Standard</h3>
+                <div class="cost" id="price-standard">$39<span>/mo</span></div>
+                <ul class="price-features">
+                    <li><i class="fa-solid fa-check"></i> Gym Floor Access</li>
+                    <li><i class="fa-solid fa-check"></i> Standard Locker Access</li>
+                    <li><i class="fa-solid fa-xmark" style="color:red"></i> No Pool/Sauna</li>
+                </ul>
+                <a href="#" class="btn-plan">Select Plan</a>
+            </div>
+            <div class="price-card featured">
+                <div class="badge">POPULAR</div>
+                <h3>Elite VIP</h3>
+                <div class="cost" id="price-elite">$79<span>/mo</span></div>
+                <ul class="price-features">
+                    <li><i class="fa-solid fa-check"></i> 24/7 Floor Access</li>
+                    <li><i class="fa-solid fa-check"></i> Full Sauna & Pool Access</li>
+                    <li><i class="fa-solid fa-check"></i> 2 Monthly Coach Reviews</li>
+                </ul>
+                <a href="#" class="btn-plan">Select Plan</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 5: FUNCTIONAL CONTACT WRAPPER -->
+    <section id="contact">
+        <h2 class="section-title">Get In <span>Touch</span></h2>
+        <div class="contact-container">
+            <div class="contact-info">
+                <h3>Have questions? Let's talk.</h3>
+                <p>Drop by the main facility floor or submit your parameters online. Our intake concierge team responds within 2 working hours.</p>
+                <div class="info-item">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <div><strong>Location:</strong> 500 Legend Way, Iron District</div>
+                </div>
+                <div class="info-item">
+                    <i class="fa-solid fa-envelope"></i>
+                    <div><strong>Email:</strong> active@legendsgym.com</div>
+                </div>
+            </div>
+            <form class="contact-form" onsubmit="handleFormSubmit(event)">
+                <div class="form-group"><input type="text" placeholder="Your Name" required></div>
+                <div class="form-group"><input type="email" placeholder="Your Email Address" required></div>
+                <div class="form-group"><textarea rows="5" placeholder="Your Message" required></textarea></div>
+                <button type="submit" class="btn-submit">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- --- INTERACTIVE COMPONENTS (JAVASCRIPT) --- -->
+    <script>
+        // Header Color Mutation on Scroll
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('header');
+            if (window.scrollY > 50) header.classList.add('scrolled');
+            else header.classList.remove('scrolled');
+            trackActiveNav();
+        });
+
+        // Auto Highlight Nav items based on Scroll Position
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-link');
+        function trackActiveNav() {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 150;
+                if (window.scrollY >= sectionTop) current = section.getAttribute('id');
+            });
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').includes(current)) link.classList.add('active');
+            });
+        }
+
+        // Live Count up metrics system matching values shown in image_8205a5.jpg
+        function initCounters() {
+            const counters = document.querySelectorAll('.stat-card .value');
+            counters.forEach(counter => {
+                const target = parseFloat(counter.getAttribute('data-target'));
+                if(target % 1 !== 0) { // Is Decimal like Hours 1.5
+                    let current = 0;
+                    const interval = setInterval(() => {
+                        current += 0.1;
+                        counter.innerText = current.toFixed(1);
+                        if(current >= target) { counter.innerText = target; clearInterval(interval); }
+                    }, 50);
+                } else { // Whole numbers
+                    let current = 0;
+                    const step = Math.ceil(target / 30);
+                    const interval = setInterval(() => {
+                        current += step;
+                        if(current >= target) { counter.innerText = target; clearInterval(interval); }
+                        else { counter.innerText = current; }
+                    }, 30);
+                }
+            });
+        }
+        window.addEventListener('DOMContentLoaded', initCounters);
+
+        // Schedule Mock Data System
+        const classesData = {
+            mon: [ { name: "Power Lifting Elite", time: "07:00 AM" }, { name: "HIIT Core Burnout", time: "10:30 AM" }, { name: "Hypertrophy Chest", time: "05:30 PM" } ],
+            tue: [ { name: "Cardio Shred Max", time: "08:00 AM" }, { name: "Functional Mobility", time: "11:00 AM" } ],
+            wed: [ { name: "Olympic Cleans Focus", time: "06:00 AM" }, { name: "Calisthenics Advanced", time: "04:00 PM" } ]
+        };
+
+        function filterDay(day, btn) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const container = document.getElementById('timetable');
+            container.innerHTML = classesData[day].map(c => `
+                <div class="class-card">
+                    <div class="class-info">
+                        <h4>${c.name}</h4>
+                        <p>With Senior Pro-Trainer</p>
+                    </div>
+                    <div class="class-time">${c.time}</div>
+                </div>
+            `).join('');
+        }
+        filterDay('mon', document.querySelector('.filter-btn')); // Set Default
+
+        // Interactive Price Toggle Switch Engine
+        function togglePricing() {
+            const isAnnual = document.getElementById('billingToggle').checked;
+            document.getElementById('price-standard').innerHTML = isAnnual ? "$312<span>/yr</span>" : "$39<span>/mo</span>";
+            document.getElementById('price-elite').innerHTML = isAnnual ? "$624<span>/yr</span>" : "$79<span>/mo</span>";
+        }
+
+        // Handle Messaging Trigger Simulation
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            alert('Excellent! Your parameters have been received. A Legend Fitness Concierge will email you details shortly.');
+            e.target.reset();
+        }
+    </script>
 </body>
 </html>
