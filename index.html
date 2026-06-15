@@ -3,431 +3,434 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Legend's GYM | Interactive 3D Anatomy Experience</title>
+    <title>Legend's Gym - Sculpt Your Body</title>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Premium Dark Luxury Theme (Inspired by image_820d2b.jpg) */
+        /* --- RESET & BASE STYLES --- */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            user-select: none;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background-color: #060606;
+            background-color: #0b0c10;
             color: #ffffff;
-            min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* Navigation Layout */
-        nav {
+        /* --- THEME VARIABLES (Electric Blue Replace Green) --- */
+        :root {
+            --primary-blue: #00d2ff;
+            --dark-blue: #0072ff;
+            --bg-dark: #0b0c10;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(0, 210, 255, 0.2);
+        }
+
+        /* --- HEADER NAVIGATION --- */
+        header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 25px 5%;
+            padding: 30px 8%;
             position: absolute;
             width: 100%;
-            z-index: 10;
+            top: 0;
+            z-index: 100;
         }
 
         .logo {
-            font-size: 1.6rem;
-            font-weight: 900;
+            font-size: 28px;
+            font-weight: 800;
             letter-spacing: 1px;
-            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .logo span {
-            color: #ccff00; /* Neon Lime Accent From image_820d2b.jpg */
+            color: var(--primary-blue);
         }
 
-        .nav-links {
+        nav ul {
             display: flex;
-            gap: 35px;
             list-style: none;
+            gap: 30px;
         }
 
-        .nav-links a {
-            color: #777;
+        nav ul li a {
+            color: #aaaaaa;
             text-decoration: none;
-            font-size: 0.85rem;
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.3s;
             text-transform: uppercase;
-            font-weight: 600;
             letter-spacing: 1px;
-            transition: color 0.3s;
         }
 
-        .nav-links a:hover, .nav-links .active {
+        nav ul li a:hover, nav ul li a.active {
             color: #ffffff;
         }
 
-        .btn-header {
-            background-color: #ccff00;
-            color: #000000;
-            padding: 10px 24px;
-            border-radius: 20px;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            transition: transform 0.2s, box-shadow 0.3s;
-        }
-
-        .btn-header:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 20px rgba(204,255,0,0.4);
-        }
-
-        /* Main Content Container Grid */
-        .main-grid {
-            display: grid;
-            grid-template-columns: 350px 1fr 350px;
-            height: 100vh;
-            padding-top: 100px;
-            position: relative;
-        }
-
-        @media (max-width: 1024px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-                height: auto;
-                padding-bottom: 50px;
-            }
-        }
-
-        /* Left Side: Editorial Hook Text */
-        .sidebar-left {
-            padding: 40px;
+        .nav-buttons {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
-            z-index: 2;
-        }
-
-        .sidebar-left h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
-            line-height: 1.1;
-            text-transform: uppercase;
-            margin-bottom: 20px;
-            letter-spacing: -2px;
-        }
-
-        .sidebar-left h1 span {
-            color: #ccff00;
-        }
-
-        .sidebar-left p {
-            color: #555;
-            font-size: 1rem;
-            line-height: 1.6;
-        }
-
-        /* Center: Three.js 3D Model Render Engine Viewport */
-        .viewport-3d-box {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
+            gap: 15px;
             align-items: center;
         }
 
-        #canvas-3d {
-            width: 100%;
-            height: 100%;
-            outline: none;
-            cursor: grab;
+        .btn-contact {
+            background-color: var(--primary-blue);
+            color: #000000;
+            padding: 10px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
         }
 
-        #canvas-3d:active {
-            cursor: grabbing;
+        .btn-contact:hover {
+            background-color: #ffffff;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
         }
 
-        /* Instructional Loading Overlay Hint */
-        .loading-hint {
+        .btn-started {
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+            padding: 10px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .btn-started:hover {
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 8% 40px 8%;
+            background: radial-gradient(circle at center, rgba(0, 114, 255, 0.15) 0%, rgba(11, 12, 16, 1) 70%);
+        }
+
+        /* Sidebar Navigation Indicators (PREV / NEXT) */
+        .side-nav {
             position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(15,15,15,0.8);
-            border: 1px solid #222;
-            padding: 8px 20px;
-            border-radius: 30px;
-            font-size: 0.8rem;
-            color: #888;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            pointer-events: none;
-        }
-
-        /* Right Side: Dynamic Interactive Anatomy Info Dashboard */
-        .sidebar-right {
-            padding: 40px;
+            top: 50%;
+            transform: translateY(-50%);
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            z-index: 2;
-        }
-
-        .dashboard-card {
-            background-color: #111111;
-            border: 1px solid #1a1a1a;
-            padding: 35px;
-            border-radius: 24px;
-            min-height: 350px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.7);
-        }
-
-        .dashboard-card h2 {
-            color: #ccff00;
-            font-size: 1.8rem;
-            text-transform: uppercase;
-            margin-bottom: 15px;
-            letter-spacing: -0.5px;
-        }
-
-        .dashboard-card p {
-            color: #888;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            margin-bottom: 25px;
-        }
-
-        .exercise-tag-box {
-            display: flex;
             gap: 10px;
-            flex-wrap: wrap;
+            color: #444;
+            font-weight: 600;
+            letter-spacing: 4px;
+            font-size: 14px;
+            user-select: none;
+        }
+        .side-nav.prev { left: 4%; }
+        .side-nav.next { right: 4%; }
+        .side-nav span {
+            display: block;
+            margin-bottom: 15px;
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .side-nav span:hover {
+            color: var(--primary-blue);
         }
 
-        .ex-tag {
-            background: #181818;
-            border: 1px solid #282828;
-            color: #eee;
-            padding: 8px 16px;
+        /* Central Content Area */
+        .hero-container {
+            position: relative;
+            width: 100%;
+            max-width: 1200px;
+            height: 700px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Headline */
+        .hero-title {
+            text-align: center;
+            font-size: 64px;
+            font-weight: 800;
+            line-height: 1.1;
+            z-index: 10;
+            margin-top: 40px;
+            letter-spacing: -1px;
+        }
+
+        .hero-title span {
+            color: var(--primary-blue);
+            position: relative;
+        }
+
+        /* Background Athlete Image Styling (Matching image_8205a5.jpg layout) */
+        .hero-center-img {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            height: 85%;
+            z-index: 2;
+            opacity: 0.75;
+            pointer-events: none;
+            filter: grayscale(100%) contrast(110%);
+        }
+
+        /* Floating Stat Cards */
+        .stat-card {
+            position: absolute;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(12px);
+            padding: 15px 20px;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            min-width: 110px;
+            z-index: 5;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-blue);
+        }
+
+        .stat-card i {
+            color: var(--primary-blue);
+            font-size: 22px;
+            margin-bottom: 2px;
+        }
+
+        .stat-card .label {
+            font-size: 11px;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-card .value {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        /* Positioning floating cards mirroring image_8205a5.jpg */
+        .card-top-left     { top: 35%; left: 22%; }
+        .card-top-right    { top: 35%; right: 22%; }
+        .card-bottom-left  { bottom: 20%; left: 20%; }
+        .card-bottom-right { bottom: 20%; right: 20%; }
+
+        /* --- HERO FOOTER ELEMENTS --- */
+        .hero-footer {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+            padding: 0 20px;
+        }
+
+        /* Social Proof Group */
+        .social-proof {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatars {
+            display: flex;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #0b0c10;
+            margin-right: -12px;
+            background-color: #333;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .proof-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .proof-text .count {
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .proof-text .sub {
+            font-size: 12px;
+            color: #888;
+        }
+
+        /* Call To Action Button Bottom Right */
+        .cta-action-btn {
+            background-color: var(--primary-blue);
+            color: #000000;
+            padding: 16px 36px;
             border-radius: 30px;
-            font-size: 0.8rem;
-            font-weight: 600;
+            text-decoration: none;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 5px 25px rgba(0, 210, 255, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .cta-action-btn:hover {
+            background-color: #ffffff;
+            box-shadow: 0 5px 30px rgba(255, 255, 255, 0.5);
+            transform: scale(1.03);
+        }
+
+        /* Responsive Optimization */
+        @media (max-width: 1024px) {
+            .hero-title { font-size: 48px; }
+            .card-top-left { left: 10%; }
+            .card-top-right { right: 10%; }
+            .card-bottom-left { left: 8%; }
+            .card-bottom-right { right: 8%; }
+        }
+
+        @media (max-width: 768px) {
+            header { padding: 20px 4%; }
+            nav, .nav-buttons { display: none; } /* Simplified for mobile preview */
+            .side-nav { display: none; }
+            .hero-title { font-size: 36px; margin-top: 80px; }
+            .hero-center-img { height: 60%; }
+            .stat-card { position: static; }
+            .mobile-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+                margin-top: 20px;
+                z-index: 10;
+            }
+            .hero-container { height: auto; gap: 30px; }
+            .hero-footer { flex-direction: column; gap: 20px; text-align: center; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Header Navigation Grid Links -->
-    <nav>
-        <div class="logo">Legend<span>'s</span></div>
-        <ul class="nav-links">
-            <li><a href="#" class="active">Home</a></li>
-            <li><a href="#">About</a></li>
-            <li><a href="#">3D Trainer</a></li>
-            <li><a href="#">Membership</a></li>
-        </ul>
-        <a href="#" class="btn-header">Join Club</a>
-    </nav>
+    <!-- HEADER NAVIGATION -->
+    <header>
+        <div class="logo">
+            <i class="fa-solid fa-dumbbell" style="color: var(--primary-blue);"></i>
+            LEGEND'S<span>GYM</span>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#" class="active">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Features</a></li>
+                <li><a href="#">Service</a></li>
+                <li><a href="#">Exercise</a></li>
+            </ul>
+        </nav>
+        <div class="nav-buttons">
+            <a href="#" class="btn-contact">Contact Us</a>
+            <a href="#" class="btn-started">Get Started</a>
+        </div>
+    </header>
 
-    <!-- App Engine Content Layout Frame -->
-    <div class="main-grid">
+    <!-- MAIN HERO SECTION -->
+    <section class="hero">
         
-        <!-- Left Wing Text Context Hook -->
-        <div class="sidebar-left">
-            <h1>Sculpt<br><span>Your Body</span><br>With Us</h1>
-            <p>Click and hold anywhere in the empty central grid to rotate the human structure. Tap directly on different muscle partitions to extract advanced diagnostic training routines instantly.</p>
+        <!-- Structural Sidebar Indicators from image_8205a5.jpg -->
+        <div class="side-nav prev">
+            <span>P</span><span>R</span><span>E</span><span>V</span>
+        </div>
+        <div class="side-nav next">
+            <span>N</span><span>E</span><span>X</span><span>T</span>
         </div>
 
-        <!-- Central Three.js Rendering Engine Stage Grid Node -->
-        <div class="viewport-3d-box">
-            <canvas id="canvas-3d"></canvas>
-            <div class="loading-hint">↔ Drag Mouse/Swipe to Rotate 3D Model</div>
-        </div>
+        <div class="hero-container">
+            <!-- Headline -->
+            <h1 class="hero-title">
+                Sculpt <span>Your</span> Body,<br>Elevate Your Spirit
+            </h1>
 
-        <!-- Right Wing Dynamic UI Telemetry Reader Panel Box -->
-        <div class="sidebar-right">
-            <div class="dashboard-card">
-                <div id="data-view">
-                    <h2>Anatomy Engine</h2>
-                    <p>3D scanning hardware interface online. Please select a specific biomechanical skeletal layer from the center model view to run strategic workout diagnostics.</p>
+            <!-- Centerpiece Athlete Graphic Placeholder -->
+            <!-- Note: Replace the placeholder source below with your actual image file "image_8205a5.jpg" when deploying -->
+            <img class="hero-center-img" src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?q=80&w=1000&auto=format&fit=crop" alt="Athlete Visual Asset from image_8205a5.jpg">
+
+            <!-- Floating Metrics / Stats Panels -->
+            <div class="mobile-grid">
+                <div class="stat-card card-top-left">
+                    <i class="fa-regular fa-clock"></i>
+                    <span class="label">Hours</span>
+                    <span class="value">1.5</span>
+                </div>
+
+                <div class="stat-card card-top-right">
+                    <i class="fa-solid fa-person-running"></i>
+                    <span class="label">Poses</span>
+                    <span class="value">20</span>
+                </div>
+
+                <div class="stat-card card-bottom-left">
+                    <i class="fa-solid fa-fire-flame-simple"></i>
+                    <span class="label">Kcal</span>
+                    <span class="value">550</span>
+                </div>
+
+                <div class="stat-card card-bottom-right">
+                    <i class="fa-solid fa-dumbbell"></i>
+                    <span class="label">Sets</span>
+                    <span class="value">5</span>
                 </div>
             </div>
+
+            <!-- Hero Footer -->
+            <div class="hero-footer">
+                <!-- Social Proof Panel -->
+                <div class="social-proof">
+                    <div class="user-avatars">
+                        <div class="avatar" style="background-image: url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=60');"></div>
+                        <div class="avatar" style="background-image: url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=60');"></div>
+                        <div class="avatar" style="background-image: url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=60');"></div>
+                    </div>
+                    <div class="proof-text">
+                        <span class="count">12k+</span>
+                        <span class="sub">Happy Spirits</span>
+                    </div>
+                </div>
+
+                <!-- Primary Action Trigger -->
+                <a href="#" class="cta-action-btn">
+                    Let's Start <i class="fa-solid fa-chevron-right"></i><i class="fa-solid fa-chevron-right" style="opacity:0.6"></i><i class="fa-solid fa-chevron-right" style="opacity:0.3"></i>
+                </a>
+            </div>
+
         </div>
-    </div>
+    </section>
 
-    <!-- Inject dependencies for Three.js framework, Orbit Controls, and Asset GLTF Engine Loader Module Plugins -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-
-    <script>
-        // Local relational structural muscle workout routing database configuration settings dictionary matrix 
-        const muscleData = {
-            "Chest": { title: "Pectoralis Major", desc: "Main driving motor layer for forward explosive pushes, stabilizing wide bench extensions, and arm sweeps.", routines: ["Barbell Bench Press", "Incline Dumbbell Press", "Chest Dips"] },
-            "Abs": { title: "Abdominals Core", desc: "Skeletal posture anchor core stabilization grid system routing power distribution between top and base limbs.", routines: ["Hanging Leg Raises", "Cable Crunches", "Ab-Wheel Rollouts"] },
-            "Quads": { title: "Quadriceps Femoris", desc: "Four massive deep tissue structural propulsion pillars driving absolute leg extension and heavy knee joint load support.", routines: ["Barbell Back Squats", "Bulgarian Split Squats", "Leg Press"] },
-            "Shoulders": { title: "Deltoid Matrix", desc: "Multi-axis rotational overhead lift cap controlling complete dynamic range shoulder extensions.", routines: ["Overhead Press", "Lateral Raises", "Rear Delt Flyes"] }
-        };
-
-        // Initialize Global Engine Pipeline Infrastructure Hooks
-        let scene, camera, renderer, controls, raycaster, mouse;
-        const canvas = document.getElementById('canvas-3d');
-        const viewContainer = document.getElementById('data-view');
-
-        function init3DEngine() {
-            // 1. Scene Pipeline Architecture Initialization
-            scene = new THREE.Scene();
-            
-            // 2. Camera Configuration Settings Array Mapping Instantiation
-            camera = new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
-            camera.position.set(0, 2, 5);
-
-            // 3. WebGL High-Contrast Lighting Buffers and Base Renderer
-            renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
-            renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            renderer.toneMapping = THREE.ACESFilmicToneMapping;
-
-            // 4. Integrated Mouse-Tracking Controls Node
-            controls = new THREE.OrbitControls(camera, renderer.domElement);
-            controls.enableDamping = true;
-            controls.dampingFactor = 0.05;
-            controls.maxPolarAngle = Math.PI / 2 + 0.1; // Restrict camera view drop underneath the floor plane
-            controls.minDistance = 2;
-            controls.maxDistance = 10;
-
-            // 5. Dual Ambient Studio Lighting Matrix Array Configuration Setup Blocks
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-            scene.add(ambientLight);
-
-            const keyLight = new THREE.DirectionalLight(#ccff00, 1.8); // Lime green tint accent ambient wash
-            keyLight.position.set(5, 8, 5);
-            scene.add(keyLight);
-
-            const fillLight = new THREE.DirectionalLight(0xffffff, 0.6);
-            fillLight.position.set(-5, 3, -5);
-            scene.add(fillLight);
-
-            // 6. Interactive Raycasting Node Click Intersector Mapping Initialization
-            raycaster = new THREE.Raycaster();
-            mouse = new THREE.Vector2();
-
-            // 7. GLTF Standard Asset File Processing Loader Mechanism Module Hook
-            const loader = new THREE.GLTFLoader();
-            
-            // Note: Replace path argument target below directly with your structural 'human_body.glb' model node asset!
-            loader.load('human_body.glb', function (gltf) {
-                const model = gltf.scene;
-                
-                // Uniformly normalize model center position offsets across the coordinate grid pipeline stage
-                model.position.set(0, 0, 0);
-                
-                // Traversal mechanism loops down structural node arrays to flag distinct mesh names
-                model.traverse((child) => {
-                    if (child.isMesh) {
-                        child.material = new THREE.MeshStandardMaterial({
-                            color: 0x222222, // Slick Charcoal gray armor look matching image_820d2b.jpg
-                            roughness: 0.4,
-                            metalness: 0.6
-                        });
-                        
-                        // Example Mapping Hint: If your model meshes are cleanly separated in Blender, 
-                        // you can explicitly name components like: child.name = "Chest";
-                    }
-                });
-
-                scene.add(model);
-            }, undefined, function (error) {
-                // Fail-safe programmatic fallback model generator array if physical external model pipeline fails to stream
-                console.warn("External GLB file asset not detected yet. Streaming conceptual matrix cubes geometry arrays framework fallback mesh.");
-                generateStructuralMeshFallback();
-            });
-
-            window.addEventListener('resize', onWindowResize);
-            canvas.addEventListener('click', onModelClickSelection);
-
-            animateEngineLoop();
-        }
-
-        // Programmatic fallback system constructs structural click target markers if physical file is missing 
-        function generateStructuralMeshFallback() {
-            const fallbackGroup = new THREE.Group();
-            
-            const createPart = (name, width, height, depth, yPos) => {
-                const geo = new THREE.BoxGeometry(width, height, depth);
-                const mat = new THREE.MeshStandardMaterial({ color: 0x252525, roughness: 0.5 });
-                const mesh = new THREE.Mesh(geo, mat);
-                mesh.position.y = yPos;
-                mesh.name = name; // Attaches identifier directly inside ThreeJS scene ecosystem hooks
-                fallbackGroup.add(mesh);
-            };
-
-            createPart("Shoulders", 1.2, 0.25, 0.4, 2.1);
-            createPart("Chest", 0.9, 0.45, 0.35, 1.8);
-            createPart("Abs", 0.7, 0.55, 0.3, 1.3);
-            createPart("Quads", 0.8, 0.9, 0.4, 0.5);
-
-            scene.add(fallbackGroup);
-        }
-
-        // Mouse click position raycaster intersection processor
-        function onModelClickSelection(event) {
-            const rect = renderer.domElement.getBoundingClientRect();
-            mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-            mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-
-            raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObjects(scene.children, true);
-
-            if (intersects.length > 0) {
-                // Capture top intersected vector array layer block name
-                let clickedBone = intersects[0].object;
-                let segmentName = clickedBone.name || "Chest"; // Default safe target string mapping if target data field empty
-                
-                // Clear any previous color modifications down the scene branch array
-                scene.traverse((child) => {
-                    if(child.isMesh && child.material.emissive) child.material.emissive.setHex(0x000000);
-                });
-
-                // Flash highlighted active object selected matching neon color schema from image_820d2b.jpg
-                if(clickedBone.material.emissive) {
-                    clickedBone.material.emissive.setHex(0x445500); 
-                }
-
-                updateDashboardUI(segmentName);
-            }
-        }
-
-        // Process interface UI string outputs
-        function updateDashboardUI(key) {
-            // Safe normalizer formats string structures cleanly
-            let matchKey = Object.keys(muscleData).find(k => key.toLowerCase().includes(k.toLowerCase())) || "Chest";
-            const data = muscleData[matchKey];
-
-            let tags = "";
-            data.routines.forEach(ex => { tags += `<div class="ex-tag">${ex}</div>`; });
-
-            viewContainer.innerHTML = `
-                <h2>${data.title}</h2>
-                <p>${data.desc}</p>
-                <h4 style="margin-bottom:12px; font-size:0.8rem; text-transform:uppercase; color:#555; letter-spacing:1px;">Recommended Exercises:</h4>
-                <div class="exercise-tag-box">${tags}</div>
-            `;
-        }
-
-        function onWindowResize() {
-            camera.aspect = canvas.clientWidth / canvas.clientHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-        }
-
-        // 60 Frames Per Second Core Frame Clock Engine Loop
-        function animateEngineLoop() {
-            requestAnimationFrame(animateEngineLoop);
-            controls.update(); // Smooth drag physics interpolation update tick
-            renderer.render(scene, camera);
-        }
-
-        // Run engine activation execution sequences setup upon script mount
-        init3DEngine();
-    </script>
 </body>
 </html>
