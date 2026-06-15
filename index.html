@@ -24,7 +24,7 @@
         .preview-img { max-width: 100%; border-radius: 8px; margin-top: 8px; display: block; border: 1px solid #475569; }
     </style>
     
-    <!-- Import standard web modules for AI providers directly in the browser -->
+    <!-- Load the official Gemini web browser SDK module -->
     <script type="importmap">
       {
         "imports": {
@@ -36,7 +36,6 @@
 <body>
 
 <div class="chat-container">
-    <!-- CHAT HEADER WITH AI ENGINE ENGINE DROPDOWN -->
     <div class="chat-header">
         <div>
             <h2>Falcon 6 AI</h2>
@@ -51,14 +50,12 @@
         </select>
     </div>
 
-    <!-- MAIN CHAT MESSAGES WINDOW -->
     <div id="chatMessages" class="chat-messages">
         <div class="message ai">Hello! I am Falcon 6, built by you. I possess advanced AI knowledge bases. 
 
 Upload a photo of your textbook data, and I will break it down into easy, pattern-matching definitions tailored for a 7th standard student. No internet fluff, just direct facts.</div>
     </div>
 
-    <!-- ACTIONS AND INPUT CONTROLS -->
     <div class="chat-input-area">
         <input type="file" id="textbookImageInput" accept="image/*" style="display: none;">
         <button class="upload-btn" onclick="document.getElementById('textbookImageInput').click()">
@@ -75,7 +72,7 @@ Upload a photo of your textbook data, and I will break it down into easy, patter
 <script type="module">
     import { GoogleGenAI } from '@google/genai';
 
-    // 🔑 API Keys configuration. Paste your key in the respective variable.
+    // 🔑 Replace with your actual working key string
     const API_KEYS = {
         gemini: "PASTE_YOUR_GEMINI_API_KEY_HERE",
         openai: "PASTE_YOUR_OPENAI_KEY_IF_USED",
@@ -84,7 +81,7 @@ Upload a photo of your textbook data, and I will break it down into easy, patter
         grok: "PASTE_YOUR_GROK_KEY_IF_USED"
     };
 
-    // 🔒 THE FALCON 6 CORE PROMPT
+    // 🔒 CORE PROMPT DEFINITION FOR FALCON 6 FORMATTING STYLE
     const FALCON_6_SYSTEM_PROMPT = 
       "You are Falcon 6, a custom study assistant built by the user. You have access to deep AI knowledge bases, but you must strictly follow these rules:\n" +
       "1. ONLY use the data present within the uploaded textbook image. Do NOT add outside facts, extra internet knowledge, or unrelated information.\n" +
@@ -100,9 +97,9 @@ Upload a photo of your textbook data, and I will break it down into easy, patter
     let rawBase64Data = "";
     let imageMimeType = "";
 
-    // Handle image file extraction
+    // File change handler listening wrapper
     imageInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
+        const file = e.target.files[0]; // Isolate first element index directly
         if (!file) return;
 
         fileStatus.textContent = file.name;
@@ -110,7 +107,9 @@ Upload a photo of your textbook data, and I will break it down into easy, patter
 
         const reader = new FileReader();
         reader.onload = function(event) {
-            rawBase64Data = event.target.result.split(',')[1];
+            const dataUrlString = event.target.result;
+            // Extract content data out cleanly past metadata header string index prefix
+            rawBase64Data = dataUrlString.substring(dataUrlString.indexOf(',') + 1);
             imageMimeType = file.type;
         };
         reader.readAsDataURL(file);
@@ -123,33 +122,28 @@ Upload a photo of your textbook data, and I will break it down into easy, patter
         const targetApiKey = API_KEYS[selectedEngine];
 
         if (!targetApiKey || targetApiKey.includes("PASTE_YOUR")) {
-            alert(`Please insert your secret key for [${selectedEngine.toUpperCase()}] in the source script variables first.`);
+            alert(`Please insert your secret key for [${selectedEngine.toUpperCase()}] inside the script tag variables first.`);
             return;
         }
 
         submitBtn.disabled = true;
 
-        // Render user visual message inside chat viewport
+        // Render input preview bubble inside conversational element stack
         const userMessage = document.createElement('div');
         userMessage.className = 'message user';
         userMessage.innerHTML = `Falcon 6, process this textbook page:<br><img class="preview-img" src="data:${imageMimeType};base64,${rawBase64Data}">`;
         chatMessages.appendChild(userMessage);
         chatMessages.scrollTop = chatMessages.scrollHeight;
 
-        // Display thinking loader
+        // Display AI thinking element status context block
         const loadingMessage = document.createElement('div');
         loadingMessage.className = 'message ai';
         loadingMessage.textContent = "Falcon 6 processing content structural data... Please wait.";
         chatMessages.appendChild(loadingMessage);
         chatMessages.scrollTop = chatMessages.scrollHeight;
 
-        // Reset inputs
-        fileStatus.textContent = "No image attached";
-        imageInput.value = "";
-
         try {
             if (selectedEngine === 'gemini') {
-                // Execute direct fetch call to official Google API Endpoint via SDK
                 const ai = new GoogleGenAI({ apiKey: targetApiKey });
                 
                 const response = await ai.models.generateContent({
@@ -167,15 +161,18 @@ Upload a photo of your textbook data, and I will break it down into easy, patter
                 
                 loadingMessage.textContent = response.text;
             } else {
-                // Placeholder warning for alternative engines if they aren't wired up yet
-                loadingMessage.textContent = `Falcon 6 Alert: Connection pipeline for ${selectedEngine.toUpperCase()} backend requests is currently unavailable in this frontend-only state. Please select 'Google Gemini' to execute processing.`;
+                loadingMessage.textContent = `Falcon 6 Alert: The script layout for connection streaming to ${selectedEngine.toUpperCase()} is currently unavailable. Choose 'Google Gemini' to execute processing.`;
             }
         } catch (err) {
-            loadingMessage.textContent = "Falcon 6 encountered a connection issue. Check your API key or active network rules.";
+            loadingMessage.textContent = `Falcon 6 Error: ${err.message || 'Connection failure'}. Check your API key.`;
             console.error(err);
         }
 
-        submitBtn.disabled = false;
+        // Clean values safely to reset for the next run cycle
+        fileStatus.textContent = "No image attached";
+        imageInput.value = "";
+        rawBase64Data = "";
+        submitBtn.disabled = true;
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 </script>
