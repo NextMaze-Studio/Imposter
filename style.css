@@ -1,0 +1,44 @@
+/* --- CUSTOM DYNAMIC TYPEWRITER CURSOR BLINK --- */
+.cursor-blink::after {
+    content: '|';
+    color: #00f0ff;
+    animation: caretPulse 0.8s infinite;
+}
+
+@keyframes caretPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* --- THE INTERACTIVE CANVAS SVG PIPELINE DASHES --- */
+.active-svg-dash {
+    stroke-dasharray: 8;
+    animation: vectorDashFlow 16s linear infinite;
+}
+
+@keyframes vectorDashFlow {
+    to {
+        stroke-dashoffset: -400;
+    }
+}
+
+/* --- OPTIONAL SMOOTH SCROLL OVERRIDE --- */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Custom scrollbar matching the premium aesthetic */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #030712;
+}
+::-webkit-scrollbar-thumb {
+    background: #0b1329;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 240, 255, 0.2);
+}
