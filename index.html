@@ -3,872 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UNDERCOVER | Imposter Word Game</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Caveat:wght@700&family=Delius&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
-
+    <title>AI Textbook Assistant</title>
     <style>
-        :root {
-            --color-bg-paper: #FCFBF7;      /* Clean sketch paper backdrop */
-            --color-ink-charcoal: #2B2A27;  /* Deep fountain pen ink */
-            --color-accent-blue: #3B7197;   /* Blueprint accent blue */
-            --color-ink-red: #A64B4B;       /* Sketchy warning ink */
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            background-color: var(--color-bg-paper);
-            color: var(--color-ink-charcoal);
-            font-family: 'Delius', cursive;
-        }
-
-        /* Hand-drawn grid mesh background */
-        .sketch-grid-bg {
-            background-image: 
-                linear-gradient(rgba(43, 42, 39, 0.04) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(43, 42, 39, 0.04) 1px, transparent 1px);
-            background-size: 24px 24px;
-        }
-
-        /* Hand-written lettering headers */
-        .handwritten-title {
-            font-family: 'Architects Daughter', cursive;
-            letter-spacing: -0.01em;
-        }
-
-        .cursive-accent {
-            font-family: 'Caveat', cursive;
-        }
-
-        /* -----------------------------------------------------------
-           Hand-Drawn Doodle Components (Asymmetrical & Organic)
-           ----------------------------------------------------------- */
-        
-        /* Simulates an uneven sketchy ink line weight and slight wobble */
-        .doodle-box {
-            border: 3px solid var(--color-ink-charcoal);
-            border-radius: 4px 10px 7px 4px/9px 4px 6px 12px;
-            box-shadow: 3px 4px 0px rgba(43, 42, 39, 0.15);
-            background: #FFFFFF;
-        }
-
-        .doodle-panel {
-            border: 3px solid var(--color-ink-charcoal);
-            border-radius: 12px 15px 12px 14px/15px 12px 14px 12px;
-            box-shadow: 4px 5px 0px var(--color-ink-charcoal);
-            background: #FFFFFF;
-        }
-
-        .doodle-card-rough {
-            border: 3px dashed var(--color-ink-charcoal);
-            border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
-            background: #FFFFFF;
-        }
-
-        /* Interactive Element States */
-        .btn-doodle {
-            border: 3px solid var(--color-ink-charcoal);
-            border-radius: 12px 6px 12px 6px/6px 12px 5px 12px;
-            background: #FFFFFF;
-            font-weight: bold;
-            transition: transform 0.1s ease, box-shadow 0.1s ease;
-            cursor: pointer;
-        }
-        
-        .btn-doodle:hover {
-            transform: translate(-2px, -2px);
-            box-shadow: 4px 4px 0px var(--color-ink-charcoal);
-        }
-
-        .btn-doodle:active {
-            transform: translate(1px, 1px);
-            box-shadow: 1px 1px 0px var(--color-ink-charcoal);
-        }
-
-        .btn-doodle-filled {
-            background: var(--color-ink-charcoal);
-            color: #FFFFFF;
-            border: 3px solid var(--color-ink-charcoal);
-            border-radius: 8px 14px 6px 12px/12px 6px 14px 7px;
-            font-weight: bold;
-            transition: transform 0.1s ease;
-            cursor: pointer;
-        }
-        .btn-doodle-filled:hover {
-            transform: scale(1.01);
-        }
-        .btn-doodle-filled:active {
-            transform: scale(0.99);
-        }
-
-        /* Custom inputs to strip away sterile digital styling */
-        .doodle-input {
-            background: #FFFFFF;
-            border: 3px solid var(--color-ink-charcoal);
-            border-radius: 7px 4px 8px 5px/4px 8px 5px 7px;
-            font-family: monospace;
-        }
-        .doodle-input:focus {
-            outline: none;
-            border-color: var(--color-accent-blue);
-            background: #FAFAFF;
-        }
-
-        /* Custom sketchy list formatting */
-        .sketch-bullet li {
-            position: relative;
-            padding-left: 1.5rem;
-        }
-        .sketch-bullet li::before {
-            content: '☞'; 
-            position: absolute;
-            left: 0;
-            font-size: 1.1rem;
-            color: var(--color-accent-blue);
-            top: -2px;
-        }
+        body { font-family: sans-serif; background: #f4f6f9; display: flex; justify-content: center; padding: 20px; }
+        .chat-container { width: 450px; background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); overflow: hidden; display: flex; flex-direction: column; height: 600px; }
+        .chat-header { background: #1a73e8; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .chat-header select { padding: 5px; border-radius: 4px; border: none; font-weight: bold; }
+        .chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .message { padding: 10px 14px; border-radius: 15px; max-width: 80%; word-break: break-word; white-space: pre-wrap; }
+        .user { background: #007bff; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .ai { background: #f1f3f4; color: #202124; align-self: flex-start; border-bottom-left-radius: 2px; }
+        .chat-input-area { padding: 10px; border-top: 1px solid #e0e0e0; display: flex; gap: 10px; align-items: center; background: #fafafa; }
+        .preview-img { max-width: 150px; border-radius: 8px; margin-top: 5px; display: block; }
     </style>
-</head>
-<body class="selection:bg-slate-950 selection:text-white min-h-screen flex flex-col justify-between antialiased sketch-grid-bg">
-
-    <header class="w-full max-w-lg mx-auto px-4 pt-6">
-        <div class="doodle-panel p-4 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="border-2 border-slate-900 p-2 rounded-lg bg-slate-50 rotate-[-2deg]">
-                    <i class="fa-solid fa-user-secret text-xl"></i>
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold tracking-tight handwritten-title">UNDERCOVER</h1>
-                    <p class="text-xs text-slate-500 font-mono">[ Find the Imposter ]</p>
-                </div>
-            </div>
-            <div id="connectionStatus" class="hidden text-xs border-2 border-dashed border-slate-400 px-3 py-1.5 rounded font-mono bg-white">
-                ✐ Offline Mode
-            </div>
-        </div>
-    </header>
-
-    <main class="w-full max-w-lg mx-auto px-4 py-8 flex-grow flex flex-col justify-center">
-        
-        <div id="screenModeSelect" class="doodle-panel p-6 md:p-8 space-y-6">
-            <div class="text-center space-y-1">
-                <h2 class="text-2xl font-bold handwritten-title">Select Play Workspace</h2>
-                <p class="text-sm text-slate-600">Pass a single device locally or link up over network nodes.</p>
-            </div>
-            <div class="space-y-4 pt-2">
-                <button onclick="initOfflineSetup()" class="w-full btn-doodle p-4 flex items-center gap-4 text-left group">
-                    <div class="border-2 border-slate-900 p-3 rounded-xl bg-amber-50 group-hover:rotate-6 transition-transform">
-                        <i class="fa-solid fa-mobile-screen-button text-2xl text-amber-700"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold handwritten-title text-lg">Local (Pass & Play)</h3>
-                        <p class="text-xs text-slate-500 font-sans">Single machine passed around a circle manual-style.</p>
-                    </div>
-                </button>
-
-                <button onclick="initOnlineMode()" class="w-full btn-doodle p-4 flex items-center gap-4 text-left group">
-                    <div class="border-2 border-slate-900 p-3 rounded-xl bg-blue-50 group-hover:rotate-[-6deg] transition-transform">
-                        <i class="fa-solid fa-globe text-2xl text-blue-700"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold handwritten-title text-lg">Online Mode (P2P Mesh)</h3>
-                        <h4 class="text-xs text-slate-500 font-sans">Host or join distributed game rooms via handshake IDs.</h4>
-                    </div>
-                </button>
-            </div>
-        </div>
-
-        <div id="screenOfflineSetup" class="hidden doodle-panel p-6 md:p-8 space-y-6">
-            <button onclick="switchScreen('screenModeSelect')" class="text-xs text-slate-500 hover:underline cursor-pointer"><i class="fa-solid fa-arrow-left mr-1"></i> Return</button>
-            <h2 class="text-2xl font-bold handwritten-title">Local Session Ingestion</h2>
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-mono uppercase tracking-wider mb-2 text-slate-500">Total Operational Players (3 - 12)</label>
-                    <input type="number" id="offlinePlayerCount" value="6" min="3" max="12" oninput="renderOfflineNameInputs()" class="w-full doodle-input px-4 py-2.5">
-                </div>
-                
-                <div class="space-y-2">
-                    <label class="block text-xs font-mono uppercase tracking-wider text-slate-500">Assign Identity Registry</label>
-                    <div id="offlineNamesContainer" class="space-y-2 max-h-44 overflow-y-auto pr-1"></div>
-                </div>
-
-                <button onclick="startOfflineGame()" class="w-full btn-doodle-filled py-3.5 shadow-[3px_3px_0px_rgba(0,0,0,0.15)] tracking-wide uppercase text-sm">
-                    Generate Identity Blueprints ✍
-                </button>
-            </div>
-        </div>
-
-        <div id="screenOfflineReveal" class="hidden doodle-panel p-6 md:p-8 text-center space-y-6">
-            <div class="space-y-1">
-                <p class="text-xs uppercase tracking-wider text-blue-600 font-mono">☞ Hand device over to:</p>
-                <h2 id="revealTurnTitle" class="text-3xl font-black handwritten-title text-slate-900">Player 1</h2>
-            </div>
-
-            <div id="roleCardContainer" class="doodle-card-rough p-8 min-h-[160px] flex flex-col justify-center items-center shadow-inner">
-                <div id="cardHiddenState" class="space-y-2">
-                    <i class="fa-solid fa-eye-slash text-3xl text-slate-400 mb-1"></i>
-                    <p class="text-xs text-slate-500 max-w-[240px]">Tap toggle module below to reveal word configuration metrics safely.</p>
-                </div>
-                <div id="cardVisibleState" class="hidden space-y-2">
-                    <p class="text-xs font-mono uppercase tracking-widest text-slate-400">Target Assignment Matrix</p>
-                    <p id="secretWordDisplay" class="text-3xl font-black handwritten-title tracking-wide text-slate-900">---</p>
-                    <p id="secretRoleNote" class="text-xs text-slate-500 italic">Ensure neighbor vectors cannot scan this asset.</p>
-                </div>
-            </div>
-
-            <div class="flex gap-4">
-                <button id="btnToggleCard" onclick="toggleCardVisibility()" class="flex-1 btn-doodle py-3 text-sm">
-                    Reveal Word
-                </button>
-                <button id="btnNextPlayer" onclick="nextOfflinePlayer()" class="flex-1 btn-doodle-filled py-3 text-sm disabled:opacity-40 disabled:cursor-not-allowed" disabled>
-                    Next Agent <i class="fa-solid fa-arrow-right text-xs ml-1"></i>
-                </button>
-            </div>
-        </div>
-
-        <div id="screenDiscussionBoard" class="hidden doodle-panel p-6 md:p-8 text-center space-y-6">
-            <div class="space-y-1">
-                <span id="discRoundLabel" class="text-xs font-mono font-bold text-amber-600 uppercase tracking-wider">● Interactive Discussion State</span>
-                <h2 id="discussionHeadline" class="text-2xl font-bold handwritten-title">Who begins the map?</h2>
-            </div>
-
-            <div class="doodle-box p-5 space-y-4">
-                <div class="border-2 border-dashed border-slate-300 rounded-xl py-3 px-2 bg-slate-50/50">
-                    <p class="text-xs font-mono uppercase tracking-widest text-slate-400 mb-0.5">Active Anchor Speaker</p>
-                    <p id="activeSpeakerName" class="text-2xl font-black tracking-wide text-slate-900 handwritten-title">---</p>
-                </div>
-                
-                <div class="text-left bg-slate-50/20 p-3.5 border-2 border-slate-900 rounded-xl">
-                    <p class="text-xs font-mono uppercase tracking-wider text-slate-500 mb-2">Chronological Transmission Order:</p>
-                    <div id="discussionOrderList" class="space-y-2 text-xs">
-                        </div>
-                </div>
-            </div>
-
-            <div class="space-y-3">
-                <button id="btnAdvanceSpeaker" onclick="advanceSpeakerOrder()" class="w-full btn-doodle py-3 shadow-[2px_2px_0px_rgba(0,0,0,1)]">
-                    Advance Order Pipeline
-                </button>
-                <button id="btnEndRoundEarly" onclick="triggerGuessingPhase()" class="w-full text-slate-500 hover:text-red-700 font-mono text-xs transition cursor-pointer">
-                    [ Break Sequence early & Force Elimination Vote ]
-                </button>
-            </div>
-        </div>
-
-        <div id="screenGuessingPhase" class="hidden doodle-panel p-6 md:p-8 space-y-6">
-            <div class="text-center space-y-1">
-                <span class="text-xs font-mono font-bold text-rose-600 uppercase tracking-wider">Judgement Target Vector</span>
-                <h2 class="text-2xl font-bold handwritten-title">Perform Consensus Vote</h2>
-                <p class="text-xs text-slate-500">Tap the node belonging to the suspected imposter entity.</p>
-            </div>
-
-            <div class="space-y-2">
-                <div id="votingGridContainer" class="grid grid-cols-1 gap-2 max-h-56 overflow-y-auto pr-1">
-                    </div>
-            </div>
-            
-            <div id="gameResolutionDisplay" class="hidden doodle-box p-5 text-center space-y-3 border-emerald-600 bg-emerald-50/20">
-                <h3 id="resolutionTitle" class="text-xl font-bold handwritten-title">---</h3>
-                <p id="resolutionSubtitle" class="text-sm text-slate-700">---</p>
-                <button onclick="location.reload()" class="w-full btn-doodle py-2 text-xs font-mono">
-                    Return to Lobby Command Center
-                </button>
-            </div>
-        </div>
-
-        <div id="screenOnlineMain" class="hidden doodle-panel p-6 md:p-8 space-y-6">
-            <button onclick="location.reload()" class="text-xs text-slate-500 hover:underline cursor-pointer"><i class="fa-solid fa-arrow-left mr-1"></i> Return</button>
-            <h2 class="text-2xl font-bold handwritten-title">Distributed Network Node Configuration</h2>
-            
-            <div class="grid grid-cols-1 gap-5">
-                <div class="doodle-box p-4 space-y-2.5">
-                    <span class="text-[11px] font-mono font-bold bg-slate-100 px-2 py-0.5 rounded border border-slate-300">NODE ALPHA</span>
-                    <h3 class="font-bold text-base handwritten-title">Initialize Host Node</h3>
-                    <div class="space-y-2">
-                        <input type="text" id="hostNickname" placeholder="Host Handle Callout" class="w-full doodle-input px-3 py-1.5 text-sm">
-                        <button onclick="hostOnlineRoom()" class="w-full btn-doodle-filled py-2 text-sm">
-                            Open Connection Gateway
-                        </button>
-                    </div>
-                </div>
-
-                <div class="relative flex py-1 items-center">
-                    <div class="flex-grow border-t-2 border-dashed border-slate-300"></div>
-                    <span class="flex-shrink mx-3 text-slate-400 font-mono text-xs">MESH SPLIT</span>
-                    <div class="flex-grow border-t-2 border-dashed border-slate-300"></div>
-                </div>
-
-                <div class="doodle-box p-4 space-y-2.5">
-                    <span class="text-[11px] font-mono font-bold bg-slate-100 px-2 py-0.5 rounded border border-slate-300">NODE BETA</span>
-                    <h3 class="font-bold text-base handwritten-title">Bridge Remote Session</h3>
-                    <div class="space-y-2">
-                        <input type="text" id="clientNickname" placeholder="Client Handle Callout" class="w-full doodle-input px-3 py-1.5 text-sm mb-1">
-                        <div class="flex gap-2">
-                            <input type="text" id="joinRoomId" placeholder="Room ID Hash" class="flex-1 doodle-input px-3 py-1.5 font-mono text-sm uppercase tracking-wider">
-                            <button onclick="joinOnlineRoom()" class="btn-doodle px-4 text-sm font-bold">
-                                Sync Link
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="screenHostLobby" class="hidden doodle-panel p-6 md:p-8 space-y-6">
-            <div class="space-y-1">
-                <span class="text-xs font-mono font-bold text-emerald-600 uppercase tracking-wider">● Port Active</span>
-                <h2 class="text-2xl font-bold handwritten-title">Session Supervisor Dashboard</h2>
-            </div>
-            
-            <div class="border-3 border-slate-900 rounded-xl p-3 text-center bg-yellow-50/30">
-                <p class="text-xs text-slate-500 font-mono mb-0.5">Broadcast Handshake Target ID:</p>
-                <p id="displayHostRoomId" class="text-2xl font-mono font-black text-blue-700 uppercase tracking-widest select-all">---</p>
-            </div>
-
-            <div>
-                <h3 class="text-xs font-mono uppercase tracking-wider text-slate-400 mb-2">Connected Client Stacks (<span id="connectedCount">0</span>)</h3>
-                <div id="hostConnectedList" class="space-y-2 max-h-36 overflow-y-auto text-sm">
-                    <p class="italic text-xs text-slate-400">Waiting for remote handshakes...</p>
-                </div>
-            </div>
-
-            <button onclick="triggerOnlineDistribution()" class="w-full btn-doodle-filled py-3.5 tracking-wider uppercase text-sm shadow-[3px_3px_0px_rgba(0,0,0,0.15)]">
-                Compile and Dispatch Vectors 🚀
-            </button>
-        </div>
-
-        <div id="screenClientView" class="hidden doodle-panel p-6 md:p-8 text-center space-y-6">
-            <div class="space-y-0.5">
-                <p class="text-xs font-mono uppercase text-slate-400">Pipeline Linked Client</p>
-                <h2 id="clientStatusTitle" class="text-2xl font-bold handwritten-title text-slate-800">Synchronizing Frame...</h2>
-            </div>
-
-            <div id="clientCardContainer" class="doodle-card-rough p-6 min-h-[150px] flex flex-col justify-center items-center shadow-inner">
-                <div id="clientCardLoading">
-                    <i class="fa-solid fa-compass-drafting text-3xl text-slate-400 animate-spin mb-2"></i>
-                    <p class="text-xs text-slate-500 font-mono">Awaiting Host parameters compilation...</p>
-                </div>
-                <div id="clientCardRevealed" class="hidden space-y-2">
-                    <p class="text-xs font-mono uppercase tracking-widest text-slate-400">Your Identity Payload</p>
-                    <p id="clientWordDisplay" class="text-3xl font-black handwritten-title tracking-wide text-slate-900">---</p>
-                    <p id="clientRoleSubtext" class="text-xs text-slate-500 italic">Shield terminal matrix from peripheral eyes.</p>
-                </div>
-            </div>
-
-            <div id="onlineStatusMonitorBox" class="hidden text-xs bg-slate-50 p-3 border-2 border-slate-900 rounded-xl text-left space-y-1">
-                <p class="font-bold font-mono text-[10px] text-slate-400 uppercase tracking-wider">Live Host Stream Data Logs:</p>
-                <p id="onlineMonitorSpeakingNow" class="font-medium">Active Vector Node: <span class="text-slate-900 underline">---</span></p>
-                <p id="onlineMonitorInstructions" class="italic text-slate-500 text-[11px]">Pay attention to vocal descriptions within your room.</p>
-            </div>
-        </div>
-
-    </main>
-
-    <footer class="w-full max-w-lg mx-auto text-center px-4 pb-6 text-xs text-slate-400 font-mono">
-        <p>Execution Routine: Describe assigned tokens via single descriptors. Isolate anomalies.</p>
-    </footer>
-
-    <script>
-        const WORD_POOL = ["Frog", "Car", "Apple", "Airplane", "Laptop", "Pizza", "Guitar", "Coffee", "Elephant", "Submarine", "Helicopter", "Football", "Watch", "Burger"];
-        
-        let appState = {
-            mode: null, 
-            playersCount: 0,
-            playerNames: [], 
-            roles: [], 
-            currentIdx: 0,
-            cardVisible: false,
-            speakerSequence: [],
-            currentSpeakerIdx: 0,
-            peer: null,
-            myId: null,
-            connections: [], 
-            isHost: false,
-            myNickname: ""
-        };
-
-        function switchScreen(screenId) {
-            const screens = ['screenModeSelect', 'screenOfflineSetup', 'screenOfflineReveal', 'screenDiscussionBoard', 'screenGuessingPhase', 'screenOnlineMain', 'screenHostLobby', 'screenClientView'];
-            screens.forEach(id => {
-                document.getElementById(id).classList.add('hidden');
-            });
-            document.getElementById(screenId).classList.remove('hidden');
+    
+    <!-- 1. Load the official Google Gemini SDK directly in the browser -->
+    <script type="importmap">
+      {
+        "imports": {
+          "@google/genai": "https://esm.run"
         }
-
-        function initOfflineSetup() {
-            switchScreen('screenOfflineSetup');
-            renderOfflineNameInputs();
-        }
-
-        function renderOfflineNameInputs() {
-            const countInput = document.getElementById('offlinePlayerCount');
-            let count = parseInt(countInput.value) || 6;
-            if(count < 3) count = 3;
-            if(count > 12) count = 12;
-
-            const container = document.getElementById('offlineNamesContainer');
-            container.innerHTML = "";
-
-            for (let i = 1; i <= count; i++) {
-                container.innerHTML += `
-                    <div class="flex items-center gap-2">
-                        <span class="text-xs font-mono text-slate-400 w-5">${i}.</span>
-                        <input type="text" id="offlineName_${i}" value="Agent ${i}" class="flex-1 doodle-input px-3 py-1.5 text-xs">
-                    </div>
-                `;
-            }
-        }
-
-        function startOfflineGame() {
-            const countInput = document.getElementById('offlinePlayerCount');
-            let count = parseInt(countInput.value) || 6;
-            if(count < 3) count = 3;
-            if(count > 12) count = 12;
-
-            appState.mode = 'offline';
-            appState.playersCount = count;
-            appState.currentIdx = 0;
-            appState.cardVisible = false;
-            
-            appState.playerNames = [];
-            for (let i = 1; i <= count; i++) {
-                const inputElement = document.getElementById(`offlineName_${i}`);
-                const value = inputElement ? inputElement.value.trim() : `Agent ${i}`;
-                appState.playerNames.push(value || `Agent ${i}`);
-            }
-
-            const chosenWord = WORD_POOL[Math.floor(Math.random() * WORD_POOL.length)];
-            const imposterIndex = Math.floor(Math.random() * count);
-
-            appState.roles = [];
-            for (let i = 0; i < count; i++) {
-                if (i === imposterIndex) {
-                    appState.roles.push({ type: 'IMPOSTER', name: appState.playerNames[i], word: '⚠️ IMPOSTER [NO WORD]' });
-                } else {
-                    appState.roles.push({ type: 'INNOCENT', name: appState.playerNames[i], word: chosenWord });
-                }
-            }
-
-            setupOfflineRevealCard();
-            switchScreen('screenOfflineReveal');
-        }
-
-        function setupOfflineRevealCard() {
-            appState.cardVisible = false;
-            document.getElementById('cardHiddenState').classList.remove('hidden');
-            document.getElementById('cardVisibleState').classList.add('hidden');
-            
-            document.getElementById('revealTurnTitle').innerText = appState.playerNames[appState.currentIdx];
-            document.getElementById('btnToggleCard').innerText = "Reveal Word";
-            document.getElementById('btnNextPlayer').disabled = true;
-        }
-
-        function toggleCardVisibility() {
-            const hiddenBox = document.getElementById('cardHiddenState');
-            const visibleBox = document.getElementById('cardVisibleState');
-            const displayWord = document.getElementById('secretWordDisplay');
-            const note = document.getElementById('secretRoleNote');
-
-            appState.cardVisible = !appState.cardVisible;
-
-            if (appState.cardVisible) {
-                hiddenBox.classList.add('hidden');
-                visibleBox.classList.remove('hidden');
-                
-                const currentData = appState.roles[appState.currentIdx];
-                displayWord.innerText = currentData.word;
-                
-                if (currentData.type === 'IMPOSTER') {
-                    displayWord.className = "text-xl font-bold font-mono text-red-700 uppercase tracking-tight";
-                    note.innerText = "Blend into standard conversations! Avoid identity parsing vectors.";
-                } else {
-                    displayWord.className = "text-3xl font-black tracking-wide text-slate-900 handwritten-title";
-                    note.innerText = "Maintain visual secrecy profiles.";
-                }
-
-                document.getElementById('btnToggleCard').innerText = "Hide Word";
-                document.getElementById('btnNextPlayer').disabled = false;
-            } else {
-                hiddenBox.classList.remove('hidden');
-                visibleBox.classList.add('hidden');
-                document.getElementById('btnToggleCard').innerText = "Reveal Word";
-                document.getElementById('btnNextPlayer').disabled = true;
-            }
-        }
-
-        function nextOfflinePlayer() {
-            appState.currentIdx++;
-            if (appState.currentIdx < appState.playersCount) {
-                setupOfflineRevealCard();
-            } else {
-                buildDiscussionSequence();
-            }
-        }
-
-        function buildDiscussionSequence() {
-            let innocentIndexes = [];
-            let imposterIndexes = [];
-
-            appState.roles.forEach((player, idx) => {
-                if(player.type === 'INNOCENT') innocentIndexes.push(idx);
-                else imposterIndexes.push(idx);
-            });
-
-            const firstSpeakerCollectionIdx = Math.floor(Math.random() * innocentIndexes.length);
-            const firstSpeakerGlobalIdx = innocentIndexes[firstSpeakerCollectionIdx];
-
-            innocentIndexes.splice(firstSpeakerCollectionIdx, 1);
-
-            let remainingPool = [...innocentIndexes, ...imposterIndexes];
-            remainingPool = remainingPool.sort(() => Math.random() - 0.5);
-
-            appState.speakerSequence = [firstSpeakerGlobalIdx, ...remainingPool];
-            appState.currentSpeakerIdx = 0;
-
-            if (appState.mode === 'online' && appState.isHost) {
-                broadcastToOnlineClients({
-                    type: 'SYNC_DISCUSSION_STATE',
-                    sequence: appState.speakerSequence,
-                    currentSpeakerIdx: appState.currentSpeakerIdx
-                });
-            }
-
-            renderDiscussionBoardScreen();
-        }
-
-        function renderDiscussionBoardScreen() {
-            switchScreen('screenDiscussionBoard');
-            
-            const activeGlobalIdx = appState.speakerSequence[appState.currentSpeakerIdx];
-            const currentSpeakerName = appState.playerNames[activeGlobalIdx];
-            
-            document.getElementById('activeSpeakerName').innerText = currentSpeakerName;
-            
-            const orderContainer = document.getElementById('discussionOrderList');
-            orderContainer.innerHTML = appState.speakerSequence.map((globalIdx, orderIdx) => {
-                let statusBadge = "";
-                let itemStyle = "text-slate-500 font-sans";
-                
-                if (orderIdx === appState.currentSpeakerIdx) {
-                    statusBadge = `<span class="text-[9px] font-mono font-bold bg-amber-100 border border-slate-900 px-1.5 py-0.5 rounded">✍ SPEAKS NOW</span>`;
-                    itemStyle = "text-slate-900 font-bold decoration-wavy underline decoration-blue-400";
-                } else if (orderIdx < appState.currentSpeakerIdx) {
-                    statusBadge = `<span class="text-[10px] text-slate-400 font-mono">✓ Passed</span>`;
-                    itemStyle = "text-slate-300 line-through font-sans";
-                } else if (orderIdx === 0) {
-                    statusBadge = `<span class="text-[9px] font-mono text-blue-600">[Starter Vector]</span>`;
-                }
-
-                return `<div class="flex items-center justify-between py-1.5 border-b-2 border-dashed border-slate-100">
-                    <span class="${itemStyle}">${orderIdx + 1}. ${appState.playerNames[globalIdx]}</span>
-                    ${statusBadge}
-                </div>`;
-            }).join('');
-
-            if (appState.mode === 'online' && !appState.isHost) {
-                document.getElementById('btnAdvanceSpeaker').classList.add('hidden');
-                document.getElementById('btnEndRoundEarly').classList.add('hidden');
-                
-                // Keep the floating client overlay status box updated
-                const overlayName = document.querySelector("#onlineMonitorSpeakingNow span") || {};
-                overlayName.innerText = currentSpeakerName;
-            } else {
-                document.getElementById('btnAdvanceSpeaker').classList.remove('hidden');
-                document.getElementById('btnEndRoundEarly').classList.remove('hidden');
-                document.getElementById('btnAdvanceSpeaker').innerText = 
-                    (appState.currentSpeakerIdx === appState.speakerSequence.length - 1) ? "Initiate Core Vote Execution" : "Advance Pipeline Node";
-            }
-        }
-
-        function advanceSpeakerOrder() {
-            if (appState.currentSpeakerIdx < appState.speakerSequence.length - 1) {
-                appState.currentSpeakerIdx++;
-                
-                if (appState.mode === 'online' && appState.isHost) {
-                    broadcastToOnlineClients({
-                        type: 'SYNC_DISCUSSION_STATE',
-                        sequence: appState.speakerSequence,
-                        currentSpeakerIdx: appState.currentSpeakerIdx
-                    });
-                }
-                renderDiscussionBoardScreen();
-            } else {
-                triggerGuessingPhase();
-            }
-        }
-
-        function triggerGuessingPhase() {
-            if (appState.mode === 'online' && appState.isHost) {
-                broadcastToOnlineClients({ type: 'REDIRECT_GUESSING_PHASE' });
-            }
-            renderGuessingPhaseScreen();
-        }
-
-        function renderGuessingPhaseScreen() {
-            switchScreen('screenGuessingPhase');
-            
-            const grid = document.getElementById('votingGridContainer');
-            document.getElementById('gameResolutionDisplay').classList.add('hidden');
-            document.getElementById('votingGridContainer').classList.remove('hidden');
-
-            grid.innerHTML = appState.playerNames.map((name, idx) => {
-                return `<button onclick="submitVotedOffTarget(${idx})" class="w-full text-left bg-white btn-doodle px-4 py-3 flex justify-between items-center group">
-                    <span class="font-medium group-hover:text-red-700">[✖] ${name}</span>
-                    <i class="fa-solid fa-scissors text-xs opacity-40 group-hover:opacity-100 group-hover:scale-110 transition"></i>
-                </button>`;
-            }).join('');
-        }
-
-        function submitVotedOffTarget(selectedIdx) {
-            const targetRoleData = appState.roles[selectedIdx];
-            const displayBox = document.getElementById('gameResolutionDisplay');
-            const title = document.getElementById('resolutionTitle');
-            const subtitle = document.getElementById('resolutionSubtitle');
-
-            displayBox.classList.remove('hidden');
-
-            if (targetRoleData.type === 'IMPOSTER') {
-                title.innerText = "✍ Structural Verdict: Citizens Win!";
-                title.className = "text-xl font-bold text-emerald-700 handwritten-title";
-                subtitle.innerText = `Anomalous vector successfully purged! ${targetRoleData.name} was isolated as the true Imposter.`;
-            } else {
-                const realImposter = appState.roles.find(r => r.type === 'IMPOSTER');
-                title.innerText = "✍ Structural Verdict: Imposter Victory!";
-                title.className = "text-xl font-bold text-red-700 handwritten-title";
-                subtitle.innerText = `Operational failure. ${targetRoleData.name} was an Innocent citizen. The active profile anomaly was ${realImposter.name}.`;
-            }
-
-            if (appState.mode === 'online' && appState.isHost) {
-                broadcastToOnlineClients({
-                    type: 'GAME_OVER_SIGNAL',
-                    title: title.innerText,
-                    titleClass: title.className,
-                    subtitle: subtitle.innerText
-                });
-            }
-        }
-
-        /* =========================================================================
-           ONLINE P2P INFRASTRUCTURE CAPTURE 
-           ========================================================================= */
-        function initOnlineMode() {
-            switchScreen('screenOnlineMain');
-            const statusBox = document.getElementById('connectionStatus');
-            statusBox.classList.remove('hidden');
-            statusBox.innerText = "Mapping signaling grid...";
-            statusBox.className = "text-xs border-2 border-slate-900 bg-yellow-50 px-3 py-1.5 rounded font-mono";
-
-            appState.peer = new Peer(generateShortRoomId(), { debug: 1 });
-
-            appState.peer.on('open', (id) => {
-                appState.myId = id;
-                statusBox.innerText = "● Port Synced Node";
-                statusBox.className = "text-xs border-2 border-slate-900 bg-emerald-50 text-emerald-800 px-3 py-1.5 rounded font-mono";
-            });
-
-            appState.peer.on('error', (err) => {
-                console.error("PeerJS Core Fault:", err);
-                statusBox.innerText = "● Peer Binding Failure";
-                statusBox.className = "text-xs border-2 border-slate-900 bg-red-50 text-red-800 px-3 py-1.5 rounded font-mono";
-            });
-        }
-
-        function generateShortRoomId() {
-            let result = '';
-            const characters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-            for (let i = 0; i < 5; i++) {
-                result += characters.charAt(Math.floor(Math.random() * characters.length));
-            }
-            return result;
-        }
-
-        function hostOnlineRoom() {
-            const hostNickInput = document.getElementById('hostNickname');
-            appState.myNickname = hostNickInput.value.trim() || "Supervisor Hub";
-
-            if(!appState.myId) {
-                alert("Signaling grid down. Re-initializing matrix variables.");
-                return;
-            }
-            appState.isHost = true;
-            appState.mode = 'online';
-            document.getElementById('displayHostRoomId').innerText = appState.myId;
-            switchScreen('screenHostLobby');
-
-            appState.peer.on('connection', (conn) => {
-                conn.on('data', (payload) => {
-                    if (payload && payload.type === 'CLIENT_HANDSHAKE') {
-                        conn.playerNickname = payload.nickname;
-                        appState.connections.push(conn);
-                        updateHostLobbyUI();
-                    }
-                });
-
-                conn.on('close', () => {
-                    appState.connections = appState.connections.filter(c => c.peer !== conn.peer);
-                    updateHostLobbyUI();
-                });
-            });
-        }
-
-        function updateHostLobbyUI() {
-            document.getElementById('connectedCount').innerText = appState.connections.length;
-            const container = document.getElementById('hostConnectedList');
-            
-            if(appState.connections.length === 0) {
-                container.innerHTML = `<p class="italic text-xs text-slate-400">Waiting for remote handshakes...</p>`;
-                return;
-            }
-
-            container.innerHTML = appState.connections.map((conn) => {
-                return `<div class="flex items-center justify-between bg-white border-2 border-slate-900 px-4 py-2 rounded-xl">
-                    <span class="font-bold font-sans text-slate-800">${conn.playerNickname || 'Anonymous Stack'}</span>
-                    <span class="text-[9px] tracking-wider font-mono font-bold bg-slate-100 text-slate-700 px-2 py-0.5 rounded border border-slate-400">LINK_SYNCED</span>
-                </div>`;
-            }).join('');
-        }
-
-        function broadcastToOnlineClients(payload) {
-            appState.connections.forEach(conn => conn.send(payload));
-        }
-
-        function triggerOnlineDistribution() {
-            const totalPeers = appState.connections.length;
-            if (totalPeers < 2) {
-                alert("Game requires a minimum cluster density of 2 connected remote nodes.");
-                return;
-            }
-
-            const gameSize = totalPeers + 1;
-            const chosenWord = WORD_POOL[Math.floor(Math.random() * WORD_POOL.length)];
-            const imposterPositionIdx = Math.floor(Math.random() * gameSize);
-
-            appState.playerNames = [appState.myNickname];
-            appState.connections.forEach(c => appState.playerNames.push(c.playerNickname));
-
-            let hostRole = { type: 'INNOCENT', name: appState.myNickname, word: chosenWord };
-            if (imposterPositionIdx === 0) {
-                hostRole = { type: 'IMPOSTER', name: appState.myNickname, word: '⚠️ IMPOSTER [NO WORD]' };
-            }
-
-            appState.roles = [hostRole];
-
-            let clientAssignments = [];
-            for(let i = 1; i <= totalPeers; i++) {
-                let roleObject = { type: 'INNOCENT', name: appState.playerNames[i], word: chosenWord };
-                if(i === imposterPositionIdx) {
-                    roleObject = { type: 'IMPOSTER', name: appState.playerNames[i], word: '⚠️ IMPOSTER [NO WORD]' };
-                }
-                clientAssignments.push(roleObject);
-                appState.roles.push(roleObject);
-            }
-
-            appState.connections.forEach((conn, index) => {
-                conn.send({
-                    type: 'ASSIGNMENT_PAYLOAD',
-                    data: clientAssignments[index],
-                    globalNamesList: appState.playerNames
-                });
-            });
-
-            switchScreen('screenClientView');
-            document.getElementById('clientStatusTitle').innerText = `${appState.myNickname} [Supervisor Console]`;
-            document.getElementById('clientCardLoading').classList.add('hidden');
-            
-            const targetReveal = document.getElementById('clientCardRevealed');
-            const textEl = document.getElementById('clientWordDisplay');
-            targetReveal.classList.remove('hidden');
-            textEl.innerText = hostRole.word;
-            
-            if (hostRole.type === 'IMPOSTER') {
-                textEl.className = "text-xl font-mono text-red-700 tracking-tight font-bold";
-            } else {
-                textEl.className = "text-3xl font-black text-slate-900 handwritten-title tracking-wide";
-            }
-
-            // Universal Screen Transfer Fix
-            setTimeout(() => {
-                broadcastToOnlineClients({ type: 'REDIRECT_DISCUSSION_PHASE' });
-                buildDiscussionSequence();
-            }, 6000);
-        }
-
-        function joinOnlineRoom() {
-            const nicknameInput = document.getElementById('clientNickname');
-            appState.myNickname = nicknameInput.value.trim() || "Node_" + Math.floor(Math.random() * 90 + 10);
-
-            const inputVal = document.getElementById('joinRoomId').value.trim().toUpperCase();
-            if(!inputVal) return alert("Must declare a valid handshake code identifier.");
-
-            appState.mode = 'online';
-            switchScreen('screenClientView');
-            document.getElementById('clientStatusTitle').innerText = "Attaching to Mesh...";
-
-            const connection = appState.peer.connect(inputVal);
-            
-            connection.on('open', () => {
-                connection.send({
-                    type: 'CLIENT_HANDSHAKE',
-                    nickname: appState.myNickname
-                });
-                document.getElementById('clientStatusTitle').innerText = `${appState.myNickname} [Linked]`;
-            });
-
-            connection.on('data', (payload) => {
-                if (payload.type === 'ASSIGNMENT_PAYLOAD') {
-                    appState.playerNames = payload.globalNamesList;
-                    document.getElementById('clientCardLoading').classList.add('hidden');
-                    const targetReveal = document.getElementById('clientCardRevealed');
-                    const textEl = document.getElementById('clientWordDisplay');
-                    
-                    targetReveal.classList.remove('hidden');
-                    textEl.innerText = payload.data.word;
-                    textEl.className = payload.data.type === 'IMPOSTER' ? "text-xl font-mono text-red-700 font-bold" : "text-3xl font-black text-slate-900 handwritten-title";
-                    
-                    document.getElementById('onlineStatusMonitorBox').classList.remove('hidden');
-                }
-                
-                if (payload.type === 'REDIRECT_DISCUSSION_PHASE') {
-                    switchScreen('screenDiscussionBoard');
-                }
-
-                if (payload.type === 'SYNC_DISCUSSION_STATE') {
-                    appState.speakerSequence = payload.sequence;
-                    appState.currentSpeakerIdx = payload.currentSpeakerIdx;
-                    
-                    renderDiscussionBoardScreen();
-                }
-
-                if (payload.type === 'REDIRECT_GUESSING_PHASE') {
-                    renderGuessingPhaseScreen();
-                    document.getElementById('votingGridContainer').style.pointerEvents = "none";
-                    document.getElementById('discussionHeadline').innerText = "Supervisor is parsing vote registers...";
-                }
-
-                if (payload.type === 'GAME_OVER_SIGNAL') {
-                    switchScreen('screenGuessingPhase');
-                    const displayBox = document.getElementById('gameResolutionDisplay');
-                    const title = document.getElementById('resolutionTitle');
-                    const subtitle = document.getElementById('resolutionSubtitle');
-                    
-                    document.getElementById('votingGridContainer').classList.add('hidden');
-                    displayBox.classList.remove('hidden');
-                    title.innerText = payload.title;
-                    title.className = payload.titleClass;
-                    subtitle.innerText = payload.subtitle;
-                }
-            });
-
-            connection.on('close', () => {
-                alert("Host terminated session port connection.");
-                location.reload();
-            });
-        }
+      }
     </script>
+</head>
+<body>
+
+<div class="chat-container">
+    <div class="chat-header">
+        <strong>Textbook Solver (Guest)</strong>
+        <select id="modelSelect">
+            <option value="gemini-2.5-flash">Gemini 2.5 Flash (Fast)</option>
+            <option value="gemini-2.5-pro">Gemini 2.5 Pro (Deep Logic)</option>
+        </select>
+    </div>
+
+    <div id="chatMessages" class="chat-messages">
+        <div class="message ai">Hello! Upload a photo of your textbook page. I will analyze it and provide a step-by-step educational breakdown.</div>
+    </div>
+
+    <div class="chat-input-area">
+        <input type="file" id="imageInput" accept="image/*" style="display: none;">
+        <button onclick="document.getElementById('imageInput').click()" style="padding: 10px; background: #34a853; color: white; border: none; border-radius: 6px; cursor: pointer;">
+            📷 Upload Photo
+        </button>
+        <span id="fileName" style="font-size: 12px; color: #666; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">No file chosen</span>
+        <button id="sendBtn" onclick="processAndSend()" style="padding: 10px 15px; background: #1a73e8; color: white; border: none; border-radius: 6px; cursor: pointer; margin-left: auto;" disabled>
+            Send
+        </button>
+    </div>
+</div>
+
+<script type="module">
+    // Import the Google Gen AI library loaded from ESM
+    import { GoogleGenAI } from '@google/genai';
+
+    // ⚠️ WARNING: If you are hosting on a public GitHub repo, anyone can see this key.
+    // Go to Google AI Studio, get a free key, and paste it here to test it out.
+    const GEMINI_API_KEY = "PASTE_YOUR_GEMINI_API_KEY_HERE"; 
+
+    // 🔒 Your hidden preset prompt injected automatically
+    const TEXTBOOK_SYSTEM_PROMPT = 
+      "You are an expert academic tutor. Analyze the attached textbook image. " +
+      "Extract the questions, charts, or text shown in the photo. Provide a clear, " +
+      "step-by-step educational explanation or answer to the material found in the image. " +
+      "Keep your language accessible and easy to understand.";
+
+    const imageInput = document.getElementById('imageInput');
+    const fileName = document.getElementById('fileName');
+    const sendBtn = document.getElementById('sendBtn');
+    const chatMessages = document.getElementById('chatMessages');
+    const modelSelect = document.getElementById('modelSelect');
+
+    let uploadedBase64 = "";
+    let uploadedMimeType = "";
+
+    imageInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        fileName.textContent = file.name;
+        sendBtn.disabled = false;
+
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            // Keep only the base64 string portion, removing the metadata prefix
+            uploadedBase64 = event.target.result.split(',')[1];
+            uploadedMimeType = file.type;
+        };
+        reader.readAsDataURL(file);
+    });
+
+    // Make the function accessible to the global HTML button
+    window.processAndSend = async function() {
+        if (!uploadedBase64) return;
+        if (GEMINI_API_KEY === "PASTE_YOUR_GEMINI_API_KEY_HERE") {
+            alert("Please paste your Gemini API Key inside the script tag first!");
+            return;
+        }
+
+        sendBtn.disabled = true;
+        const selectedModel = modelSelect.value;
+
+        // Display user's image in the chat
+        const userBubble = document.createElement('div');
+        userBubble.className = 'message user';
+        userBubble.innerHTML = `Sent textbook photo:<br><img class="preview-img" src="data:${uploadedMimeType};base64,${uploadedBase64}">`;
+        chatMessages.appendChild(userBubble);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        // Display loading bubble
+        const loadingBubble = document.createElement('div');
+        loadingBubble.className = 'message ai';
+        loadingBubble.textContent = "AI is evaluating your textbook page... please wait...";
+        chatMessages.appendChild(loadingBubble);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        // Reset the interface fields
+        fileName.textContent = "No file chosen";
+        imageInput.value = "";
+
+        try {
+            // Initialize Gemini directly inside the client browser
+            const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+
+            // Structure the image data payload
+            const imagePart = {
+                inlineData: {
+                    data: uploadedBase64,
+                    mimeType: uploadedMimeType
+                },
+            };
+
+            // Call the official Gemini servers directly from the browser
+            const response = await ai.models.generateContent({
+                model: selectedModel,
+                contents: [
+                    TEXTBOOK_SYSTEM_PROMPT,
+                    imagePart
+                ],
+            });
+
+            // Set the final response text
+            loadingBubble.textContent = response.text;
+
+        } catch (error) {
+            loadingBubble.textContent = "Error processing image. Check your API key or console log.";
+            console.error("Gemini Browser Error:", error);
+        }
+
+        sendBtn.disabled = false;
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+</script>
 </body>
 </html>
