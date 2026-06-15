@@ -3,21 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Textbook Assistant</title>
+    <title>Falcon 6 - Study Assistant</title>
     <style>
-        body { font-family: sans-serif; background: #f4f6f9; display: flex; justify-content: center; padding: 20px; }
-        .chat-container { width: 450px; background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); overflow: hidden; display: flex; flex-direction: column; height: 600px; }
-        .chat-header { background: #1a73e8; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .chat-header select { padding: 5px; border-radius: 4px; border: none; font-weight: bold; }
-        .chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .message { padding: 10px 14px; border-radius: 15px; max-width: 80%; word-break: break-word; white-space: pre-wrap; }
-        .user { background: #007bff; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
-        .ai { background: #f1f3f4; color: #202124; align-self: flex-start; border-bottom-left-radius: 2px; }
-        .chat-input-area { padding: 10px; border-top: 1px solid #e0e0e0; display: flex; gap: 10px; align-items: center; background: #fafafa; }
-        .preview-img { max-width: 150px; border-radius: 8px; margin-top: 5px; display: block; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f172a; display: flex; justify-content: center; padding: 20px; color: #f8fafc; }
+        .chat-container { width: 480px; background: #1e293b; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); overflow: hidden; display: flex; flex-direction: column; height: 650px; border: 1px solid #334155; }
+        .chat-header { background: #2563eb; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1d4ed8; }
+        .chat-header h2 { margin: 0; font-size: 1.1rem; letter-spacing: 0.5px; }
+        .chat-header select { padding: 6px 10px; border-radius: 6px; border: 1px solid #3b82f6; background: #1e40af; color: white; font-weight: 600; cursor: pointer; font-size: 0.85rem; }
+        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; background: #0f172a; }
+        .message { padding: 12px 16px; border-radius: 12px; max-width: 85%; word-break: break-word; white-space: pre-wrap; line-height: 1.5; font-size: 0.95rem; }
+        .user { background: #2563eb; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .ai { background: #334155; color: #f8fafc; align-self: flex-start; border-bottom-left-radius: 2px; border: 1px solid #475569; }
+        .chat-input-area { padding: 15px; border-top: 1px solid #334155; display: flex; gap: 10px; align-items: center; background: #1e293b; }
+        .upload-btn { padding: 10px 14px; background: #059669; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: background 0.2s; }
+        .upload-btn:hover { background: #10b981; }
+        .send-btn { padding: 10px 20px; background: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem; margin-left: auto; transition: background 0.2s; }
+        .send-btn:hover:not(:disabled) { background: #3b82f6; }
+        .send-btn:disabled { background: #475569; color: #94a3b8; cursor: not-allowed; }
+        .file-status { font-size: 0.8rem; color: #94a3b8; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .preview-img { max-width: 100%; border-radius: 8px; margin-top: 8px; display: block; border: 1px solid #475569; }
     </style>
     
-    <!-- 1. Load the official Google Gemini SDK directly in the browser -->
+    <!-- Import standard web modules for AI providers directly in the browser -->
     <script type="importmap">
       {
         "imports": {
@@ -29,129 +36,146 @@
 <body>
 
 <div class="chat-container">
+    <!-- CHAT HEADER WITH AI ENGINE ENGINE DROPDOWN -->
     <div class="chat-header">
-        <strong>Textbook Solver (Guest)</strong>
-        <select id="modelSelect">
-            <option value="gemini-2.5-flash">Gemini 2.5 Flash (Fast)</option>
-            <option value="gemini-2.5-pro">Gemini 2.5 Pro (Deep Logic)</option>
+        <div>
+            <h2>Falcon 6 AI</h2>
+            <small style="color: #bfdbfe; font-size: 0.75rem;">Your Study Companion</small>
+        </div>
+        <select id="aiEngineSelect">
+            <option value="gemini">Google Gemini</option>
+            <option value="openai">ChatGPT (OpenAI)</option>
+            <option value="anthropic">Claude (Anthropic)</option>
+            <option value="deepseek">DeepSeek AI</option>
+            <option value="grok">xAI Grok</option>
         </select>
     </div>
 
+    <!-- MAIN CHAT MESSAGES WINDOW -->
     <div id="chatMessages" class="chat-messages">
-        <div class="message ai">Hello! Upload a photo of your textbook page. I will analyze it and provide a step-by-step educational breakdown.</div>
+        <div class="message ai">Hello! I am Falcon 6, built by you. I possess advanced AI knowledge bases. 
+
+Upload a photo of your textbook data, and I will break it down into easy, pattern-matching definitions tailored for a 7th standard student. No internet fluff, just direct facts.</div>
     </div>
 
+    <!-- ACTIONS AND INPUT CONTROLS -->
     <div class="chat-input-area">
-        <input type="file" id="imageInput" accept="image/*" style="display: none;">
-        <button onclick="document.getElementById('imageInput').click()" style="padding: 10px; background: #34a853; color: white; border: none; border-radius: 6px; cursor: pointer;">
-            📷 Upload Photo
+        <input type="file" id="textbookImageInput" accept="image/*" style="display: none;">
+        <button class="upload-btn" onclick="document.getElementById('textbookImageInput').click()">
+            📷 Upload Page
         </button>
-        <span id="fileName" style="font-size: 12px; color: #666; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">No file chosen</span>
-        <button id="sendBtn" onclick="processAndSend()" style="padding: 10px 15px; background: #1a73e8; color: white; border: none; border-radius: 6px; cursor: pointer; margin-left: auto;" disabled>
-            Send
+        <span id="fileStatusBar" class="file-status">No image attached</span>
+        
+        <button id="submitActionBtn" class="send-btn" onclick="engageFalcon6()" disabled>
+            Teach Me
         </button>
     </div>
 </div>
 
 <script type="module">
-    // Import the Google Gen AI library loaded from ESM
     import { GoogleGenAI } from '@google/genai';
 
-    // ⚠️ WARNING: If you are hosting on a public GitHub repo, anyone can see this key.
-    // Go to Google AI Studio, get a free key, and paste it here to test it out.
-    const GEMINI_API_KEY = "PASTE_YOUR_GEMINI_API_KEY_HERE"; 
+    // 🔑 API Keys configuration. Paste your key in the respective variable.
+    const API_KEYS = {
+        gemini: "PASTE_YOUR_GEMINI_API_KEY_HERE",
+        openai: "PASTE_YOUR_OPENAI_KEY_IF_USED",
+        anthropic: "PASTE_YOUR_CLAUDE_KEY_IF_USED",
+        deepseek: "PASTE_YOUR_DEEPSEEK_KEY_IF_USED",
+        grok: "PASTE_YOUR_GROK_KEY_IF_USED"
+    };
 
-    // 🔒 Your hidden preset prompt injected automatically
-    const TEXTBOOK_SYSTEM_PROMPT = 
-      "You are an expert academic tutor. Analyze the attached textbook image. " +
-      "Extract the questions, charts, or text shown in the photo. Provide a clear, " +
-      "step-by-step educational explanation or answer to the material found in the image. " +
-      "Keep your language accessible and easy to understand.";
+    // 🔒 THE FALCON 6 CORE PROMPT
+    const FALCON_6_SYSTEM_PROMPT = 
+      "You are Falcon 6, a custom study assistant built by the user. You have access to deep AI knowledge bases, but you must strictly follow these rules:\n" +
+      "1. ONLY use the data present within the uploaded textbook image. Do NOT add outside facts, extra internet knowledge, or unrelated information.\n" +
+      "2. Teach like the user is a 7th standard student using simple, easy-to-learn language.\n" +
+      "3. Format definitions using clear comparative patterns so they are easy to memorize. For example, if defining opposite concepts, keep all words identical except for the core change (Example: 'When moving turning right is a right turn. When moving turning left is a left turn'). Use this simple structural design for terms to make definitions highly skimmable and easy to process.";
 
-    const imageInput = document.getElementById('imageInput');
-    const fileName = document.getElementById('fileName');
-    const sendBtn = document.getElementById('sendBtn');
+    const imageInput = document.getElementById('textbookImageInput');
+    const fileStatus = document.getElementById('fileStatusBar');
+    const submitBtn = document.getElementById('submitActionBtn');
     const chatMessages = document.getElementById('chatMessages');
-    const modelSelect = document.getElementById('modelSelect');
+    const engineSelect = document.getElementById('aiEngineSelect');
 
-    let uploadedBase64 = "";
-    let uploadedMimeType = "";
+    let rawBase64Data = "";
+    let imageMimeType = "";
 
+    // Handle image file extraction
     imageInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (!file) return;
 
-        fileName.textContent = file.name;
-        sendBtn.disabled = false;
+        fileStatus.textContent = file.name;
+        submitBtn.disabled = false;
 
         const reader = new FileReader();
         reader.onload = function(event) {
-            // Keep only the base64 string portion, removing the metadata prefix
-            uploadedBase64 = event.target.result.split(',')[1];
-            uploadedMimeType = file.type;
+            rawBase64Data = event.target.result.split(',')[1];
+            imageMimeType = file.type;
         };
         reader.readAsDataURL(file);
     });
 
-    // Make the function accessible to the global HTML button
-    window.processAndSend = async function() {
-        if (!uploadedBase64) return;
-        if (GEMINI_API_KEY === "PASTE_YOUR_GEMINI_API_KEY_HERE") {
-            alert("Please paste your Gemini API Key inside the script tag first!");
+    window.engageFalcon6 = async function() {
+        if (!rawBase64Data) return;
+        
+        const selectedEngine = engineSelect.value;
+        const targetApiKey = API_KEYS[selectedEngine];
+
+        if (!targetApiKey || targetApiKey.includes("PASTE_YOUR")) {
+            alert(`Please insert your secret key for [${selectedEngine.toUpperCase()}] in the source script variables first.`);
             return;
         }
 
-        sendBtn.disabled = true;
-        const selectedModel = modelSelect.value;
+        submitBtn.disabled = true;
 
-        // Display user's image in the chat
-        const userBubble = document.createElement('div');
-        userBubble.className = 'message user';
-        userBubble.innerHTML = `Sent textbook photo:<br><img class="preview-img" src="data:${uploadedMimeType};base64,${uploadedBase64}">`;
-        chatMessages.appendChild(userBubble);
+        // Render user visual message inside chat viewport
+        const userMessage = document.createElement('div');
+        userMessage.className = 'message user';
+        userMessage.innerHTML = `Falcon 6, process this textbook page:<br><img class="preview-img" src="data:${imageMimeType};base64,${rawBase64Data}">`;
+        chatMessages.appendChild(userMessage);
         chatMessages.scrollTop = chatMessages.scrollHeight;
 
-        // Display loading bubble
-        const loadingBubble = document.createElement('div');
-        loadingBubble.className = 'message ai';
-        loadingBubble.textContent = "AI is evaluating your textbook page... please wait...";
-        chatMessages.appendChild(loadingBubble);
+        // Display thinking loader
+        const loadingMessage = document.createElement('div');
+        loadingMessage.className = 'message ai';
+        loadingMessage.textContent = "Falcon 6 processing content structural data... Please wait.";
+        chatMessages.appendChild(loadingMessage);
         chatMessages.scrollTop = chatMessages.scrollHeight;
 
-        // Reset the interface fields
-        fileName.textContent = "No file chosen";
+        // Reset inputs
+        fileStatus.textContent = "No image attached";
         imageInput.value = "";
 
         try {
-            // Initialize Gemini directly inside the client browser
-            const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
-
-            // Structure the image data payload
-            const imagePart = {
-                inlineData: {
-                    data: uploadedBase64,
-                    mimeType: uploadedMimeType
-                },
-            };
-
-            // Call the official Gemini servers directly from the browser
-            const response = await ai.models.generateContent({
-                model: selectedModel,
-                contents: [
-                    TEXTBOOK_SYSTEM_PROMPT,
-                    imagePart
-                ],
-            });
-
-            // Set the final response text
-            loadingBubble.textContent = response.text;
-
-        } catch (error) {
-            loadingBubble.textContent = "Error processing image. Check your API key or console log.";
-            console.error("Gemini Browser Error:", error);
+            if (selectedEngine === 'gemini') {
+                // Execute direct fetch call to official Google API Endpoint via SDK
+                const ai = new GoogleGenAI({ apiKey: targetApiKey });
+                
+                const response = await ai.models.generateContent({
+                    model: 'gemini-1.5-flash',
+                    contents: [
+                        FALCON_6_SYSTEM_PROMPT,
+                        {
+                            inlineData: {
+                                data: rawBase64Data,
+                                mimeType: imageMimeType
+                            }
+                        }
+                    ],
+                });
+                
+                loadingMessage.textContent = response.text;
+            } else {
+                // Placeholder warning for alternative engines if they aren't wired up yet
+                loadingMessage.textContent = `Falcon 6 Alert: Connection pipeline for ${selectedEngine.toUpperCase()} backend requests is currently unavailable in this frontend-only state. Please select 'Google Gemini' to execute processing.`;
+            }
+        } catch (err) {
+            loadingMessage.textContent = "Falcon 6 encountered a connection issue. Check your API key or active network rules.";
+            console.error(err);
         }
 
-        sendBtn.disabled = false;
+        submitBtn.disabled = false;
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 </script>
