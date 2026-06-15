@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Imposter Word Game</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+        }
+        /* Custom Apple-inspired Glassmorphism */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+    </style>
+</head>
+<body class="text-slate-100 min-h-screen flex flex-col justify-between antialiased">
+
+    <header class="w-full max-w-4xl mx-auto px-4 pt-6">
+        <div class="glass-panel rounded-2xl p-4 flex items-center justify-between shadow-2xl">
+            <div class="flex items-center gap-3">
+                <div class="bg-indigo-500/20 text-indigo-400 p-2.5 rounded-xl border border-indigo-500/30">
+                    <i class="fa-solid fa-user-secret text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight">UNDERCOVER</h1>
+                    <p class="text-xs text-slate-400">Find the Imposter</p>
+                </div>
+            </div>
+            <div id="connectionStatus" class="hidden text-xs bg-emerald-500/10 text-emerald-400 px-3 py-1.5 rounded-full border border-emerald-500/20 font-mono">
+                <i class="fa-solid fa-circle text-[8px] mr-1.5 animate-pulse"></i> Online Idle
+            </div>
+        </div>
+    </header>
+
+    <main class="w-full max-w-lg mx-auto px-4 py-8 flex-grow flex flex-col justify-center">
+        
+        <div id="screenModeSelect" class="glass-panel rounded-3xl p-8 shadow-2xl space-y-6">
+            <div class="text-center space-y-2">
+                <h2 class="text-2xl font-bold">Choose Game Mode</h2>
+                <p class="text-sm text-slate-400">Play locally on one screen or connect remotely.</p>
+            </div>
+            <div class="space-y-4 pt-2">
+                <button onclick="switchScreen('screenOfflineSetup')" class="w-full glass-card hover:bg-white/10 p-5 rounded-2xl flex items-center gap-4 transition cursor-pointer text-left group">
+                    <div class="bg-amber-500/20 text-amber-400 p-3 rounded-xl group-hover:scale-105 transition">
+                        <i class="fa-solid fa-mobile-screen-button text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-lg">Offline (Pass & Play)</h3>
+                        <p class="text-sm text-slate-400">Single phone or PC passed around players.</p>
+                    </div>
+                </button>
+
+                <button onclick="initOnlineMode()" class="w-full glass-card hover:bg-white/10 p-5 rounded-2xl flex items-center gap-4 transition cursor-pointer text-left group">
+                    <div class="bg-indigo-500/20 text-indigo-400 p-3 rounded-xl group-hover:scale-105 transition">
+                        <i class="fa-solid fa-globe text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-lg">Online Mode (P2P)</h3>
+                        <p class="text-sm text-slate-400">Host or Join rooms instantly using a code.</p>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <div id="screenOfflineSetup" class="hidden glass-panel rounded-3xl p-8 shadow-2xl space-y-6">
+            <button onclick="switchScreen('screenModeSelect')" class="text-xs text-slate-400 hover:text-white transition"><i class="fa-solid fa-arrow-left mr-1"></i> Back</button>
+            <h2 class="text-2xl font-bold">Offline Setup</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Total Players (3 - 12)</label>
+                    <input type="number" id="offlinePlayerCount" value="8" min="3" max="12" class="w-full bg-slate-950 border border-white/10 rounded-xl px-4 py-3 font-mono focus:outline-none focus:border-indigo-500 transition">
+                </div>
+                <button onclick="startOfflineGame()" class="w-full bg-indigo-600 hover:bg-indigo-500 font-bold py-4 rounded-xl transition shadow-lg shadow-indigo-600/20 cursor-pointer">
+                    Generate Game Roles
+                </button>
+            </div>
+        </div>
+
+        <div id="screenOfflineReveal" class="hidden glass-panel rounded-3xl p-8 shadow-2xl text-center space-y-6">
+            <div class="space-y-1">
+                <p class="text-xs font-semibold tracking-wider text-indigo-400 uppercase">Player Turn</p>
+                <h2 id="revealTurnTitle" class="text-3xl font-extrabold text-white">Player 1</h2>
+            </div>
+
+            <div id="roleCardContainer" class="glass-card rounded-2xl p-8 border-dashed border-2 border-white/10 min-h-[180px] flex flex-col justify-center items-center relative overflow-hidden">
+                <div id="cardHiddenState" class="space-y-2">
+                    <i class="fa-solid fa-eye-slash text-4xl text-slate-500 mb-2"></i>
+                    <p class="text-sm font-medium text-slate-400">Click below to reveal your secret word safely.</p>
+                </div>
+                <div id="cardVisibleState" class="hidden space-y-3">
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Your Private Assignment</p>
+                    <p id="secretWordDisplay" class="text-4xl font-black text-indigo-400 tracking-wide">CAR</p>
+                    <p id="secretRoleNote" class="text-xs text-slate-400 italic">Do not show this to anybody!</p>
+                </div>
+            </div>
+
+            <div class="flex gap-4">
+                <button id="btnToggleCard" onclick="toggleCardVisibility()" class="flex-1 bg-white/10 hover:bg-white/15 font-semibold py-3 rounded-xl transition cursor-pointer">
+                    Reveal Word
+                </button>
+                <button id="btnNextPlayer" onclick="nextOfflinePlayer()" class="flex-1 bg-indigo-600 hover:bg-indigo-500 font-bold py-3 rounded-xl transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer" disabled>
+                    Next Player <i class="fa-solid fa-arrow-right text-xs ml-1"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="screenOnlineMain" class="hidden glass-panel rounded-3xl p-8 shadow-2xl space-y-6">
+            <button onclick="location.reload()" class="text-xs text-slate-400 hover:text-white transition"><i class="fa-solid fa-arrow-left mr-1"></i> Main Menu</button>
+            <h2 class="text-2xl font-bold">Online Lobby Setup</h2>
+            
+            <div class="grid grid-cols-1 gap-6">
+                <div class="glass-card p-5 rounded-2xl border border-white/5 space-y-3">
+                    <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider">Option A</span>
+                    <h3 class="font-bold text-lg">Create a New Room</h3>
+                    <p class="text-xs text-slate-400">You will act as the master dealer and generate words for connected peers.</p>
+                    <button onclick="hostOnlineRoom()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-sm font-bold py-3 rounded-xl transition cursor-pointer">
+                        Initialize As Host Room
+                    </button>
+                </div>
+
+                <div class="relative flex py-2 items-center">
+                    <div class="flex-grow border-t border-white/10"></div>
+                    <span class="flex-shrink mx-4 text-slate-500 font-mono text-xs">OR</span>
+                    <div class="flex-grow border-t border-white/10"></div>
+                </div>
+
+                <div class="glass-card p-5 rounded-2xl border border-white/5 space-y-3">
+                    <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Option B</span>
+                    <h3 class="font-bold text-lg">Join Existing Room</h3>
+                    <div class="flex gap-2">
+                        <input type="text" id="joinRoomId" placeholder="Enter Host Room ID" class="flex-1 bg-slate-950 border border-white/10 rounded-xl px-4 py-2 font-mono text-sm focus:outline-none focus:border-amber-500 transition uppercase">
+                        <button onclick="joinOnlineRoom()" class="bg-amber-600 hover:bg-amber-500 text-sm font-bold px-5 rounded-xl transition cursor-pointer">
+                            Connect
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="screenHostLobby" class="hidden glass-panel rounded-3xl p-8 shadow-2xl space-y-6">
+            <div class="space-y-1">
+                <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Room Active</span>
+                <h2 class="text-2xl font-bold">Host Master Console</h2>
+            </div>
+            
+            <div class="bg-slate-950 border border-white/10 rounded-xl p-4 text-center">
+                <p class="text-xs text-slate-400 mb-1">Share this Room ID with friends:</p>
+                <p id="displayHostRoomId" class="text-2xl font-mono font-black text-indigo-400 uppercase tracking-wider select-all">---</p>
+            </div>
+
+            <div>
+                <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Connected Clients (<span id="connectedCount">0</span>)</h3>
+                <div id="hostConnectedList" class="space-y-1.5 max-h-36 overflow-y-auto text-sm text-slate-400 font-mono">
+                    <p class="italic text-xs text-slate-500">Waiting for connections...</p>
+                </div>
+            </div>
+
+            <button onclick="triggerOnlineDistribution()" class="w-full bg-emerald-600 hover:bg-emerald-500 font-bold py-4 rounded-xl transition shadow-lg shadow-emerald-600/20 cursor-pointer">
+                Dispatch Secret Roles To Clients
+            </button>
+        </div>
+
+        <div id="screenClientView" class="hidden glass-panel rounded-3xl p-8 shadow-2xl text-center space-y-6">
+            <div class="space-y-1">
+                <p class="text-xs font-semibold tracking-wider text-amber-400 uppercase">Connected Workspace</p>
+                <h2 id="clientStatusTitle" class="text-2xl font-extrabold text-white">Waiting for Host...</h2>
+            </div>
+
+            <div id="clientCardContainer" class="glass-card rounded-2xl p-8 border-dashed border-2 border-white/10 min-h-[180px] flex flex-col justify-center items-center">
+                <div id="clientCardLoading">
+                    <i class="fa-solid fa-spinner text-4xl text-slate-500 animate-spin mb-3"></i>
+                    <p class="text-sm text-slate-400">The host is setting up the word configurations.</p>
+                </div>
+                <div id="clientCardRevealed" class="hidden space-y-3">
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Your Private Assignment</p>
+                    <p id="clientWordDisplay" class="text-4xl font-black text-emerald-400 tracking-wide">---</p>
+                    <p id="clientRoleSubtext" class="text-xs text-slate-400 italic">Keep your screen safe from onlookers.</p>
+                </div>
+            </div>
+            
+            <p class="text-xs text-slate-500">Do not refresh your browser window during active sessions.</p>
+        </div>
+
+    </main>
+
+    <footer class="w-full max-w-lg mx-auto text-center px-4 pb-6 text-xs text-slate-500 font-mono">
+        <p>Rule: Everyone says one word description. Vote off the Imposter.</p>
+    </footer>
+
+    <script>
+        // Core Game Word Arrays
+        const WORD_POOL = ["Frog", "Car", "Apple", "Airplane", "Laptop", "Pizza", "Guitar", "Coffee", "Elephant", "Submarine", "Helicopter", "Football", "Watch", "Burger"];
+        
+        // System Application Memory Context
+        let appState = {
+            mode: null, // 'offline' or 'online'
+            playersCount: 0,
+            roles: [], // Master track configurations
+            currentIdx: 0,
+            cardVisible: false,
+            // Online Networking State Configurations
+            peer: null,
+            myId: null,
+            connections: [],
+            isHost: false
+        };
+
+        // UI Layer Engine Navigation Controls
+        function switchScreen(screenId) {
+            const screens = ['screenModeSelect', 'screenOfflineSetup', 'screenOfflineReveal', 'screenOnlineMain', 'screenHostLobby', 'screenClientView'];
+            screens.forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            document.getElementById(screenId).classList.remove('hidden');
+        }
+
+        /* =========================================================================
+           OFFLINE LOGIC CONTROLLERS (PASS & PLAY)
+           ========================================================================= */
+        function startOfflineGame() {
+            const countInput = document.getElementById('offlinePlayerCount');
+            let count = parseInt(countInput.value) || 8;
+            if(count < 3) count = 3;
+            if(count > 12) count = 12;
+
+            appState.mode = 'offline';
+            appState.playersCount = count;
+            appState.currentIdx = 0;
+            appState.cardVisible = false;
+
+            // Generate Word distribution profile
+            const chosenWord = WORD_POOL[Math.floor(Math.random() * WORD_POOL.length)];
+            const imposterIndex = Math.floor(Math.random() * count);
+
+            appState.roles = [];
+            for (let i = 0; i < count; i++) {
+                if (i === imposterIndex) {
+                    appState.roles.push({ type: 'IMPOSTER', word: '⚠️ YOU ARE THE IMPOSTER' });
+                } else {
+                    appState.roles.push({ type: 'INNOCENT', word: chosenWord });
+                }
+            }
+
+            setupOfflineRevealCard();
+            switchScreen('screenOfflineReveal');
+        }
+
+        function setupOfflineRevealCard() {
+            appState.cardVisible = false;
+            document.getElementById('cardHiddenState').classList.remove('hidden');
+            document.getElementById('cardVisibleState').classList.add('hidden');
+            
+            document.getElementById('revealTurnTitle').innerText = `Player ${appState.currentIdx + 1}`;
+            document.getElementById('btnToggleCard').innerText = "Reveal Word";
+            document.getElementById('btnNextPlayer').disabled = true;
+        }
+
+        function toggleCardVisibility() {
+            const hiddenBox = document.getElementById('cardHiddenState');
+            const visibleBox = document.getElementById('cardVisibleState');
+            const displayWord = document.getElementById('secretWordDisplay');
+            const note = document.getElementById('secretRoleNote');
+
+            appState.cardVisible = !appState.cardVisible;
+
+            if (appState.cardVisible) {
+                hiddenBox.classList.add('hidden');
+                visibleBox.classList.remove('hidden');
+                
+                const currentData = appState.roles[appState.currentIdx];
+                displayWord.innerText = currentData.word;
+                
+                if (currentData.type === 'IMPOSTER') {
+                    displayWord.className = "text-2xl font-black text-rose-400 tracking-wide";
+                    note.innerText = "Blend in! Try to guess what word the others have.";
+                } else {
+                    displayWord.className = "text-4xl font-black text-indigo-400 tracking-wide";
+                    note.innerText = "Do not show this to anybody!";
+                }
+
+                document.getElementById('btnToggleCard').innerText = "Hide Word";
+                document.getElementById('btnNextPlayer').disabled = false;
+            } else {
+                hiddenBox.classList.remove('hidden');
+                visibleBox.classList.add('hidden');
+                document.getElementById('btnToggleCard').innerText = "Reveal Word";
+                document.getElementById('btnNextPlayer').disabled = true;
+            }
+        }
+
+        function nextOfflinePlayer() {
+            appState.currentIdx++;
+            if (appState.currentIdx < appState.playersCount) {
+                setupOfflineRevealCard();
+            } else {
+                // All assignments evaluated natively
+                document.getElementById('revealTurnTitle').innerText = "🎉 All Set!";
+                document.getElementById('cardHiddenState').innerHTML = `
+                    <i class="fa-solid fa-play text-4xl text-emerald-400 mb-2"></i>
+                    <p class="text-sm font-bold text-slate-200">Roles Dispatched Successfully</p>
+                    <p class="text-xs text-slate-400 mt-1 max-w-xs">Start your round. Let each player describe their item while the imposter blends in!</p>
+                `;
+                document.getElementById('btnToggleCard').classList.add('hidden');
+                document.getElementById('btnNextPlayer').onclick = () => location.reload();
+                document.getElementById('btnNextPlayer').innerText = "Restart Game";
+                document.getElementById('btnNextPlayer').disabled = false;
+            }
+        }
+
+        /* =========================================================================
+           ONLINE P2P SYSTEM LOGIC CONTROLLERS (PEERJS ENGINE)
+           ========================================================================= */
+        function initOnlineMode() {
+            switchScreen('screenOnlineMain');
+            const statusBox = document.getElementById('connectionStatus');
+            statusBox.classList.remove('hidden');
+            statusBox.innerText = "Connecting Framework...";
+            statusBox.className = "text-xs bg-amber-500/10 text-amber-400 px-3 py-1.5 rounded-full border border-amber-500/20 font-mono";
+
+            // Instantiate Peer initialization on public mesh infrastructure
+            appState.peer = new Peer(generateShortRoomId(), {
+                debug: 1
+            });
+
+            appState.peer.on('open', (id) => {
+                appState.myId = id;
+                statusBox.innerText = "● Server Online";
+                statusBox.className = "text-xs bg-emerald-500/10 text-emerald-400 px-3 py-1.5 rounded-full border border-emerald-500/20 font-mono";
+            });
+
+            appState.peer.on('error', (err) => {
+                console.error("PeerJS Core Error Intercept:", err);
+                statusBox.innerText = "● Mesh Node Error";
+                statusBox.className = "text-xs bg-rose-500/10 text-rose-400 px-3 py-1.5 rounded-full border border-rose-500/20 font-mono";
+            });
+        }
+
+        function generateShortRoomId() {
+            // Generates simple readable string matrix coordinates
+            let result = '';
+            const characters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Avoid ambiguous lookalikes
+            for (let i = 0; i < 5; i++) {
+                result += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return result;
+        }
+
+        // --- HOST CAPABILITY MATRIX ---
+        function hostOnlineRoom() {
+            if(!appState.myId) {
+                alert("P2P Signaling framework processing. Please try again in 2 seconds.");
+                return;
+            }
+            appState.isHost = true;
+            document.getElementById('displayHostRoomId').innerText = appState.myId;
+            switchScreen('screenHostLobby');
+
+            // Listen for connections coming in from external clients
+            appState.peer.on('connection', (conn) => {
+                appState.connections.push(conn);
+                updateHostLobbyUI();
+
+                conn.on('close', () => {
+                    appState.connections = appState.connections.filter(c => c.peer !== conn.peer);
+                    updateHostLobbyUI();
+                });
+            });
+        }
+
+        function updateHostLobbyUI() {
+            document.getElementById('connectedCount').innerText = appState.connections.length;
+            const container = document.getElementById('hostConnectedList');
+            
+            if(appState.connections.length === 0) {
+                container.innerHTML = `<p class="italic text-xs text-slate-500">Waiting for connections...</p>`;
+                return;
+            }
+
+            container.innerHTML = appState.connections.map((conn, idx) => {
+                return `<div class="flex items-center justify-between bg-white/5 px-3 py-2 rounded-lg">
+                    <span>Client Node: ${conn.peer}</span>
+                    <span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/30">CONNECTED</span>
+                </div>`;
+            }).join('');
+        }
+
+        function triggerOnlineDistribution() {
+            const totalPeers = appState.connections.length;
+            if (totalPeers < 2) {
+                alert("You need at least 2 connected clients (minimum 3 players total including Host) to balance gameplay parameters.");
+                return;
+            }
+
+            // Total dynamic players count = peers + host
+            const gameSize = totalPeers + 1;
+            const chosenWord = WORD_POOL[Math.floor(Math.random() * WORD_POOL.length)];
+            const imposterPositionIdx = Math.floor(Math.random() * gameSize);
+
+            // Determine host position assignment profile
+            let hostRole = { type: 'INNOCENT', word: chosenWord };
+            if (imposterPositionIdx === 0) {
+                hostRole = { type: 'IMPOSTER', word: '⚠️ YOU ARE THE IMPOSTER' };
+            }
+
+            // Construct array stack distribution mappings for clients
+            let clientAssignments = [];
+            for(let i = 1; i <= totalPeers; i++) {
+                if(i === imposterPositionIdx) {
+                    clientAssignments.push({ type: 'IMPOSTER', word: '⚠️ YOU ARE THE IMPOSTER' });
+                } else {
+                    clientAssignments.push({ type: 'INNOCENT', word: chosenWord });
+                }
+            }
+
+            // Disseminate payloads across individual processing threads
+            appState.connections.forEach((conn, index) => {
+                conn.send({
+                    type: 'ASSIGNMENT_PAYLOAD',
+                    data: clientAssignments[index]
+                });
+            });
+
+            // Turn host viewport window into visible asset module
+            switchScreen('screenClientView');
+            document.getElementById('clientStatusTitle').innerText = "Host Workspace Role";
+            document.getElementById('clientCardLoading').classList.add('hidden');
+            const targetReveal = document.getElementById('clientCardRevealed');
+            const textEl = document.getElementById('clientWordDisplay');
+            
+            targetReveal.classList.remove('hidden');
+            textEl.innerText = hostRole.word;
+            if (hostRole.type === 'IMPOSTER') {
+                textEl.className = "text-2xl font-black text-rose-400 tracking-wide";
+                document.getElementById('clientRoleSubtext').innerText = "Blend in! You do not have the target word.";
+            } else {
+                textEl.className = "text-4xl font-black text-emerald-400 tracking-wide";
+                document.getElementById('clientRoleSubtext').innerText = "Do not reveal this word sequence to anyone.";
+            }
+        }
+
+        // --- CLIENT CAPABILITY MATRIX ---
+        function joinOnlineRoom() {
+            const inputVal = document.getElementById('joinRoomId').value.trim().toUpperCase();
+            if(!inputVal) {
+                alert("Please input a valid room identification sequence.");
+                return;
+            }
+
+            if(!appState.myId) {
+                alert("Connecting backend framework. Try again in a moment.");
+                return;
+            }
+
+            switchScreen('screenClientView');
+            document.getElementById('clientStatusTitle').innerText = "Joining Host Mesh...";
+
+            // Initialize outgoing connectivity stream mapping
+            const connection = appState.peer.connect(inputVal);
+            
+            connection.on('open', () => {
+                document.getElementById('clientStatusTitle').innerText = "Synchronized to Room";
+            });
+
+            connection.on('data', (payload) => {
+                if (payload && payload.type === 'ASSIGNMENT_PAYLOAD') {
+                    document.getElementById('clientCardLoading').classList.add('hidden');
+                    const targetReveal = document.getElementById('clientCardRevealed');
+                    const textEl = document.getElementById('clientWordDisplay');
+                    
+                    targetReveal.classList.remove('hidden');
+                    textEl.innerText = payload.data.word;
+                    
+                    if(payload.data.type === 'IMPOSTER') {
+                        textEl.className = "text-2xl font-black text-rose-400 tracking-wide";
+                        document.getElementById('clientRoleSubtext').innerText = "Blend in! You do not know the target word.";
+                    } else {
+                        textEl.className = "text-4xl font-black text-emerald-400 tracking-wide";
+                        document.getElementById('clientRoleSubtext').innerText = "Do not share this word with anyone.";
+                    }
+                }
+            });
+
+            connection.on('close', () => {
+                alert("The host closed the room or dropped network sync.");
+                location.reload();
+            });
+        }
+    </script>
+</body>
+</html>
